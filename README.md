@@ -1,8 +1,8 @@
 # Darwin CLI
 
 The official command-line client for Darwin. It uses the same authenticated
-agent, goals, approvals, integrations, and reviewed tools as the web app, MCP,
-and messaging channels.
+account, agents, goals, approvals, integrations, and reviewed tools as the web
+app, MCP, and messaging channels.
 
 ## Install
 
@@ -25,11 +25,15 @@ production API URL for local development.
 
 ```bash
 darwin agent message "Summarize my active goals."
+darwin agent message "Check Darwin's pending approvals."
+darwin agent message "Now ask my personal agent what is on my calendar."
 darwin goals list
 darwin approvals list
 darwin tools list
 darwin tools execute create_goal --input '{"intent":"Plan the launch","kind":"PRIVATE"}'
 ```
+
+Agent messages are intent routed. Name an accessible personal or business agent naturally; the CLI does not require an agent ID on every request.
 
 Use `darwin --help` for the complete command list. The generic `tools` commands
 track the reviewed public tool catalog, so new Darwin capabilities do not

@@ -3,7 +3,7 @@
   "info": {
     "title": "Darwin API",
     "version": "1.0.0",
-    "description": "A stable, owner-scoped interface to one Darwin personal agent, its goals, approvals, and connected integrations.",
+    "description": "A stable, owner-scoped interface to the authenticated account’s Darwin agents, goals, approvals, and connected integrations. Messages route to the intended personal or business agent from natural-language context and retain a separate conversation per agent.",
     "contact": {
       "name": "Darwin",
       "url": "https://docs.darwin.so"
@@ -18,7 +18,7 @@
   "tags": [
     {
       "name": "Agent",
-      "description": "Talk to the authenticated user’s personal agent."
+      "description": "Talk to the authenticated account. Darwin routes each message to the intended accessible personal or business agent."
     },
     {
       "name": "Tools",
@@ -26,11 +26,11 @@
     },
     {
       "name": "Goals",
-      "description": "Create and inspect private Darwin goals."
+      "description": "Create and inspect goals for the agent selected on the developer/MCP channel."
     },
     {
       "name": "Approvals",
-      "description": "Review decisions requested by the agent."
+      "description": "Review decisions requested by the agent selected on the developer/MCP channel."
     },
     {
       "name": "Integrations",
@@ -49,7 +49,8 @@
         "tags": [
           "Agent"
         ],
-        "summary": "Get the personal-agent conversation",
+        "summary": "Get the selected agent conversation",
+        "description": "Returns the conversation for the agent currently selected on the developer/MCP channel. Natural-language routing in createMessage updates this selection.",
         "parameters": [
           {
             "name": "limit",
@@ -120,7 +121,8 @@
         "tags": [
           "Agent"
         ],
-        "summary": "Send a message to the personal agent",
+        "summary": "Send a message to Darwin",
+        "description": "Darwin infers the intended accessible personal or business agent from the message and current conversation. Name an agent naturally when changing context; ambiguous requests return a clarification without running tools.",
         "requestBody": {
           "required": true,
           "content": {
