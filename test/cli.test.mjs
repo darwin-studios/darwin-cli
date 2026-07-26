@@ -38,14 +38,7 @@ test('stores configuration in the XDG config directory with redacted output', as
   };
   const configureResult = spawnSync(
     process.execPath,
-    [
-      'dist/index.js',
-      'configure',
-      '--api-key',
-      'darwin_test_1234567890',
-      '--base-url',
-      'https://example.test/api/v1/',
-    ],
+    ['dist/index.js', 'configure', '--api-key', 'darwin_test_1234567890', '--base-url', 'https://example.test/api/v1/'],
     {
       cwd: new URL('..', import.meta.url),
       encoding: 'utf8',
@@ -54,9 +47,7 @@ test('stores configuration in the XDG config directory with redacted output', as
   );
   assert.equal(configureResult.status, 0, configureResult.stderr);
 
-  const stored = JSON.parse(
-    await readFile(join(configRoot, 'darwin', 'config.json'), 'utf8'),
-  );
+  const stored = JSON.parse(await readFile(join(configRoot, 'darwin', 'config.json'), 'utf8'));
   assert.deepEqual(stored, {
     apiKey: 'darwin_test_1234567890',
     baseUrl: 'https://example.test/api/v1',
@@ -85,18 +76,14 @@ test('accepts conversation options without changing command dispatch', async (t)
   const address = server.address();
   assert.ok(address && typeof address === 'object');
   const result = await new Promise((resolve, reject) => {
-    const child = spawn(
-      process.execPath,
-      ['dist/index.js', 'conversation', '--limit', '7', '--cursor', 'next-page'],
-      {
-        cwd: new URL('..', import.meta.url),
-        env: {
-          ...process.env,
-          DARWIN_API_KEY: 'test-key',
-          DARWIN_API_URL: `http://127.0.0.1:${address.port}`,
-        },
+    const child = spawn(process.execPath, ['dist/index.js', 'conversation', '--limit', '7', '--cursor', 'next-page'], {
+      cwd: new URL('..', import.meta.url),
+      env: {
+        ...process.env,
+        DARWIN_API_KEY: 'test-key',
+        DARWIN_API_URL: `http://127.0.0.1:${address.port}`,
       },
-    );
+    });
     let stdout = '';
     let stderr = '';
     child.stdout.setEncoding('utf8').on('data', (chunk) => {
@@ -180,14 +167,7 @@ test('executes a reviewed Darwin tool with JSON input', async (t) => {
   const result = await new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
-      [
-        'dist/index.js',
-        'tools',
-        'execute',
-        'create_goal',
-        '--input',
-        '{"intent":"Plan the launch","kind":"PRIVATE"}',
-      ],
+      ['dist/index.js', 'tools', 'execute', 'create_goal', '--input', '{"intent":"Plan the launch","kind":"PRIVATE"}'],
       {
         cwd: new URL('..', import.meta.url),
         env: {

@@ -45,12 +45,7 @@ async function credentials() {
   };
 }
 
-async function request(
-  apiKey: string,
-  baseUrl: string,
-  path: string,
-  options: RequestOptions = {},
-) {
+async function request(apiKey: string, baseUrl: string, path: string, options: RequestOptions = {}) {
   const url = new URL(`${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`);
   for (const [key, value] of Object.entries(options.query ?? {})) {
     if (value !== undefined) {
@@ -77,10 +72,7 @@ async function request(
   }
   if (!response.ok) {
     const message =
-      body &&
-      typeof body === 'object' &&
-      'message' in body &&
-      typeof body.message === 'string'
+      body && typeof body === 'object' && 'message' in body && typeof body.message === 'string'
         ? body.message
         : response.statusText || 'Darwin API request failed';
     throw new DarwinApiError(response.status, message, body);
@@ -172,9 +164,9 @@ async function logout() {
 }
 
 async function version() {
-  const packageJson = JSON.parse(
-    await readFile(new URL('../package.json', import.meta.url), 'utf8'),
-  ) as { version: string };
+  const packageJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')) as {
+    version: string;
+  };
   process.stdout.write(`${packageJson.version}\n`);
 }
 
@@ -230,9 +222,7 @@ async function main() {
 
   const auth = await credentials();
   if (!auth.apiKey) {
-    throw new Error(
-      'No API key found. Run darwin configure --api-key <key> or set DARWIN_API_KEY.',
-    );
+    throw new Error('No API key found. Run darwin configure --api-key <key> or set DARWIN_API_KEY.');
   }
 
   const resource = args[0];
@@ -267,11 +257,7 @@ async function main() {
     if (!goalId) {
       throw new Error('Pass a goal ID after "darwin goals get".');
     }
-    result = await request(
-      auth.apiKey,
-      auth.baseUrl,
-      `/goals/${encodeURIComponent(goalId)}`,
-    );
+    result = await request(auth.apiKey, auth.baseUrl, `/goals/${encodeURIComponent(goalId)}`);
   } else if (resource === 'goals' && operation === 'create') {
     const intent = option(args, '--intent');
     if (!intent?.trim()) {
@@ -298,18 +284,13 @@ async function main() {
     if (!approvalId) {
       throw new Error('Pass the approval ID before the decision.');
     }
-    result = await request(
-      auth.apiKey,
-      auth.baseUrl,
-      `/approvals/${encodeURIComponent(approvalId)}/decisions`,
-      {
-        method: 'POST',
-        body: {
-          decision,
-          reason: option(args, '--reason'),
-        },
+    result = await request(auth.apiKey, auth.baseUrl, `/approvals/${encodeURIComponent(approvalId)}/decisions`, {
+      method: 'POST',
+      body: {
+        decision,
+        reason: option(args, '--reason'),
       },
-    );
+    });
   } else if (resource === 'integrations') {
     result = await request(auth.apiKey, auth.baseUrl, '/integrations');
   } else if (resource === 'tools' && operation === 'list') {
@@ -319,15 +300,10 @@ async function main() {
     if (!tool) {
       throw new Error('Pass a tool name after "darwin tools execute".');
     }
-    result = await request(
-      auth.apiKey,
-      auth.baseUrl,
-      `/tools/${encodeURIComponent(tool)}/executions`,
-      {
-        method: 'POST',
-        body: { input: jsonObjectOption(args, '--input') },
-      },
-    );
+    result = await request(auth.apiKey, auth.baseUrl, `/tools/${encodeURIComponent(tool)}/executions`, {
+      method: 'POST',
+      body: { input: jsonObjectOption(args, '--input') },
+    });
   } else {
     throw new Error(`Unknown command: ${args.join(' ')}`);
   }
