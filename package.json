@@ -1,0 +1,47 @@
+{
+  "name": "@darwinso/cli",
+  "version": "0.1.0",
+  "description": "Official command-line client for Darwin",
+  "keywords": [
+    "darwin",
+    "agent",
+    "cli"
+  ],
+  "homepage": "https://docs.darwin.so/cli",
+  "bugs": {
+    "url": "https://github.com/darwin-studios/darwin-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darwin-studios/darwin-cli.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "darwin": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "npm run check-types && npm run check-contract",
+    "check-contract": "node scripts/check-openapi.mjs",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "prepack": "npm run check && npm test",
+    "test": "npm run build && node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "typescript": "5.9.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
