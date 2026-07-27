@@ -53,7 +53,8 @@ configuration, and webhook events accept a JSON object through `--data`.
 
 Session mutations automatically include an idempotency key. Supply
 `--idempotency-key` when a retry must reuse the same command identity. A sealed
-session keeps message content encrypted outside Darwin; encrypt with the
+session rejects plaintext `--intent`; disclose only
+`--discovery-descriptor` when routing requires it. Encrypt messages with the
 participant-approved provider and pass its envelope with
 `--protected-content '<protected-content-json>'` or
 `--protected-content-file ./protected-content.json`.

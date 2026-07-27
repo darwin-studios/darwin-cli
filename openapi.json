@@ -2575,7 +2575,7 @@
           "Sessions"
         ],
         "summary": "Create a network session",
-        "description": "Creates a Darwin-owned Session projection. Direct Sessions target explicit accessible agents; discovery and commerce Sessions may resolve eligible agents through Mesh without exposing private provider identifiers.",
+        "description": "Creates a Darwin-owned Session projection. Managed Sessions may include structured plaintext intent. Sealed Sessions reject plaintext intent and use only an explicitly disclosed discoveryDescriptor or encrypted interactions.",
         "parameters": [
           {
             "name": "Idempotency-Key",
@@ -9212,6 +9212,7 @@
           },
           "intent": {
             "type": "object",
+            "description": "Structured plaintext intent for managed Sessions only. Omit this field for sealed Sessions.",
             "required": [
               "title",
               "description"
@@ -9310,6 +9311,7 @@
           },
           "discoveryDescriptor": {
             "type": "object",
+            "description": "A deliberately disclosed, content-free routing descriptor. Required for sealed discovery without explicit targets.",
             "additionalProperties": false,
             "properties": {
               "requiredCapabilities": {

@@ -292,6 +292,31 @@ test('executes a reviewed Darwin tool with JSON input', async (t) => {
   });
 });
 
+test('rejects privacy-incompatible Session creation before sending a request', async () => {
+  const sealedWithPlaintext = await runCli(
+    ['sessions', 'create', '--kind', 'discovery', '--intent', 'Private acquisition strategy'],
+    'http://127.0.0.1:1',
+  );
+  assert.equal(sealedWithPlaintext.status, 1);
+  assert.match(sealedWithPlaintext.stderr, /Sealed sessions cannot include plaintext intent/);
+
+  const managedDescriptorWithoutIntent = await runCli(
+    [
+      'sessions',
+      'create',
+      '--kind',
+      'discovery',
+      '--content-mode',
+      'managed',
+      '--discovery-descriptor',
+      '{"requiredCapabilities":["security-review"]}',
+    ],
+    'http://127.0.0.1:1',
+  );
+  assert.equal(managedDescriptorWithoutIntent.status, 1);
+  assert.match(managedDescriptorWithoutIntent.stderr, /require a structured intent/);
+});
+
 test('drives the session lifecycle with public IDs and idempotency keys', async (t) => {
   const fixtureRoot = await mkdtemp(join(tmpdir(), 'darwin-cli-session-'));
   t.after(() => rm(fixtureRoot, { recursive: true, force: true }));
@@ -358,11 +383,29 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       '--intent',
       'Coordinate a launch',
       '--content-mode',
+      'managed',
+      '--learning-mode',
+      'outcomes_only',
+      '--key-management',
+      'darwin_managed',
+      '--idempotency-key',
+      'create-session-key',
+    ],
+    [
+      'sessions',
+      'create',
+      '--kind',
+      'direct',
+      '--target',
+      'agent/3',
+      '--content-mode',
       'sealed',
       '--learning-mode',
       'outcomes_only',
+      '--key-management',
+      'tenant_managed',
       '--idempotency-key',
-      'create-session-key',
+      'create-sealed-session-key',
     ],
     ['sessions', 'list', '--agent', 'agent/1', '--status', 'pending_provider', '--limit', '4', '--cursor', 'next'],
     ['sessions', 'participants', 'session/1'],
@@ -383,7 +426,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
     [
       'sessions',
       'send',
-      'session/1',
+      'session/2',
       '--kind',
       'message',
       '--protected-content-file',
@@ -451,8 +494,23 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
         },
         targetAgentIds: ['agent/2'],
         dataPolicy: {
+          contentMode: 'managed',
+          learningMode: 'outcomes_only',
+          keyManagement: 'darwin_managed',
+        },
+      },
+    },
+    {
+      method: 'POST',
+      url: '/sessions',
+      idempotencyKey: 'create-sealed-session-key',
+      body: {
+        kind: 'direct',
+        targetAgentIds: ['agent/3'],
+        dataPolicy: {
           contentMode: 'sealed',
           learningMode: 'outcomes_only',
+          keyManagement: 'tenant_managed',
         },
       },
     },
@@ -480,7 +538,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
     },
     {
       method: 'POST',
-      url: '/sessions/session%2F1/interactions',
+      url: '/sessions/session%2F2/interactions',
       idempotencyKey: 'send-sealed-key',
       body: {
         kind: 'message',

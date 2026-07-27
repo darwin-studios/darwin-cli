@@ -733,6 +733,16 @@ async function main() {
       ['keyManagement', lowerEnumOption(args, '--key-management', ['darwin_managed', 'tenant_managed'])],
     ]);
     if (Object.keys(dataPolicy).length > 0) body.dataPolicy = dataPolicy;
+    const effectiveContentMode =
+      typeof dataPolicy.contentMode === 'string' ? dataPolicy.contentMode.toLowerCase() : 'sealed';
+    if (effectiveContentMode === 'sealed' && body.intent !== undefined) {
+      throw new Error(
+        'Sealed sessions cannot include plaintext intent. Remove --intent/intent and use --discovery-descriptor only when discovery is needed.',
+      );
+    }
+    if (effectiveContentMode === 'managed' && body.discoveryDescriptor !== undefined && body.intent === undefined) {
+      throw new Error('Managed session discovery descriptors require a structured intent.');
+    }
     if (typeof body.kind !== 'string') {
       throw new Error('Pass a session kind with --kind or in --data.');
     }
