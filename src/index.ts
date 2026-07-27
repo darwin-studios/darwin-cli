@@ -323,7 +323,7 @@ Usage:
   darwin conversation [--agent <id>] [--limit <number>] [--cursor <cursor>]
   darwin conversations <list|create|get|message> [...]
   darwin goals <list|get|create|update|action|publish> [...]
-  darwin sessions <create|list|get|send|participants|watch|mesh|replan|outcome|complete|cancel> [...]
+  darwin sessions <create|list|get|invitations|invitation|send|participants|watch|mesh|replan|outcome|feedback|complete|cancel> [...]
   darwin directory <search|get> [...]
   darwin offers <list|get|create|update|action> [...]
   darwin payments <account|list|get> [...]
@@ -656,6 +656,31 @@ async function main() {
         cursor: option(args, '--cursor'),
       },
     });
+  } else if (resource === 'sessions' && operation === 'invitations') {
+    result = await request(auth.apiKey, auth.baseUrl, '/session-invitations', {
+      query: {
+        agentId: option(args, '--agent'),
+        limit: integerOption(args, '--limit'),
+      },
+    });
+  } else if (resource === 'sessions' && operation === 'invitation') {
+    const action = args[3]?.toLowerCase();
+    if (action !== 'accept' && action !== 'decline') {
+      throw new Error('Session invitation action must be accept or decline.');
+    }
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/session-invitations/${id(args[2], 'Pass an invitation ID after "darwin sessions invitation".')}/actions`,
+      {
+        method: 'POST',
+        body: {
+          action,
+          ...(option(args, '--agent') ? { agentId: option(args, '--agent') } : {}),
+        },
+        headers: idempotencyHeaders(args),
+      },
+    );
   } else if (resource === 'sessions' && operation === 'get') {
     result = await request(
       auth.apiKey,
@@ -908,6 +933,61 @@ async function main() {
       auth.apiKey,
       auth.baseUrl,
       `/sessions/${id(args[2], 'Pass a session ID after "darwin sessions outcome".')}/outcomes`,
+      { method: 'POST', body, headers: idempotencyHeaders(args) },
+    );
+  } else if (resource === 'sessions' && operation === 'feedback') {
+    const content = textArgument(args, 3, [
+      '--rating',
+      '--outcome',
+      '--context-scope',
+      '--idempotency-key',
+      '--data',
+      '--protected-content',
+      '--protected-content-file',
+      '--sealed-content',
+      '--sealed-content-file',
+    ]);
+    const body = mergeFields(dataOption(args), [
+      ['outcomeId', option(args, '--outcome')],
+      ['contextScopeId', option(args, '--context-scope')],
+      ['content', content || undefined],
+    ]);
+    const rating = integerOption(args, '--rating');
+    if (rating !== undefined) {
+      if (rating > 5) throw new Error('--rating must be an integer from 1 to 5.');
+      body.rating = rating;
+    }
+    if (args.includes('--protected-content') && args.includes('--sealed-content')) {
+      throw new Error('Pass only one of --sealed-content or --protected-content.');
+    }
+    if (args.includes('--protected-content-file') && args.includes('--sealed-content-file')) {
+      throw new Error('Pass only one of --sealed-content-file or --protected-content-file.');
+    }
+    const protectedContentOption = args.includes('--protected-content') ? '--protected-content' : '--sealed-content';
+    if (args.includes(protectedContentOption)) {
+      body.protectedContent = jsonObjectOption(args, protectedContentOption);
+    }
+    const protectedContentFileOption = args.includes('--protected-content-file')
+      ? '--protected-content-file'
+      : '--sealed-content-file';
+    const protectedContentFile = await jsonObjectFileOption(args, protectedContentFileOption);
+    if (protectedContentFile) {
+      if (body.protectedContent) throw new Error('Pass only one sealed-content value or file.');
+      body.protectedContent = protectedContentFile;
+    }
+    const hasContent = typeof body.content === 'string' && body.content.trim().length > 0;
+    const hasProtectedContent =
+      !!body.protectedContent && typeof body.protectedContent === 'object' && !Array.isArray(body.protectedContent);
+    if (hasContent && hasProtectedContent) {
+      throw new Error('Pass plaintext feedback or protected content, not both.');
+    }
+    if (body.rating === undefined && !hasContent && !hasProtectedContent) {
+      throw new Error('Pass a rating, feedback text, or protected content.');
+    }
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/sessions/${id(args[2], 'Pass a session ID after "darwin sessions feedback".')}/feedback`,
       { method: 'POST', body, headers: idempotencyHeaders(args) },
     );
   } else if (resource === 'directory' && operation === 'search') {

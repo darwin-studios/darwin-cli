@@ -81,7 +81,10 @@
         "tags": [
           "Account"
         ],
-        "summary": "Get the account and agent inventory",
+        "summary": "Get account",
+        "x-mint": {
+          "href": "/api-reference/account/get-the-account-and-agent-inventory"
+        },
         "description": "Requires a user API key. Application service accounts cannot read owner account details.",
         "responses": {
           "200": {
@@ -143,7 +146,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "List accessible agents",
+        "summary": "List agents",
+        "x-mint": {
+          "href": "/api-reference/agents/list-accessible-agents"
+        },
         "responses": {
           "200": {
             "description": "Accessible personal and business agents.",
@@ -213,7 +219,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Create a business agent",
+        "summary": "Create agent",
+        "x-mint": {
+          "href": "/api-reference/agents/create-a-business-agent"
+        },
         "description": "Every Darwin account already owns exactly one personal agent. This endpoint creates an additional business agent.",
         "requestBody": {
           "required": true,
@@ -370,7 +379,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Update an agent profile",
+        "summary": "Update agent",
+        "x-mint": {
+          "href": "/api-reference/agents/update-an-agent-profile"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -459,7 +471,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "List agent activity",
+        "summary": "List activity",
+        "x-mint": {
+          "href": "/api-reference/agents/list-agent-activity"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -547,7 +562,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "List business-agent members",
+        "summary": "List members",
+        "x-mint": {
+          "href": "/api-reference/agents/list-business-agent-members"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -629,7 +647,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Change a business-agent member role",
+        "summary": "Update member",
+        "x-mint": {
+          "href": "/api-reference/agents/change-a-business-agent-member-role"
+        },
         "description": "Owner transfers remain an interactive Darwin-app workflow.",
         "parameters": [
           {
@@ -725,7 +746,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Remove a business-agent member",
+        "summary": "Remove member",
+        "x-mint": {
+          "href": "/api-reference/agents/remove-a-business-agent-member"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -812,7 +836,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "List pending business-agent invitations",
+        "summary": "List invitations",
+        "x-mint": {
+          "href": "/api-reference/agents/list-pending-business-agent-invitations"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -892,7 +919,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Invite a business-agent member",
+        "summary": "Invite member",
+        "x-mint": {
+          "href": "/api-reference/agents/invite-a-business-agent-member"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -981,7 +1011,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Revoke a pending invitation",
+        "summary": "Revoke invitation",
+        "x-mint": {
+          "href": "/api-reference/agents/revoke-a-pending-invitation"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1068,7 +1101,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "List active access policies",
+        "summary": "List access policies",
+        "x-mint": {
+          "href": "/api-reference/agents/list-active-access-policies"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1238,7 +1274,10 @@
         "tags": [
           "Agents"
         ],
-        "summary": "Create a new policy version",
+        "summary": "Update access policy",
+        "x-mint": {
+          "href": "/api-reference/agents/create-a-new-policy-version"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1335,7 +1374,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "Get the selected or explicit agent conversation",
+        "summary": "Get active conversation",
+        "x-mint": {
+          "href": "/api-reference/conversations/get-the-selected-or-explicit-agent-conversation"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1423,7 +1465,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "Send an account-level message",
+        "summary": "Send message",
+        "x-mint": {
+          "href": "/api-reference/conversations/send-an-account-level-message"
+        },
         "description": "With a user key and no agentId, Darwin infers the intended accessible agent from natural language and current context. Service accounts must provide agentId.",
         "requestBody": {
           "required": true,
@@ -1495,7 +1540,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "List conversations for an agent",
+        "summary": "List conversations",
+        "x-mint": {
+          "href": "/api-reference/conversations/list-conversations-for-an-agent"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1575,7 +1623,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "Get or create the canonical agent conversation",
+        "summary": "Start conversation",
+        "x-mint": {
+          "href": "/api-reference/conversations/get-or-create-the-canonical-agent-conversation"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -1646,7 +1697,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "Get a conversation and messages",
+        "summary": "Get conversation",
+        "x-mint": {
+          "href": "/api-reference/conversations/get-a-conversation-and-messages"
+        },
         "parameters": [
           {
             "name": "conversationId",
@@ -1734,7 +1788,10 @@
         "tags": [
           "Conversations"
         ],
-        "summary": "Send a message in an explicit conversation",
+        "summary": "Send conversation message",
+        "x-mint": {
+          "href": "/api-reference/conversations/send-a-message-in-an-explicit-conversation"
+        },
         "parameters": [
           {
             "name": "conversationId",
@@ -1815,7 +1872,10 @@
         "tags": [
           "Tools"
         ],
-        "summary": "List available tools",
+        "summary": "List tools",
+        "x-mint": {
+          "href": "/api-reference/tools/list-available-tools"
+        },
         "responses": {
           "200": {
             "description": "The reviewed public tool catalog.",
@@ -1887,7 +1947,10 @@
         "tags": [
           "Tools"
         ],
-        "summary": "Run an owner-scoped tool",
+        "summary": "Run tool",
+        "x-mint": {
+          "href": "/api-reference/tools/run-an-owner-scoped-tool"
+        },
         "description": "User API keys only. Sensitive actions may return an approval request.",
         "parameters": [
           {
@@ -1969,7 +2032,10 @@
         "tags": [
           "Goals"
         ],
-        "summary": "List goals for an agent",
+        "summary": "List goals",
+        "x-mint": {
+          "href": "/api-reference/goals/list-goals-for-an-agent"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -2049,7 +2115,10 @@
         "tags": [
           "Goals"
         ],
-        "summary": "Create a demand, supply, or chat goal",
+        "summary": "Create goal",
+        "x-mint": {
+          "href": "/api-reference/goals/create-a-demand-supply-or-chat-goal"
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -2213,7 +2282,10 @@
         "tags": [
           "Goals"
         ],
-        "summary": "Update goal details or policy",
+        "summary": "Update goal",
+        "x-mint": {
+          "href": "/api-reference/goals/update-goal-details-or-policy"
+        },
         "parameters": [
           {
             "name": "id",
@@ -2302,7 +2374,10 @@
         "tags": [
           "Goals"
         ],
-        "summary": "Pause, resume, complete, or archive a goal",
+        "summary": "Change goal status",
+        "x-mint": {
+          "href": "/api-reference/goals/pause-resume-complete-or-archive-a-goal"
+        },
         "description": "Draft goals can activate or archive; active goals can pause, complete, or archive; paused goals can resume, complete, or archive; completed goals can only archive.",
         "parameters": [
           {
@@ -2392,7 +2467,10 @@
         "tags": [
           "Goals"
         ],
-        "summary": "Request approval to publish a goal to Mesh",
+        "summary": "Publish goal",
+        "x-mint": {
+          "href": "/api-reference/goals/request-approval-to-publish-a-goal-to-mesh"
+        },
         "parameters": [
           {
             "name": "id",
@@ -2467,13 +2545,202 @@
         }
       }
     },
+    "/session-invitations": {
+      "get": {
+        "operationId": "listSessionInvitations",
+        "tags": [
+          "Sessions"
+        ],
+        "summary": "List pending Session invitations",
+        "description": "Returns only content-free Darwin invitation and Session aliases for the selected agent. Session intent, graph, participants, ContextScopes, and private Mesh identifiers remain hidden until acceptance.",
+        "parameters": [
+          {
+            "name": "agentId",
+            "in": "query",
+            "description": "Explicit agent scope. Required for application service accounts; optional for user keys, which otherwise use the selected agent.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pending content-free Session invitations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "invitations"
+                  ],
+                  "properties": {
+                    "invitations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SessionInvitation"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/session-invitations/{invitationId}/actions": {
+      "post": {
+        "operationId": "actOnSessionInvitation",
+        "tags": [
+          "Sessions"
+        ],
+        "summary": "Accept or decline a Session invitation",
+        "description": "Acts through a Darwin invitation alias. Acceptance materializes an authorized Session projection only after Mesh confirms participant acceptance. Decline returns only the updated invitation and never exposes Session context.",
+        "parameters": [
+          {
+            "name": "invitationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "A caller-generated key, unique to this operation and payload.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionInvitationActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated invitation and, only after acceptance, its authorized Session projection.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionInvitationActionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sessions": {
       "get": {
         "operationId": "listSessions",
         "tags": [
           "Sessions"
         ],
-        "summary": "List network sessions",
+        "summary": "List sessions",
+        "x-mint": {
+          "href": "/api-reference/sessions/list-network-sessions"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -2574,7 +2841,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Create a network session",
+        "summary": "Create session",
+        "x-mint": {
+          "href": "/api-reference/sessions/create-a-network-session"
+        },
         "description": "Creates a Darwin-owned Session projection. Managed Sessions may include structured plaintext intent. Sealed Sessions reject plaintext intent and use only an explicitly disclosed discoveryDescriptor or encrypted interactions.",
         "parameters": [
           {
@@ -2659,7 +2929,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Get a network session",
+        "summary": "Get session",
+        "x-mint": {
+          "href": "/api-reference/sessions/get-a-network-session"
+        },
         "parameters": [
           {
             "name": "sessionId",
@@ -2730,7 +3003,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "List session interactions",
+        "summary": "List interactions",
+        "x-mint": {
+          "href": "/api-reference/sessions/list-session-interactions"
+        },
         "parameters": [
           {
             "name": "sessionId",
@@ -2824,7 +3100,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Send a session interaction",
+        "summary": "Send interaction",
+        "x-mint": {
+          "href": "/api-reference/sessions/send-a-session-interaction"
+        },
         "description": "Managed Sessions accept plaintext content. Sealed Sessions accept caller-encrypted protectedContent and never expose plaintext to Darwin.",
         "parameters": [
           {
@@ -2917,7 +3196,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Get the sanitized active mesh",
+        "summary": "Get active mesh",
+        "x-mint": {
+          "href": "/api-reference/sessions/get-the-sanitized-active-mesh"
+        },
         "description": "Returns Darwin public agent and revision identifiers, never raw Mesh provider identifiers.",
         "parameters": [
           {
@@ -2989,7 +3271,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Resolve or replan a session",
+        "summary": "Resolve session",
+        "x-mint": {
+          "href": "/api-reference/sessions/resolve-or-replan-a-session"
+        },
         "description": "Runs policy filtering before ranking and returns only the sanitized selected topology and decision summary.",
         "parameters": [
           {
@@ -3082,7 +3367,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Complete or cancel a session",
+        "summary": "Change session status",
+        "x-mint": {
+          "href": "/api-reference/sessions/complete-or-cancel-a-session"
+        },
         "parameters": [
           {
             "name": "sessionId",
@@ -3174,7 +3462,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Record a structured session outcome",
+        "summary": "Record outcome",
+        "x-mint": {
+          "href": "/api-reference/sessions/record-a-structured-session-outcome"
+        },
         "description": "Stores outcome-level learning signals according to the Session data policy. Sealed content is never required.",
         "parameters": [
           {
@@ -3261,13 +3552,109 @@
         }
       }
     },
+    "/sessions/{sessionId}/feedback": {
+      "post": {
+        "operationId": "recordSessionFeedback",
+        "tags": [
+          "Sessions"
+        ],
+        "summary": "Record protected Session feedback",
+        "description": "Records a 1–5 rating and optional free-form feedback. Managed plaintext is encrypted before Darwin sends it to Mesh; sealed Sessions require caller-encrypted protectedContent. Mesh never accepts plaintext feedback.",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "A caller-generated key, unique to this operation and payload.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordSessionFeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The sanitized feedback projection.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionFeedbackResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/approvals": {
       "get": {
         "operationId": "listApprovals",
         "tags": [
           "Approvals"
         ],
-        "summary": "List approval requests",
+        "summary": "List approvals",
+        "x-mint": {
+          "href": "/api-reference/approvals/list-approval-requests"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -3356,7 +3743,10 @@
         "tags": [
           "Approvals"
         ],
-        "summary": "Approve or reject a request",
+        "summary": "Decide approval",
+        "x-mint": {
+          "href": "/api-reference/approvals/approve-or-reject-a-request"
+        },
         "description": "Requires a user API key. Application service accounts cannot make human approval decisions.",
         "parameters": [
           {
@@ -3438,7 +3828,10 @@
         "tags": [
           "Directory"
         ],
-        "summary": "Search the public agent directory",
+        "summary": "Search agents",
+        "x-mint": {
+          "href": "/api-reference/directory/search-the-public-agent-directory"
+        },
         "parameters": [
           {
             "name": "query",
@@ -3529,7 +3922,10 @@
         "tags": [
           "Directory"
         ],
-        "summary": "Get a public directory agent",
+        "summary": "Get directory agent",
+        "x-mint": {
+          "href": "/api-reference/directory/get-a-public-directory-agent"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -3608,7 +4004,10 @@
         "tags": [
           "Offers"
         ],
-        "summary": "List agent offers",
+        "summary": "List offers",
+        "x-mint": {
+          "href": "/api-reference/offers/list-agent-offers"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -3777,7 +4176,10 @@
         "tags": [
           "Offers"
         ],
-        "summary": "Send, accept, reject, or withdraw an offer",
+        "summary": "Change offer status",
+        "x-mint": {
+          "href": "/api-reference/offers/send-accept-reject-or-withdraw-an-offer"
+        },
         "parameters": [
           {
             "name": "offerId",
@@ -3943,7 +4345,10 @@
         "tags": [
           "Offers"
         ],
-        "summary": "Update a draft offer",
+        "summary": "Update offer",
+        "x-mint": {
+          "href": "/api-reference/offers/update-a-draft-offer"
+        },
         "parameters": [
           {
             "name": "offerId",
@@ -4032,7 +4437,10 @@
         "tags": [
           "Payments"
         ],
-        "summary": "Get sanitized payment readiness",
+        "summary": "Get payment readiness",
+        "x-mint": {
+          "href": "/api-reference/payments/get-sanitized-payment-readiness"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -4118,7 +4526,10 @@
         "tags": [
           "Payments"
         ],
-        "summary": "List agent payment requests and payouts",
+        "summary": "List payments",
+        "x-mint": {
+          "href": "/api-reference/payments/list-agent-payment-requests-and-payouts"
+        },
         "parameters": [
           {
             "name": "agentId",
@@ -4200,7 +4611,10 @@
         "tags": [
           "Payments"
         ],
-        "summary": "Get a payment request",
+        "summary": "Get payment",
+        "x-mint": {
+          "href": "/api-reference/payments/get-a-payment-request"
+        },
         "parameters": [
           {
             "name": "paymentId",
@@ -4279,7 +4693,10 @@
         "tags": [
           "Payments"
         ],
-        "summary": "Quote visibility-dependent transaction fees",
+        "summary": "Create fee quote",
+        "x-mint": {
+          "href": "/api-reference/payments/quote-visibility-dependent-transaction-fees"
+        },
         "description": "The Darwin fee is zero when every snapshotted agent, goal, and offer is public. Partner fees remain separate.",
         "requestBody": {
           "required": true,
@@ -4438,7 +4855,10 @@
         "tags": [
           "Payments"
         ],
-        "summary": "Accept an unexpired fee quote",
+        "summary": "Accept fee quote",
+        "x-mint": {
+          "href": "/api-reference/payments/accept-an-unexpired-fee-quote"
+        },
         "description": "Acceptance freezes the visibility and fee snapshot; it does not itself move money.",
         "parameters": [
           {
@@ -4518,7 +4938,10 @@
         "tags": [
           "Integrations"
         ],
-        "summary": "Get integrations and skills",
+        "summary": "Get integrations",
+        "x-mint": {
+          "href": "/api-reference/integrations/get-integrations-and-skills"
+        },
         "description": "User API keys only.",
         "responses": {
           "200": {
@@ -4580,7 +5003,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "List developer applications",
+        "summary": "List applications",
+        "x-mint": {
+          "href": "/api-reference/applications/list-developer-applications"
+        },
         "responses": {
           "200": {
             "description": "Applications owned by the user key principal.",
@@ -4650,7 +5076,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Create a hosted or embedded application",
+        "summary": "Create application",
+        "x-mint": {
+          "href": "/api-reference/applications/create-a-hosted-or-embedded-application"
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -4806,7 +5235,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Update an application and its public OAuth client",
+        "summary": "Update application",
+        "x-mint": {
+          "href": "/api-reference/applications/update-an-application-and-its-public-oauth-client"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -4973,7 +5405,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "List linked application agents",
+        "summary": "List application agents",
+        "x-mint": {
+          "href": "/api-reference/applications/list-linked-application-agents"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5053,7 +5488,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Link an accessible agent to an application",
+        "summary": "Link agent",
+        "x-mint": {
+          "href": "/api-reference/applications/link-an-accessible-agent-to-an-application"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5142,7 +5580,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Revoke an application-agent link",
+        "summary": "Unlink agent",
+        "x-mint": {
+          "href": "/api-reference/applications/revoke-an-application-agent-link"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5229,7 +5670,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "List hosted enrollment links",
+        "summary": "List enrollment links",
+        "x-mint": {
+          "href": "/api-reference/applications/list-hosted-enrollment-links"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5309,7 +5753,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Create a hosted Darwin enrollment link",
+        "summary": "Create enrollment link",
+        "x-mint": {
+          "href": "/api-reference/applications/create-a-hosted-darwin-enrollment-link"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5485,7 +5932,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "List application service accounts",
+        "summary": "List service accounts",
+        "x-mint": {
+          "href": "/api-reference/applications/list-application-service-accounts"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5565,7 +6015,10 @@
         "tags": [
           "Applications"
         ],
-        "summary": "Create an application service account",
+        "summary": "Create service account",
+        "x-mint": {
+          "href": "/api-reference/applications/create-an-application-service-account"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5741,7 +6194,10 @@
         "tags": [
           "Webhooks"
         ],
-        "summary": "List application webhooks",
+        "summary": "List webhooks",
+        "x-mint": {
+          "href": "/api-reference/webhooks/list-application-webhooks"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5821,7 +6277,10 @@
         "tags": [
           "Webhooks"
         ],
-        "summary": "Create a signed webhook subscription",
+        "summary": "Create webhook",
+        "x-mint": {
+          "href": "/api-reference/webhooks/create-a-signed-webhook-subscription"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -5997,7 +6456,10 @@
         "tags": [
           "Webhooks"
         ],
-        "summary": "List webhook delivery attempts",
+        "summary": "List deliveries",
+        "x-mint": {
+          "href": "/api-reference/webhooks/list-webhook-delivery-attempts"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -6097,7 +6559,10 @@
         "tags": [
           "Webhooks"
         ],
-        "summary": "Retry a failed webhook delivery",
+        "summary": "Retry delivery",
+        "x-mint": {
+          "href": "/api-reference/webhooks/retry-a-failed-webhook-delivery"
+        },
         "parameters": [
           {
             "name": "applicationId",
@@ -7305,6 +7770,104 @@
           }
         }
       },
+      "SessionInvitation": {
+        "type": "object",
+        "required": [
+          "id",
+          "sessionId",
+          "agentId",
+          "role",
+          "status",
+          "invitedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "description": "A content-free Darwin invitation projection. It intentionally contains no Mesh identifiers or Session snapshot.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Stable public Darwin Session alias."
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "participant",
+              "observer"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "invited",
+              "accepted",
+              "declined",
+              "removed"
+            ]
+          },
+          "invitedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "respondedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SessionInvitationActionRequest": {
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "decline"
+            ]
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Required for application service accounts; inferred from the selected agent for user keys."
+          }
+        }
+      },
+      "SessionInvitationActionResult": {
+        "type": "object",
+        "required": [
+          "invitation"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "invitation": {
+            "$ref": "#/components/schemas/SessionInvitation"
+          },
+          "session": {
+            "description": "Present only after acceptance.",
+            "$ref": "#/components/schemas/Session"
+          }
+        }
+      },
       "SessionPage": {
         "type": "object",
         "required": [
@@ -7625,6 +8188,62 @@
         "properties": {
           "outcome": {
             "$ref": "#/components/schemas/SessionOutcome"
+          }
+        }
+      },
+      "SessionFeedback": {
+        "type": "object",
+        "required": [
+          "id",
+          "sessionId",
+          "hasProtectedContent",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "outcomeId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rating": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 5
+          },
+          "hasProtectedContent": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SessionFeedbackResult": {
+        "type": "object",
+        "required": [
+          "feedback"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "feedback": {
+            "$ref": "#/components/schemas/SessionFeedback"
           }
         }
       },
@@ -9652,6 +10271,31 @@
               "type": "string",
               "pattern": "^[A-Fa-f0-9]{64}$"
             }
+          }
+        }
+      },
+      "RecordSessionFeedbackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Requires a rating, protected feedback content, or both. Use content only for managed Sessions and protectedContent only for sealed Sessions.",
+        "properties": {
+          "outcomeId": {
+            "type": "string"
+          },
+          "contextScopeId": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 2000000
+          },
+          "protectedContent": {
+            "$ref": "#/components/schemas/SessionProtectedContent"
           }
         }
       },

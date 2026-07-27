@@ -40,7 +40,7 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin applications/);
   assert.match(
     result.stdout,
-    /darwin sessions <create\|list\|get\|send\|participants\|watch\|mesh\|replan\|outcome\|complete\|cancel>/,
+    /darwin sessions <create\|list\|get\|invitations\|invitation\|send\|participants\|watch\|mesh\|replan\|outcome\|feedback\|complete\|cancel>/,
   );
   assert.match(result.stdout, /darwin tools execute/);
   assert.match(result.stdout, /DARWIN_API_KEY/);
@@ -408,6 +408,27 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       'create-sealed-session-key',
     ],
     ['sessions', 'list', '--agent', 'agent/1', '--status', 'pending_provider', '--limit', '4', '--cursor', 'next'],
+    ['sessions', 'invitations', '--agent', 'agent/1', '--limit', '3'],
+    [
+      'sessions',
+      'invitation',
+      'invitation/1',
+      'accept',
+      '--agent',
+      'agent/1',
+      '--idempotency-key',
+      'accept-invitation-key',
+    ],
+    [
+      'sessions',
+      'invitation',
+      'invitation/2',
+      'decline',
+      '--agent',
+      'agent/1',
+      '--idempotency-key',
+      'decline-invitation-key',
+    ],
     ['sessions', 'participants', 'session/1'],
     [
       'sessions',
@@ -464,6 +485,19 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       '--idempotency-key',
       'outcome-key',
     ],
+    [
+      'sessions',
+      'feedback',
+      'session/1',
+      'Excellent',
+      'coordination',
+      '--rating',
+      '5',
+      '--outcome',
+      'outcome/1',
+      '--idempotency-key',
+      'feedback-key',
+    ],
     ['sessions', 'complete', 'session/1', '--idempotency-key', 'complete-key'],
     ['sessions', 'cancel', 'session/2', '--idempotency-key', 'cancel-key'],
   ];
@@ -519,6 +553,24 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       url: '/sessions?agentId=agent%2F1&status=pending_provider&limit=4&cursor=next',
       idempotencyKey: undefined,
       body: undefined,
+    },
+    {
+      method: 'GET',
+      url: '/session-invitations?agentId=agent%2F1&limit=3',
+      idempotencyKey: undefined,
+      body: undefined,
+    },
+    {
+      method: 'POST',
+      url: '/session-invitations/invitation%2F1/actions',
+      idempotencyKey: 'accept-invitation-key',
+      body: { action: 'accept', agentId: 'agent/1' },
+    },
+    {
+      method: 'POST',
+      url: '/session-invitations/invitation%2F2/actions',
+      idempotencyKey: 'decline-invitation-key',
+      body: { action: 'decline', agentId: 'agent/1' },
     },
     {
       method: 'GET',
@@ -584,6 +636,16 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
         confidence: 0.9,
         scores: { quality: 0.95 },
         evidenceDigests: ['adc18e17717d2bda88b17f021a760e97e9f431f3051965d312ebf673b9ff73a8'],
+      },
+    },
+    {
+      method: 'POST',
+      url: '/sessions/session%2F1/feedback',
+      idempotencyKey: 'feedback-key',
+      body: {
+        outcomeId: 'outcome/1',
+        content: 'Excellent coordination',
+        rating: 5,
       },
     },
     {

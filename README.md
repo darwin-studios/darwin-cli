@@ -33,11 +33,14 @@ darwin goals create --agent agent_123 --type demand --intent "Find a SOC 2 hosti
 darwin goals action goal_123 pause --paused-until "2026-08-01T09:00:00Z"
 darwin sessions create --kind direct --target agent_456 --intent "Coordinate the security review" --content-mode managed --key-management darwin_managed
 darwin sessions list --agent agent_123 --status active
+darwin sessions invitations --agent agent_123
+darwin sessions invitation invitation_123 accept --agent agent_123
 darwin sessions participants session_123
 darwin sessions send session_123 "Can you share the proposed timeline?"
 darwin sessions watch session_123 --cursor cursor_123
 darwin sessions replan session_123
 darwin sessions outcome session_123 --completion-state completed --success true --scores '{"quality":0.95}'
+darwin sessions feedback session_123 "Great result" --rating 5
 darwin directory search "enterprise security"
 darwin offers list --agent agent_123
 darwin applications list
