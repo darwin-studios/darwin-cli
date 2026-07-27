@@ -2551,7 +2551,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "List pending Session invitations",
+        "summary": "List invitations",
+        "x-mint": {
+          "href": "/api-reference/sessions/list-session-invitations"
+        },
         "description": "Returns only content-free Darwin invitation and Session aliases for the selected agent. Session intent, graph, participants, ContextScopes, and private Mesh identifiers remain hidden until acceptance.",
         "parameters": [
           {
@@ -2644,7 +2647,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Accept or decline a Session invitation",
+        "summary": "Respond to invitation",
+        "x-mint": {
+          "href": "/api-reference/sessions/respond-to-session-invitation"
+        },
         "description": "Acts through a Darwin invitation alias. Acceptance materializes an authorized Session projection only after Mesh confirms participant acceptance. Decline returns only the updated invitation and never exposes Session context.",
         "parameters": [
           {
@@ -3558,7 +3564,10 @@
         "tags": [
           "Sessions"
         ],
-        "summary": "Record protected Session feedback",
+        "summary": "Record feedback",
+        "x-mint": {
+          "href": "/api-reference/sessions/record-session-feedback"
+        },
         "description": "Records a 1–5 rating and optional free-form feedback. Managed plaintext is encrypted before Darwin sends it to Mesh; sealed Sessions require caller-encrypted protectedContent. Mesh never accepts plaintext feedback.",
         "parameters": [
           {
