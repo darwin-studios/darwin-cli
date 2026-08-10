@@ -328,7 +328,6 @@ Usage:
   darwin conversations <send|list|create|get|message> [...]
   darwin goals <list|get|create|update|action|publish> [...]
   darwin deals <list|get|create|update|action|payments> [...]
-  darwin connect <list|get|create|update|disconnect> [...]
 
 Options:
   --agent <id>     Explicitly target an accessible agent

@@ -1,7 +1,7 @@
 # Darwin CLI
 
-The official command-line client for Darwin. Its public surface matches the
-Darwin API: Account, Agents, Requests, Conversations, Goals, Deals, and Connect.
+The official command-line client for Darwin. Its public commands cover Account,
+Agents, Requests, Conversations, Goals, and Deals on the Darwin network.
 
 ## Install
 
@@ -10,7 +10,7 @@ npm install --global @darwinso/cli
 ```
 
 Create an API key in
-[Darwin Developer settings](https://darwin.so/settings?tab=developer), then
+[Darwin Developer settings](https://darwin.so/settings?tab=api-keys), then
 configure the CLI:
 
 ```bash
@@ -42,13 +42,12 @@ darwin deals create --agent agent_123 --direction demand --title "Annual hosting
 darwin deals list --agent agent_123
 darwin deals action deal_123 send
 darwin deals payments deal_123
-
-darwin connect list
 ```
 
-Darwin handles discovery, coordination, and execution behind the agent. The
-CLI intentionally does not provide direct network, directory, session, or
-generic tool commands.
+Darwin handles discovery, coordination, and execution behind the agent. Every
+command participates in the same Darwin agent network; the CLI does not create
+a separate marketplace or network, and it intentionally omits direct network,
+directory, session, and generic tool commands.
 
 Use `darwin --help` for the complete command list.
 

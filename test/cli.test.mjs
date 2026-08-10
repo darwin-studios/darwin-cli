@@ -41,7 +41,7 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin requests <list\|action>/);
   assert.match(result.stdout, /darwin conversations <send\|list\|create\|get\|message>/);
   assert.match(result.stdout, /darwin deals <list\|get\|create\|update\|action\|payments>/);
-  assert.match(result.stdout, /darwin connect/);
+  assert.doesNotMatch(result.stdout, /darwin connect/);
   assert.doesNotMatch(result.stdout, /darwin sessions/);
   assert.doesNotMatch(result.stdout, /darwin directory/);
   assert.doesNotMatch(result.stdout, /darwin tools/);

@@ -26,7 +26,7 @@ if (!contractPath) {
 
 const contract = JSON.parse(await readFile(contractPath, 'utf8'));
 const problems = [];
-const expectedTags = ['Account', 'Agents', 'Requests', 'Conversations', 'Goals', 'Deals', 'Connect', 'Examples'];
+const expectedTags = ['Account', 'Agents', 'Requests', 'Conversations', 'Goals', 'Deals', 'Billing', 'Examples'];
 const expectedOperations = [
   ['get', '/account', 'getAccount'],
   ['get', '/account/skills', 'listSkillCatalog'],
@@ -42,8 +42,6 @@ const expectedOperations = [
   ['get', '/deals/{dealId}', 'getDeal'],
   ['post', '/deals/{dealId}/actions', 'actOnDeal'],
   ['get', '/deals/{dealId}/payments', 'listDealPayments'],
-  ['get', '/applications', 'listApplications'],
-  ['post', '/applications', 'createApplication'],
 ];
 
 function checkLocalSchemaReferences(value, location = '#') {
@@ -88,8 +86,8 @@ const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
     .map(([, operation]) => operation),
 );
 const operationIds = operations.map((operation) => operation.operationId);
-if (operationIds.length !== 66 || new Set(operationIds).size !== operationIds.length) {
-  problems.push('expected 66 uniquely named public operations');
+if (operationIds.length !== 59 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 59 uniquely named public operations');
 }
 for (const operation of operations) {
   if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {
@@ -105,6 +103,7 @@ const forbiddenPrefixes = [
   '/payments',
   '/tools',
   '/approvals',
+  '/applications',
 ];
 for (const path of Object.keys(contract.paths ?? {})) {
   if (forbiddenPrefixes.some((prefix) => path.startsWith(prefix))) {
