@@ -60,6 +60,9 @@ async function request(apiKey: string, baseUrl: string, path: string, options: R
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
+      'X-Darwin-Access-Point': 'cli',
+      'X-Darwin-Client': '@darwinso/cli',
+      'X-Darwin-Client-Version': '0.2.0',
       ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
       ...options.headers,
     },
@@ -317,24 +320,15 @@ Usage:
   darwin configure --api-key <key> [--base-url <url>]
   darwin config show
   darwin logout
-  darwin account
+  darwin account show
   darwin agents <list|get|create|update|activity> [...]
-  darwin agent message <text> [--agent <id>] [--request-id <id>]
-  darwin conversation [--agent <id>] [--limit <number>] [--cursor <cursor>]
-  darwin conversations <list|create|get|message> [...]
+  darwin agents skills
+  darwin agents integrations
+  darwin requests <list|action> [...]
+  darwin conversations <send|list|create|get|message> [...]
   darwin goals <list|get|create|update|action|publish> [...]
-  darwin sessions <create|list|get|invitations|invitation|send|participants|watch|mesh|replan|outcome|feedback|complete|cancel> [...]
-  darwin directory <search|get> [...]
-  darwin offers <list|get|create|update|action> [...]
-  darwin payments <account|list|get> [...]
-  darwin fee-quotes <create|get|accept> [...]
-  darwin applications <list|get|create|update|archive> [...]
-  darwin approvals list [--agent <id>] [--status <status>]
-  darwin approvals decide <id> <approve|reject> [--agent <id>] [--reason <text>]
-  darwin integrations
-  darwin tools list
-  darwin tools execute <tool> [--input <json-object>]
-  darwin api <GET|POST|PATCH|DELETE> <path> [--data <json-object>]
+  darwin deals <list|get|create|update|action|payments> [...]
+  darwin connect <list|get|create|update|disconnect> [...]
 
 Options:
   --agent <id>     Explicitly target an accessible agent
@@ -351,7 +345,7 @@ https://docs.darwin.so/cli
 }
 
 async function main() {
-  const args = process.argv.slice(2);
+  let args = process.argv.slice(2);
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     help();
     return;
@@ -373,21 +367,57 @@ async function main() {
     return;
   }
 
+  if (args[0] === 'account' && args[1] === 'show') {
+    args = ['account'];
+  }
+
   const auth = await credentials();
   if (!auth.apiKey) {
     throw new Error('No API key found. Run darwin configure --api-key <key> or set DARWIN_API_KEY.');
   }
 
-  const resource = args[0];
-  const operation = args[1];
+  const resource = args[0] === 'applications' ? 'connect' : args[0];
+  const operation = resource === 'connect' && args[1] === 'disconnect' ? 'archive' : args[1];
   let result: unknown;
 
   if (resource === 'account') {
     result = await request(auth.apiKey, auth.baseUrl, '/account');
-  } else if (resource === 'agent' && operation === 'message') {
+  } else if (resource === 'agents' && operation === 'skills') {
+    result = await request(auth.apiKey, auth.baseUrl, '/account/skills');
+  } else if (resource === 'agents' && operation === 'integrations') {
+    result = await request(auth.apiKey, auth.baseUrl, '/integrations');
+  } else if (resource === 'requests' && operation === 'list') {
+    result = await request(auth.apiKey, auth.baseUrl, '/requests', {
+      query: {
+        ...agentQuery(args),
+        limit: integerOption(args, '--limit'),
+      },
+    });
+  } else if (resource === 'requests' && operation === 'action') {
+    const action = args[3]?.toUpperCase();
+    if (action !== 'ACCEPT' && action !== 'DECLINE') {
+      throw new Error('Request action must be accept or decline.');
+    }
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/requests/${id(args[2], 'Pass a request ID after "darwin requests action".')}/actions`,
+      {
+        method: 'POST',
+        body: {
+          action,
+          ...(option(args, '--agent') ? { agentId: option(args, '--agent') } : {}),
+        },
+        headers: idempotencyHeaders(args),
+      },
+    );
+  } else if (
+    (resource === 'agent' && operation === 'message') ||
+    (resource === 'conversations' && operation === 'send')
+  ) {
     const content = textArgument(args, 2, ['--agent', '--request-id']);
     if (!content) {
-      throw new Error('Pass a message after "darwin agent message".');
+      throw new Error('Pass a message after "darwin conversations send".');
     }
     result = await request(auth.apiKey, auth.baseUrl, '/agent/messages', {
       method: 'POST',
@@ -637,8 +667,57 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/goals/${id(args[2], 'Pass a goal ID after "darwin goals publish".')}/publication-approvals`,
+      `/goals/${id(args[2], 'Pass a goal ID after "darwin goals publish".')}/publication-requests`,
       { method: 'POST', body: dataOption(args) },
+    );
+  } else if (resource === 'deals' && operation === 'list') {
+    result = await request(auth.apiKey, auth.baseUrl, '/deals', { query: agentQuery(args) });
+  } else if (resource === 'deals' && operation === 'get') {
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/deals/${id(args[2], 'Pass a deal ID after "darwin deals get".')}`,
+    );
+  } else if (resource === 'deals' && operation === 'create') {
+    const body = mergeFields(dataOption(args), [
+      ['agentId', option(args, '--agent')],
+      ['direction', enumOption(args, '--direction', ['DEMAND', 'SUPPLY'])],
+      ['title', option(args, '--title')],
+      ['goalId', option(args, '--goal')],
+      ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
+    ]);
+    if (typeof body.direction !== 'string' || typeof body.title !== 'string') {
+      throw new Error('Pass --direction and --title, or provide both in --data.');
+    }
+    result = await request(auth.apiKey, auth.baseUrl, '/deals', { method: 'POST', body });
+  } else if (resource === 'deals' && operation === 'update') {
+    const body = mergeFields(dataOption(args), [
+      ['title', option(args, '--title')],
+      ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
+    ]);
+    if (Object.keys(body).length === 0) throw new Error('Pass editable deal fields or --data.');
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/deals/${id(args[2], 'Pass a deal ID after "darwin deals update".')}`,
+      { method: 'PATCH', body },
+    );
+  } else if (resource === 'deals' && operation === 'action') {
+    const action = args[3]?.toUpperCase();
+    if (!action || !['SEND', 'ACCEPT', 'REJECT', 'WITHDRAW'].includes(action)) {
+      throw new Error('Action must be send, accept, reject, or withdraw.');
+    }
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/deals/${id(args[2], 'Pass a deal ID after "darwin deals action".')}/actions`,
+      { method: 'POST', body: { action } },
+    );
+  } else if (resource === 'deals' && operation === 'payments') {
+    result = await request(
+      auth.apiKey,
+      auth.baseUrl,
+      `/deals/${id(args[2], 'Pass a deal ID after "darwin deals payments".')}/payments`,
     );
   } else if (resource === 'sessions' && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, '/sessions', {
@@ -1078,18 +1157,18 @@ async function main() {
     result = await request(auth.apiKey, auth.baseUrl, `/fee-quotes/${id(args[2], 'Pass a fee quote ID.')}/accept`, {
       method: 'POST',
     });
-  } else if (resource === 'applications' && operation === 'list') {
+  } else if (resource === 'connect' && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, '/applications');
-  } else if (resource === 'applications' && operation === 'get') {
+  } else if (resource === 'connect' && operation === 'get') {
     result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}`);
-  } else if (resource === 'applications' && operation === 'create') {
+  } else if (resource === 'connect' && operation === 'create') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['mode', enumOption(args, '--mode', ['HOSTED', 'EMBEDDED', 'HYBRID'])],
     ]);
     if (typeof body.name !== 'string') throw new Error('Pass --name or include name in --data.');
     result = await request(auth.apiKey, auth.baseUrl, '/applications', { method: 'POST', body });
-  } else if (resource === 'applications' && operation === 'update') {
+  } else if (resource === 'connect' && operation === 'update') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['mode', enumOption(args, '--mode', ['HOSTED', 'EMBEDDED', 'HYBRID'])],
@@ -1099,13 +1178,13 @@ async function main() {
       method: 'PATCH',
       body,
     });
-  } else if (resource === 'applications' && operation === 'archive') {
+  } else if (resource === 'connect' && operation === 'archive') {
     result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}`, {
       method: 'DELETE',
     });
-  } else if (resource === 'applications' && operation === 'agents') {
+  } else if (resource === 'connect' && operation === 'agents') {
     result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}/agents`);
-  } else if (resource === 'applications' && operation === 'link-agent') {
+  } else if (resource === 'connect' && operation === 'link-agent') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
@@ -1118,40 +1197,40 @@ async function main() {
         },
       },
     );
-  } else if (resource === 'applications' && operation === 'unlink-agent') {
+  } else if (resource === 'connect' && operation === 'unlink-agent') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/agents/${id(args[3], 'Pass an agent ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'applications' && operation === 'enrollments') {
+  } else if (resource === 'connect' && operation === 'enrollments') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/enrollment-links`,
     );
-  } else if (resource === 'applications' && operation === 'create-enrollment') {
+  } else if (resource === 'connect' && operation === 'create-enrollment') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/enrollment-links`,
       { method: 'POST', body: dataOption(args) },
     );
-  } else if (resource === 'applications' && operation === 'revoke-enrollment') {
+  } else if (resource === 'connect' && operation === 'revoke-enrollment') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/enrollment-links/${id(args[3], 'Pass an enrollment link ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'applications' && operation === 'service-accounts') {
+  } else if (resource === 'connect' && operation === 'service-accounts') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/service-accounts`,
     );
-  } else if (resource === 'applications' && operation === 'create-service-account') {
+  } else if (resource === 'connect' && operation === 'create-service-account') {
     const body = mergeFields(dataOption(args), [['name', option(args, '--name')]]);
     if (typeof body.name !== 'string') throw new Error('Pass --name or include name in --data.');
     result = await request(
@@ -1160,20 +1239,20 @@ async function main() {
       `/applications/${id(args[2], 'Pass an application ID.')}/service-accounts`,
       { method: 'POST', body },
     );
-  } else if (resource === 'applications' && operation === 'revoke-service-account') {
+  } else if (resource === 'connect' && operation === 'revoke-service-account') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/service-accounts/${id(args[3], 'Pass a service account ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'applications' && operation === 'webhooks') {
+  } else if (resource === 'connect' && operation === 'webhooks') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/webhooks`,
     );
-  } else if (resource === 'applications' && operation === 'create-webhook') {
+  } else if (resource === 'connect' && operation === 'create-webhook') {
     const body = mergeFields(dataOption(args), [['url', option(args, '--url')]]);
     if (typeof body.url !== 'string') throw new Error('Pass --url or include url in --data.');
     result = await request(
@@ -1182,14 +1261,14 @@ async function main() {
       `/applications/${id(args[2], 'Pass an application ID.')}/webhooks`,
       { method: 'POST', body },
     );
-  } else if (resource === 'applications' && operation === 'revoke-webhook') {
+  } else if (resource === 'connect' && operation === 'revoke-webhook') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/webhooks/${id(args[3], 'Pass a webhook ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'applications' && operation === 'webhook-deliveries') {
+  } else if (resource === 'connect' && operation === 'webhook-deliveries') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
@@ -1201,36 +1280,13 @@ async function main() {
         },
       },
     );
-  } else if (resource === 'applications' && operation === 'retry-webhook') {
+  } else if (resource === 'connect' && operation === 'retry-webhook') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/applications/${id(args[2], 'Pass an application ID.')}/webhooks/${id(args[3], 'Pass a webhook ID.')}/deliveries/${id(args[4], 'Pass a delivery ID.')}/retry`,
       { method: 'POST' },
     );
-  } else if (resource === 'approvals' && operation === 'list') {
-    result = await request(auth.apiKey, auth.baseUrl, '/approvals', {
-      query: { ...agentQuery(args), status: option(args, '--status') },
-    });
-  } else if (resource === 'approvals' && operation === 'decide') {
-    const decision = args[3]?.toUpperCase();
-    if (decision !== 'APPROVE' && decision !== 'REJECT') {
-      throw new Error('Decision must be approve or reject.');
-    }
-    const approvalId = args[2]?.trim();
-    if (!approvalId) {
-      throw new Error('Pass the approval ID before the decision.');
-    }
-    result = await request(auth.apiKey, auth.baseUrl, `/approvals/${encodeURIComponent(approvalId)}/decisions`, {
-      method: 'POST',
-      body: {
-        agentId: option(args, '--agent'),
-        decision,
-        reason: option(args, '--reason'),
-      },
-    });
-  } else if (resource === 'integrations') {
-    result = await request(auth.apiKey, auth.baseUrl, '/integrations');
   } else if (resource === 'tools' && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, '/tools');
   } else if (resource === 'tools' && operation === 'execute') {

@@ -35,14 +35,17 @@ test('prints concise help', () => {
     encoding: 'utf8',
   });
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /darwin agent message/);
   assert.match(result.stdout, /darwin agents <list\|get\|create\|update\|activity>/);
-  assert.match(result.stdout, /darwin applications/);
-  assert.match(
-    result.stdout,
-    /darwin sessions <create\|list\|get\|invitations\|invitation\|send\|participants\|watch\|mesh\|replan\|outcome\|feedback\|complete\|cancel>/,
-  );
-  assert.match(result.stdout, /darwin tools execute/);
+  assert.match(result.stdout, /darwin agents skills/);
+  assert.match(result.stdout, /darwin agents integrations/);
+  assert.match(result.stdout, /darwin requests <list\|action>/);
+  assert.match(result.stdout, /darwin conversations <send\|list\|create\|get\|message>/);
+  assert.match(result.stdout, /darwin deals <list\|get\|create\|update\|action\|payments>/);
+  assert.match(result.stdout, /darwin connect/);
+  assert.doesNotMatch(result.stdout, /darwin sessions/);
+  assert.doesNotMatch(result.stdout, /darwin directory/);
+  assert.doesNotMatch(result.stdout, /darwin tools/);
+  assert.doesNotMatch(result.stdout, /approvals/);
   assert.match(result.stdout, /DARWIN_API_KEY/);
 });
 

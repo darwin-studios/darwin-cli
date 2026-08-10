@@ -25,86 +25,26 @@ if (!contractPath) {
 }
 
 const contract = JSON.parse(await readFile(contractPath, 'utf8'));
+const problems = [];
+const expectedTags = ['Account', 'Agents', 'Requests', 'Conversations', 'Goals', 'Deals', 'Connect', 'Examples'];
 const expectedOperations = [
   ['get', '/account', 'getAccount'],
+  ['get', '/account/skills', 'listSkillCatalog'],
   ['get', '/agents', 'listAgents'],
-  ['post', '/agents', 'createAgent'],
-  ['get', '/agents/{agentId}', 'getAgent'],
-  ['patch', '/agents/{agentId}', 'updateAgent'],
-  ['get', '/agents/{agentId}/activity', 'listAgentActivity'],
-  ['get', '/agents/{agentId}/members', 'listAgentMembers'],
-  ['patch', '/agents/{agentId}/members/{membershipId}', 'updateAgentMember'],
-  ['delete', '/agents/{agentId}/members/{membershipId}', 'removeAgentMember'],
-  ['get', '/agents/{agentId}/invitations', 'listAgentInvitations'],
-  ['post', '/agents/{agentId}/invitations', 'createAgentInvitation'],
-  ['delete', '/agents/{agentId}/invitations/{invitationId}', 'revokeAgentInvitation'],
-  ['get', '/agents/{agentId}/access-policies', 'listAccessPolicies'],
-  ['post', '/agents/{agentId}/access-policies', 'createAccessPolicy'],
-  ['patch', '/agents/{agentId}/access-policies/{policyId}', 'updateAccessPolicy'],
-  ['get', '/agent/conversation', 'getSelectedAgentConversation'],
+  ['get', '/requests', 'listRequests'],
+  ['post', '/requests/{requestId}/actions', 'actOnRequest'],
   ['post', '/agent/messages', 'createMessage'],
-  ['get', '/agents/{agentId}/conversations', 'listAgentConversations'],
-  ['post', '/agents/{agentId}/conversations', 'createAgentConversation'],
-  ['get', '/conversations/{conversationId}', 'getConversation'],
-  ['post', '/conversations/{conversationId}/messages', 'createConversationMessage'],
-  ['get', '/tools', 'listTools'],
-  ['post', '/tools/{tool}/executions', 'executeTool'],
   ['get', '/goals', 'listGoals'],
   ['post', '/goals', 'createGoal'],
-  ['get', '/goals/{id}', 'getGoal'],
-  ['patch', '/goals/{id}', 'updateGoal'],
-  ['post', '/goals/{id}/actions', 'actOnGoal'],
-  ['post', '/goals/{id}/publication-approvals', 'requestGoalPublication'],
-  ['get', '/session-invitations', 'listSessionInvitations'],
-  ['post', '/session-invitations/{invitationId}/actions', 'actOnSessionInvitation'],
-  ['get', '/sessions', 'listSessions'],
-  ['post', '/sessions', 'createSession'],
-  ['get', '/sessions/{sessionId}', 'getSession'],
-  ['get', '/sessions/{sessionId}/interactions', 'listSessionInteractions'],
-  ['post', '/sessions/{sessionId}/interactions', 'sendSessionInteraction'],
-  ['post', '/sessions/{sessionId}/resolutions', 'resolveSession'],
-  ['get', '/sessions/{sessionId}/mesh', 'getSessionMesh'],
-  ['post', '/sessions/{sessionId}/actions', 'actOnSession'],
-  ['post', '/sessions/{sessionId}/outcomes', 'recordSessionOutcome'],
-  ['post', '/sessions/{sessionId}/feedback', 'recordSessionFeedback'],
-  ['get', '/approvals', 'listApprovals'],
-  ['post', '/approvals/{id}/decisions', 'decideApproval'],
-  ['get', '/directory/agents', 'searchAgentDirectory'],
-  ['get', '/directory/agents/{agentId}', 'getDirectoryAgent'],
-  ['get', '/agents/{agentId}/offers', 'listOffers'],
-  ['post', '/agents/{agentId}/offers', 'createOffer'],
-  ['get', '/offers/{offerId}', 'getOffer'],
-  ['patch', '/offers/{offerId}', 'updateOffer'],
-  ['post', '/offers/{offerId}/actions', 'actOnOffer'],
-  ['get', '/agents/{agentId}/payment-account', 'getAgentPaymentAccount'],
-  ['get', '/agents/{agentId}/payments', 'listAgentPayments'],
-  ['get', '/payments/{paymentId}', 'getPayment'],
-  ['post', '/fee-quotes', 'createFeeQuote'],
-  ['get', '/fee-quotes/{feeQuoteId}', 'getFeeQuote'],
-  ['post', '/fee-quotes/{feeQuoteId}/accept', 'acceptFeeQuote'],
-  ['get', '/integrations', 'getIntegrations'],
+  ['post', '/goals/{id}/publication-requests', 'requestGoalPublication'],
+  ['get', '/deals', 'listDeals'],
+  ['post', '/deals', 'createDeal'],
+  ['get', '/deals/{dealId}', 'getDeal'],
+  ['post', '/deals/{dealId}/actions', 'actOnDeal'],
+  ['get', '/deals/{dealId}/payments', 'listDealPayments'],
   ['get', '/applications', 'listApplications'],
   ['post', '/applications', 'createApplication'],
-  ['get', '/applications/{applicationId}', 'getApplication'],
-  ['patch', '/applications/{applicationId}', 'updateApplication'],
-  ['delete', '/applications/{applicationId}', 'archiveApplication'],
-  ['get', '/applications/{applicationId}/agents', 'listApplicationAgents'],
-  ['post', '/applications/{applicationId}/agents', 'linkApplicationAgent'],
-  ['delete', '/applications/{applicationId}/agents/{agentId}', 'unlinkApplicationAgent'],
-  ['get', '/applications/{applicationId}/enrollment-links', 'listEnrollmentLinks'],
-  ['post', '/applications/{applicationId}/enrollment-links', 'createEnrollmentLink'],
-  ['delete', '/applications/{applicationId}/enrollment-links/{enrollmentLinkId}', 'revokeEnrollmentLink'],
-  ['get', '/applications/{applicationId}/service-accounts', 'listServiceAccounts'],
-  ['post', '/applications/{applicationId}/service-accounts', 'createServiceAccount'],
-  ['delete', '/applications/{applicationId}/service-accounts/{serviceAccountId}', 'revokeServiceAccount'],
-  ['get', '/applications/{applicationId}/webhooks', 'listWebhooks'],
-  ['post', '/applications/{applicationId}/webhooks', 'createWebhook'],
-  ['delete', '/applications/{applicationId}/webhooks/{webhookId}', 'revokeWebhook'],
-  ['get', '/applications/{applicationId}/webhooks/{webhookId}/deliveries', 'listWebhookDeliveries'],
-  ['post', '/applications/{applicationId}/webhooks/{webhookId}/deliveries/{deliveryId}/retry', 'retryWebhookDelivery'],
 ];
-
-const problems = [];
 
 function checkLocalSchemaReferences(value, location = '#') {
   if (Array.isArray(value)) {
@@ -127,8 +67,8 @@ function checkLocalSchemaReferences(value, location = '#') {
 if (contract.openapi !== '3.1.0') {
   problems.push(`expected OpenAPI 3.1.0, received ${String(contract.openapi)}`);
 }
-if (contract.info?.version !== '1.3.0') {
-  problems.push(`expected Darwin API 1.3.0, received ${String(contract.info?.version)}`);
+if (contract.info?.version !== '2.0.0') {
+  problems.push(`expected Darwin API 2.0.0, received ${String(contract.info?.version)}`);
 }
 if (
   !Array.isArray(contract.servers) ||
@@ -136,10 +76,44 @@ if (
 ) {
   problems.push('production server https://api.darwin.so/api/v1 is missing');
 }
-if (expectedOperations.length !== 73) {
-  problems.push(`CLI operation inventory expected 73 entries, received ${expectedOperations.length}`);
+
+const tags = contract.tags?.map((tag) => tag.name);
+if (JSON.stringify(tags) !== JSON.stringify(expectedTags)) {
+  problems.push(`expected public tags ${expectedTags.join(', ')}, received ${String(tags)}`);
 }
-checkLocalSchemaReferences(contract);
+
+const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
+  Object.entries(pathItem)
+    .filter(([method]) => ['get', 'post', 'patch', 'put', 'delete'].includes(method))
+    .map(([, operation]) => operation),
+);
+const operationIds = operations.map((operation) => operation.operationId);
+if (operationIds.length !== 66 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 66 uniquely named public operations');
+}
+for (const operation of operations) {
+  if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {
+    problems.push(`${operation.operationId ?? 'unknown operation'} is not assigned to one public domain`);
+  }
+}
+
+const forbiddenPrefixes = [
+  '/sessions',
+  '/session-invitations',
+  '/directory',
+  '/offers',
+  '/payments',
+  '/tools',
+  '/approvals',
+];
+for (const path of Object.keys(contract.paths ?? {})) {
+  if (forbiddenPrefixes.some((prefix) => path.startsWith(prefix))) {
+    problems.push(`${path} exposes a private or legacy surface`);
+  }
+  if (path.includes('publication-approvals')) {
+    problems.push(`${path} exposes the internal approval model`);
+  }
+}
 
 for (const [method, path, operationId] of expectedOperations) {
   const operation = contract.paths?.[path]?.[method];
@@ -152,8 +126,10 @@ for (const [method, path, operationId] of expectedOperations) {
   }
 }
 
+checkLocalSchemaReferences(contract);
+
 if (problems.length > 0) {
   throw new Error(`Darwin CLI contract check failed:\n- ${problems.join('\n- ')}`);
 }
 
-process.stdout.write(`Darwin CLI contract is compatible (${contractPath}).\n`);
+process.stdout.write(`Darwin CLI contract is aligned to the public resource model (${contractPath}).\n`);
