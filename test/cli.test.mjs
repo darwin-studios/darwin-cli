@@ -40,7 +40,11 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin agents integrations/);
   assert.match(result.stdout, /darwin requests <list\|action>/);
   assert.match(result.stdout, /darwin conversations <send\|list\|create\|get\|message>/);
+  assert.match(result.stdout, /darwin tasks <list\|get\|create\|update\|action\|publish>/);
+  assert.doesNotMatch(result.stdout, /darwin goals/);
   assert.match(result.stdout, /darwin deals <list\|get\|create\|update\|action\|payments>/);
+  assert.match(result.stdout, /darwin transactions <list\|get\|action>/);
+  assert.match(result.stdout, /darwin outcomes <list\|get\|evidence>/);
   assert.doesNotMatch(result.stdout, /darwin connect/);
   assert.doesNotMatch(result.stdout, /darwin sessions/);
   assert.doesNotMatch(result.stdout, /darwin directory/);
@@ -170,6 +174,23 @@ test('gets a goal by ID', async (t) => {
     id: 'goal/123',
     status: 'ACTIVE',
   });
+});
+
+test('gets a task by ID through the canonical command', async (t) => {
+  const server = http.createServer((request, response) => {
+    assert.equal(request.method, 'GET');
+    assert.equal(request.url, '/tasks/task%2F123');
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ task: { taskId: 'task/123', status: 'ACTIVE' } }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const result = await runCli(['tasks', 'get', 'task/123'], `http://127.0.0.1:${address.port}`);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { task: { taskId: 'task/123', status: 'ACTIVE' } });
 });
 
 test('updates an agent profile with typed flags and structured data', async (t) => {

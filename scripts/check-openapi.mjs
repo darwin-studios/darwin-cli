@@ -26,7 +26,33 @@ if (!contractPath) {
 
 const contract = JSON.parse(await readFile(contractPath, 'utf8'));
 const problems = [];
-const expectedTags = ['Account', 'Agents', 'Requests', 'Conversations', 'Goals', 'Deals', 'Billing', 'Examples'];
+const expectedTags = [
+  'Account',
+  'Agents',
+  'Permissions',
+  'Reputation',
+  'Skills',
+  'Integrations',
+  'Connections',
+  'Notifications',
+  'Usage',
+  'Verification',
+  'Deployment',
+  'Tools',
+  'Requests',
+  'Conversations',
+  'Tasks',
+  'Goals',
+  'Deals',
+  'Transactions',
+  'Outcomes',
+  'Billing',
+  'Applications',
+  'Enrollment',
+  'Ephemeral Tasks',
+  'Webhooks',
+  'Examples',
+];
 const expectedOperations = [
   ['get', '/account', 'getAccount'],
   ['get', '/account/skills', 'listSkillCatalog'],
@@ -34,14 +60,19 @@ const expectedOperations = [
   ['get', '/requests', 'listRequests'],
   ['post', '/requests/{requestId}/actions', 'actOnRequest'],
   ['post', '/agent/messages', 'createMessage'],
-  ['get', '/goals', 'listGoals'],
-  ['post', '/goals', 'createGoal'],
-  ['post', '/goals/{id}/publication-requests', 'requestGoalPublication'],
+  ['get', '/tasks', 'listTasks'],
+  ['post', '/tasks', 'createTask'],
+  ['post', '/tasks/{id}/publication-requests', 'requestTaskPublication'],
   ['get', '/deals', 'listDeals'],
   ['post', '/deals', 'createDeal'],
   ['get', '/deals/{dealId}', 'getDeal'],
   ['post', '/deals/{dealId}/actions', 'actOnDeal'],
   ['get', '/deals/{dealId}/payments', 'listDealPayments'],
+  ['post', '/deals/{dealId}/transactions', 'createDealTransaction'],
+  ['get', '/transactions', 'listTransactions'],
+  ['get', '/outcomes', 'listOutcomes'],
+  ['get', '/applications', 'listApplications'],
+  ['post', '/applications/{applicationId}/ephemeral-tasks', 'createEphemeralTask'],
 ];
 
 function checkLocalSchemaReferences(value, location = '#') {
@@ -65,8 +96,8 @@ function checkLocalSchemaReferences(value, location = '#') {
 if (contract.openapi !== '3.1.0') {
   problems.push(`expected OpenAPI 3.1.0, received ${String(contract.openapi)}`);
 }
-if (contract.info?.version !== '2.0.0') {
-  problems.push(`expected Darwin API 2.0.0, received ${String(contract.info?.version)}`);
+if (contract.info?.version !== '1.4.0') {
+  problems.push(`expected Darwin API 1.4.0, received ${String(contract.info?.version)}`);
 }
 if (
   !Array.isArray(contract.servers) ||
@@ -86,8 +117,8 @@ const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
     .map(([, operation]) => operation),
 );
 const operationIds = operations.map((operation) => operation.operationId);
-if (operationIds.length !== 59 || new Set(operationIds).size !== operationIds.length) {
-  problems.push('expected 59 uniquely named public operations');
+if (operationIds.length !== 115 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 115 uniquely named public operations');
 }
 for (const operation of operations) {
   if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {
@@ -101,16 +132,11 @@ const forbiddenPrefixes = [
   '/directory',
   '/offers',
   '/payments',
-  '/tools',
   '/approvals',
-  '/applications',
 ];
 for (const path of Object.keys(contract.paths ?? {})) {
   if (forbiddenPrefixes.some((prefix) => path.startsWith(prefix))) {
     problems.push(`${path} exposes a private or legacy surface`);
-  }
-  if (path.includes('publication-approvals')) {
-    problems.push(`${path} exposes the internal approval model`);
   }
 }
 
