@@ -326,7 +326,7 @@ Usage:
   darwin agents integrations
   darwin requests <list|action> [...]
   darwin conversations <send|list|create|get|message> [...]
-  darwin tasks <list|get|create|update|action|publish> [...]
+  darwin goals <list|get|create|update|action|publish> [...]
   darwin deals <list|get|create|update|action|payments> [...]
   darwin transactions <list|get|action> [...]
   darwin outcomes <list|get|evidence> [...]
@@ -612,14 +612,14 @@ async function main() {
     result = await request(auth.apiKey, auth.baseUrl, `/${resource}`, {
       query: {
         ...agentQuery(args),
-        ...(resource === 'tasks' ? { mode: enumOption(args, '--mode', ['BUY', 'SELL', 'CHAT']) } : {}),
+        mode: enumOption(args, '--mode', ['BUY', 'SELL', 'CHAT']),
       },
     });
   } else if ((resource === 'tasks' || resource === 'goals') && operation === 'get') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/${resource}/${id(args[2], 'Pass a task ID after "darwin tasks get".')}`,
+      `/${resource}/${id(args[2], `Pass a goal ID after "darwin ${resource} get".`)}`,
       { query: agentQuery(args) },
     );
   } else if ((resource === 'tasks' || resource === 'goals') && operation === 'create') {
@@ -634,7 +634,7 @@ async function main() {
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
     ]);
     if (typeof body.intent !== 'string' || !body.intent.trim()) {
-      throw new Error('Pass a task intent with --intent or in --data.');
+      throw new Error('Pass a goal intent with --intent or in --data.');
     }
     result = await request(auth.apiKey, auth.baseUrl, `/${resource}`, {
       method: 'POST',
@@ -650,11 +650,11 @@ async function main() {
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
       ['pausedUntil', option(args, '--paused-until')],
     ]);
-    if (Object.keys(body).length === 0) throw new Error('Pass editable task fields or --data.');
+    if (Object.keys(body).length === 0) throw new Error('Pass editable goal fields or --data.');
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/${resource}/${id(args[2], 'Pass a task ID after "darwin tasks update".')}`,
+      `/${resource}/${id(args[2], `Pass a goal ID after "darwin ${resource} update".`)}`,
       { method: 'PATCH', body },
     );
   } else if ((resource === 'tasks' || resource === 'goals') && operation === 'action') {
@@ -665,7 +665,7 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/${resource}/${id(args[2], 'Pass a task ID after "darwin tasks action".')}/actions`,
+      `/${resource}/${id(args[2], `Pass a goal ID after "darwin ${resource} action".`)}/actions`,
       {
         method: 'POST',
         body: { action, pausedUntil: option(args, '--paused-until') },
@@ -675,7 +675,7 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/${resource}/${id(args[2], 'Pass a task ID after "darwin tasks publish".')}/publication-requests`,
+      `/${resource}/${id(args[2], `Pass a goal ID after "darwin ${resource} publish".`)}/publication-requests`,
       { method: 'POST', body: dataOption(args) },
     );
   } else if (resource === 'deals' && operation === 'list') {
@@ -692,8 +692,8 @@ async function main() {
       ['mode', enumOption(args, '--mode', ['BUY', 'SELL'])],
       ['direction', enumOption(args, '--direction', ['DEMAND', 'SUPPLY'])],
       ['title', option(args, '--title')],
-      ['taskId', option(args, '--task')],
       ['goalId', option(args, '--goal')],
+      ['taskId', option(args, '--task')],
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
     ]);
     if ((typeof body.mode !== 'string' && typeof body.direction !== 'string') || typeof body.title !== 'string') {

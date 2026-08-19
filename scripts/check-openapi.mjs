@@ -41,15 +41,15 @@ const expectedTags = [
   'Tools',
   'Requests',
   'Conversations',
-  'Tasks',
   'Goals',
+  'Tasks',
   'Deals',
   'Transactions',
   'Outcomes',
   'Billing',
   'Applications',
   'Enrollment',
-  'Ephemeral Tasks',
+  'Ephemeral Goals',
   'Webhooks',
   'Examples',
 ];
@@ -72,7 +72,7 @@ const expectedOperations = [
   ['get', '/transactions', 'listTransactions'],
   ['get', '/outcomes', 'listOutcomes'],
   ['get', '/applications', 'listApplications'],
-  ['post', '/applications/{applicationId}/ephemeral-tasks', 'createEphemeralTask'],
+  ['post', '/applications/{applicationId}/ephemeral-goals', 'createEphemeralGoal'],
 ];
 
 function checkLocalSchemaReferences(value, location = '#') {
@@ -96,8 +96,8 @@ function checkLocalSchemaReferences(value, location = '#') {
 if (contract.openapi !== '3.1.0') {
   problems.push(`expected OpenAPI 3.1.0, received ${String(contract.openapi)}`);
 }
-if (contract.info?.version !== '1.4.0') {
-  problems.push(`expected Darwin API 1.4.0, received ${String(contract.info?.version)}`);
+if (contract.info?.version !== '1.5.0') {
+  problems.push(`expected Darwin API 1.5.0, received ${String(contract.info?.version)}`);
 }
 if (
   !Array.isArray(contract.servers) ||
@@ -117,8 +117,8 @@ const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
     .map(([, operation]) => operation),
 );
 const operationIds = operations.map((operation) => operation.operationId);
-if (operationIds.length !== 115 || new Set(operationIds).size !== operationIds.length) {
-  problems.push('expected 115 uniquely named public operations');
+if (operationIds.length !== 111 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 111 uniquely named public operations');
 }
 for (const operation of operations) {
   if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {

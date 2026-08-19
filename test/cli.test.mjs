@@ -40,8 +40,8 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin agents integrations/);
   assert.match(result.stdout, /darwin requests <list\|action>/);
   assert.match(result.stdout, /darwin conversations <send\|list\|create\|get\|message>/);
-  assert.match(result.stdout, /darwin tasks <list\|get\|create\|update\|action\|publish>/);
-  assert.doesNotMatch(result.stdout, /darwin goals/);
+  assert.match(result.stdout, /darwin goals <list\|get\|create\|update\|action\|publish>/);
+  assert.doesNotMatch(result.stdout, /darwin tasks/);
   assert.match(result.stdout, /darwin deals <list\|get\|create\|update\|action\|payments>/);
   assert.match(result.stdout, /darwin transactions <list\|get\|action>/);
   assert.match(result.stdout, /darwin outcomes <list\|get\|evidence>/);
@@ -176,7 +176,7 @@ test('gets a goal by ID', async (t) => {
   });
 });
 
-test('gets a task by ID through the canonical command', async (t) => {
+test('keeps the task command as an undocumented compatibility alias', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'GET');
     assert.equal(request.url, '/tasks/task%2F123');

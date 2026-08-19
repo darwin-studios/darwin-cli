@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Darwin API",
-    "version": "1.4.0",
-    "description": "Use one canonical Darwin agent across surfaces. Buy, Sell, and Chat are workflow views over shared Tasks, Conversations, Deals, Transactions, and Outcomes. Goals remain a deprecated compatibility alias inside the additive /api/v1 contract.",
+    "version": "1.5.0",
+    "description": "Use the Product API to control your own Darwin agents and the Connect API to embed Darwin identity, linking, app-funded work, and webhooks in another product. Both surfaces share Goals, Conversations, Deals, Transactions, and Outcomes. Tasks remain a deprecated compatibility alias inside /api/v1.",
     "contact": {
       "name": "Darwin",
       "url": "https://docs.darwin.so"
@@ -50,7 +50,7 @@
     },
     {
       "name": "Usage",
-      "description": "Read sanitized credit, wallet, task, and deal usage projections."
+      "description": "Read sanitized Agent Wallet, dollar-denominated usage, goal, and deal projections."
     },
     {
       "name": "Verification",
@@ -73,12 +73,12 @@
       "description": "Start conversations and exchange messages with an account’s agents."
     },
     {
-      "name": "Tasks",
-      "description": "Create and manage the executable work an agent performs across buy, sell, and chat."
+      "name": "Goals",
+      "description": "Create and manage the durable outcomes an agent pursues across buy, sell, and chat."
     },
     {
-      "name": "Goals",
-      "description": "Deprecated compatibility API for executable work now represented by Tasks."
+      "name": "Tasks",
+      "description": "Deprecated compatibility API for executable work now represented by Goals."
     },
     {
       "name": "Deals",
@@ -94,7 +94,7 @@
     },
     {
       "name": "Billing",
-      "description": "Manage an agent’s Product subscription, Agent Credits, wallet funding, automatic top-ups, and earned-fund payouts."
+      "description": "Inspect the Agent Wallet, add funds, configure automatic top-ups, and manage eligible earned-fund payouts."
     },
     {
       "name": "Applications",
@@ -105,8 +105,8 @@
       "description": "Create pseudonymous, user-distributed enrollment links and asynchronous batches."
     },
     {
-      "name": "Ephemeral Tasks",
-      "description": "Create application-funded work without provisioning an end-user agent."
+      "name": "Ephemeral Goals",
+      "description": "Create application-funded goals without provisioning an end-user agent."
     },
     {
       "name": "Webhooks",
@@ -131,7 +131,7 @@
         ],
         "summary": "Get account",
         "x-mint": {
-          "href": "/api-reference/account/get-the-account-and-agent-inventory",
+          "href": "/reference/account/get-the-account-and-agent-inventory",
           "metadata": {
             "title": "Get account",
             "sidebarTitle": "Get account"
@@ -200,7 +200,7 @@
         ],
         "summary": "List available skills",
         "x-mint": {
-          "href": "/api-reference/account/list-available-skills",
+          "href": "/reference/account/list-available-skills",
           "metadata": {
             "title": "List available skills",
             "sidebarTitle": "List available skills"
@@ -280,7 +280,7 @@
         ],
         "summary": "List agents",
         "x-mint": {
-          "href": "/api-reference/agents/list-accessible-agents",
+          "href": "/reference/agents/list-accessible-agents",
           "metadata": {
             "title": "List agents",
             "sidebarTitle": "List agents"
@@ -357,7 +357,7 @@
         ],
         "summary": "Create agent",
         "x-mint": {
-          "href": "/api-reference/agents/create-a-business-agent",
+          "href": "/reference/agents/create-a-business-agent",
           "metadata": {
             "title": "Create agent",
             "sidebarTitle": "Create agent"
@@ -521,7 +521,7 @@
         ],
         "summary": "Update agent",
         "x-mint": {
-          "href": "/api-reference/agents/update-an-agent-profile",
+          "href": "/reference/agents/update-an-agent-profile",
           "metadata": {
             "title": "Update agent",
             "sidebarTitle": "Update agent"
@@ -2540,7 +2540,7 @@
         ],
         "summary": "List activity",
         "x-mint": {
-          "href": "/api-reference/agents/list-agent-activity",
+          "href": "/reference/agents/list-agent-activity",
           "metadata": {
             "title": "List activity",
             "sidebarTitle": "List activity"
@@ -2635,7 +2635,7 @@
         ],
         "summary": "List members",
         "x-mint": {
-          "href": "/api-reference/agents/list-business-agent-members",
+          "href": "/reference/agents/list-business-agent-members",
           "metadata": {
             "title": "List members",
             "sidebarTitle": "List members"
@@ -2724,7 +2724,7 @@
         ],
         "summary": "Update member",
         "x-mint": {
-          "href": "/api-reference/agents/change-a-business-agent-member-role",
+          "href": "/reference/agents/change-a-business-agent-member-role",
           "metadata": {
             "title": "Update member",
             "sidebarTitle": "Update member"
@@ -2827,7 +2827,7 @@
         ],
         "summary": "Remove member",
         "x-mint": {
-          "href": "/api-reference/agents/remove-a-business-agent-member",
+          "href": "/reference/agents/remove-a-business-agent-member",
           "metadata": {
             "title": "Remove member",
             "sidebarTitle": "Remove member"
@@ -2921,7 +2921,7 @@
         ],
         "summary": "List invitations",
         "x-mint": {
-          "href": "/api-reference/agents/list-pending-business-agent-invitations",
+          "href": "/reference/agents/list-pending-business-agent-invitations",
           "metadata": {
             "title": "List invitations",
             "sidebarTitle": "List invitations"
@@ -3008,7 +3008,7 @@
         ],
         "summary": "Invite member",
         "x-mint": {
-          "href": "/api-reference/agents/invite-a-business-agent-member",
+          "href": "/reference/agents/invite-a-business-agent-member",
           "metadata": {
             "title": "Invite member",
             "sidebarTitle": "Invite member"
@@ -3104,7 +3104,7 @@
         ],
         "summary": "Revoke invitation",
         "x-mint": {
-          "href": "/api-reference/agents/revoke-a-pending-invitation",
+          "href": "/reference/agents/revoke-a-pending-invitation",
           "metadata": {
             "title": "Revoke invitation",
             "sidebarTitle": "Revoke invitation"
@@ -3198,7 +3198,7 @@
         ],
         "summary": "List access policies",
         "x-mint": {
-          "href": "/api-reference/agents/list-active-access-policies",
+          "href": "/reference/agents/list-active-access-policies",
           "metadata": {
             "title": "List access policies",
             "sidebarTitle": "List access policies"
@@ -3375,7 +3375,7 @@
         ],
         "summary": "Update access policy",
         "x-mint": {
-          "href": "/api-reference/agents/create-a-new-policy-version",
+          "href": "/reference/agents/create-a-new-policy-version",
           "metadata": {
             "title": "Update access policy",
             "sidebarTitle": "Update access policy"
@@ -3477,15 +3477,15 @@
         "tags": [
           "Billing"
         ],
-        "summary": "Get Agent Wallet and Agent Credits",
+        "summary": "Get Agent Wallet",
         "x-mint": {
-          "href": "/api-reference/billing/get-agent-billing-summary",
+          "href": "/reference/billing/get-agent-billing-summary",
           "metadata": {
             "title": "Get billing summary",
             "sidebarTitle": "Get billing summary"
           }
         },
-        "description": "Returns the agent’s Product plan, spendable and withdrawable wallet balances, Agent Credit balances and expirations, money settings, and available actions. Available only to user API keys with `payments:read`.",
+        "description": "Returns deposited, promotional, reserved, pending, spendable, and withdrawable wallet balances together with money settings and available actions. Darwin prices agent work in USD per goal; subscriptions and Agent Credits are retired. Available only to user API keys with `payments:read`.",
         "parameters": [
           {
             "name": "agentId",
@@ -3551,84 +3551,15 @@
         }
       }
     },
-    "/billing/catalog": {
-      "get": {
-        "operationId": "getBillingCatalog",
-        "tags": [
-          "Billing"
-        ],
-        "summary": "Get Darwin pricing",
-        "x-mint": {
-          "href": "/api-reference/billing/get-billing-catalog",
-          "metadata": {
-            "title": "Get billing catalog",
-            "sidebarTitle": "Get billing catalog"
-          }
-        },
-        "description": "Returns Darwin subscription prices, Agent Credit packs, and the network marketplace fee. Amounts include the exact processing component charged by the configured payment provider.",
-        "responses": {
-          "200": {
-            "description": "The current public billing catalog.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BillingCatalog"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The bearer key is missing, invalid, expired, or revoked.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "The principal does not have the required scope or resource access.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The resource was not found for this principal.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/agents/{agentId}/billing/activity": {
       "get": {
         "operationId": "listAgentBillingActivity",
         "tags": [
           "Billing"
         ],
-        "summary": "List wallet and credit activity",
+        "summary": "List wallet activity",
         "x-mint": {
-          "href": "/api-reference/billing/list-agent-billing-activity",
+          "href": "/reference/billing/list-agent-billing-activity",
           "metadata": {
             "title": "List billing activity",
             "sidebarTitle": "List billing activity"
@@ -3651,13 +3582,6 @@
             }
           },
           {
-            "name": "aiCursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "limit",
             "in": "query",
             "schema": {
@@ -3670,289 +3594,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Wallet and Agent Credit ledger activity.",
+            "description": "Wallet ledger activity, including goal-level reservations, captures, releases, refunds, and payouts.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AgentBillingActivityPage"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The bearer key is missing, invalid, expired, or revoked.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "The principal does not have the required scope or resource access.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The resource was not found for this principal.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/agents/{agentId}/billing/subscription-checkout": {
-      "post": {
-        "operationId": "createAgentSubscriptionCheckout",
-        "tags": [
-          "Billing"
-        ],
-        "summary": "Start subscription checkout",
-        "x-mint": {
-          "href": "/api-reference/billing/start-subscription-checkout",
-          "metadata": {
-            "title": "Start subscription checkout",
-            "sidebarTitle": "Start subscription checkout"
-          }
-        },
-        "description": "Creates a hosted Product subscription checkout. Entitlements are granted only after signed billing webhooks confirm payment.",
-        "parameters": [
-          {
-            "name": "agentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AgentSubscriptionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "A hosted checkout URL.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CheckoutRedirect"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The bearer key is missing, invalid, expired, or revoked.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "The principal does not have the required scope or resource access.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The resource was not found for this principal.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/agents/{agentId}/billing/subscription": {
-      "patch": {
-        "operationId": "changeAgentSubscription",
-        "tags": [
-          "Billing"
-        ],
-        "summary": "Change Product subscription",
-        "x-mint": {
-          "href": "/api-reference/billing/change-product-subscription",
-          "metadata": {
-            "title": "Change subscription",
-            "sidebarTitle": "Change subscription"
-          }
-        },
-        "description": "Upgrades immediately with proration. Downgrades take effect at renewal. If the agent has no active paid subscription, this returns a checkout URL instead.",
-        "parameters": [
-          {
-            "name": "agentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AgentSubscriptionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The subscription change or checkout handoff.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SubscriptionChangeResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The request was invalid.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The bearer key is missing, invalid, expired, or revoked.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "The principal does not have the required scope or resource access.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The resource was not found for this principal.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/agents/{agentId}/billing/ai-credits-checkout": {
-      "post": {
-        "operationId": "createAgentCreditCheckout",
-        "tags": [
-          "Billing"
-        ],
-        "summary": "Buy one-time Agent Credits",
-        "x-mint": {
-          "href": "/api-reference/billing/buy-agent-credits",
-          "metadata": {
-            "title": "Buy Agent Credits",
-            "sidebarTitle": "Buy Agent Credits"
-          }
-        },
-        "description": "Creates a hosted checkout for a one-time Agent Credit pack. Requires an active Plus or Business subscription. Purchased credits expire 12 months after fulfillment.",
-        "parameters": [
-          {
-            "name": "agentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "required": true,
-            "description": "A caller-generated key, unique to this operation and payload.",
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AgentCreditCheckoutRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "A hosted checkout URL.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CheckoutRedirect"
                 }
               }
             }
@@ -4008,7 +3654,7 @@
         ],
         "summary": "Set up a payment method",
         "x-mint": {
-          "href": "/api-reference/billing/set-up-payment-method",
+          "href": "/reference/billing/set-up-payment-method",
           "metadata": {
             "title": "Set up payment method",
             "sidebarTitle": "Set up payment method"
@@ -4098,7 +3744,7 @@
         ],
         "summary": "Top up Agent Wallet",
         "x-mint": {
-          "href": "/api-reference/billing/top-up-agent-wallet",
+          "href": "/reference/billing/top-up-agent-wallet",
           "metadata": {
             "title": "Top up Agent Wallet",
             "sidebarTitle": "Top up Agent Wallet"
@@ -4198,7 +3844,7 @@
         ],
         "summary": "Update top-up and payout settings",
         "x-mint": {
-          "href": "/api-reference/billing/update-money-settings",
+          "href": "/reference/billing/update-money-settings",
           "metadata": {
             "title": "Update money settings",
             "sidebarTitle": "Update money settings"
@@ -4287,7 +3933,7 @@
         ],
         "summary": "Quote earned-fund withdrawal",
         "x-mint": {
-          "href": "/api-reference/billing/quote-wallet-withdrawal",
+          "href": "/reference/billing/quote-wallet-withdrawal",
           "metadata": {
             "title": "Quote wallet withdrawal",
             "sidebarTitle": "Quote wallet withdrawal"
@@ -4376,7 +4022,7 @@
         ],
         "summary": "Withdraw earned funds",
         "x-mint": {
-          "href": "/api-reference/billing/withdraw-earned-funds",
+          "href": "/reference/billing/withdraw-earned-funds",
           "metadata": {
             "title": "Withdraw earned funds",
             "sidebarTitle": "Withdraw earned funds"
@@ -4476,7 +4122,7 @@
         ],
         "summary": "Set up seller payouts",
         "x-mint": {
-          "href": "/api-reference/billing/set-up-seller-payouts",
+          "href": "/reference/billing/set-up-seller-payouts",
           "metadata": {
             "title": "Set up seller payouts",
             "sidebarTitle": "Set up seller payouts"
@@ -4555,7 +4201,7 @@
         ],
         "summary": "Get active conversation",
         "x-mint": {
-          "href": "/api-reference/conversations/get-the-selected-or-explicit-agent-conversation",
+          "href": "/reference/conversations/get-the-selected-or-explicit-agent-conversation",
           "metadata": {
             "title": "Get active conversation",
             "sidebarTitle": "Get active conversation"
@@ -4650,7 +4296,7 @@
         ],
         "summary": "List requests",
         "x-mint": {
-          "href": "/api-reference/requests/list-inbound-requests",
+          "href": "/reference/requests/list-inbound-requests",
           "metadata": {
             "title": "List requests",
             "sidebarTitle": "List requests"
@@ -4750,7 +4396,7 @@
         ],
         "summary": "Accept or decline request",
         "x-mint": {
-          "href": "/api-reference/requests/accept-or-decline-a-request",
+          "href": "/reference/requests/accept-or-decline-a-request",
           "metadata": {
             "title": "Respond to request",
             "sidebarTitle": "Respond to request"
@@ -4857,7 +4503,7 @@
         ],
         "summary": "Send message",
         "x-mint": {
-          "href": "/api-reference/conversations/send-an-account-level-message",
+          "href": "/reference/conversations/send-an-account-level-message",
           "metadata": {
             "title": "Send message",
             "sidebarTitle": "Send message"
@@ -4936,7 +4582,7 @@
         ],
         "summary": "List conversations",
         "x-mint": {
-          "href": "/api-reference/conversations/list-conversations-for-an-agent",
+          "href": "/reference/conversations/list-conversations-for-an-agent",
           "metadata": {
             "title": "List conversations",
             "sidebarTitle": "List conversations"
@@ -5023,7 +4669,7 @@
         ],
         "summary": "Start conversation",
         "x-mint": {
-          "href": "/api-reference/conversations/get-or-create-the-canonical-agent-conversation",
+          "href": "/reference/conversations/get-or-create-the-canonical-agent-conversation",
           "metadata": {
             "title": "Start conversation",
             "sidebarTitle": "Start conversation"
@@ -5101,7 +4747,7 @@
         ],
         "summary": "Get conversation",
         "x-mint": {
-          "href": "/api-reference/conversations/get-a-conversation-and-messages",
+          "href": "/reference/conversations/get-a-conversation-and-messages",
           "metadata": {
             "title": "Get conversation",
             "sidebarTitle": "Get conversation"
@@ -5196,7 +4842,7 @@
         ],
         "summary": "Send conversation message",
         "x-mint": {
-          "href": "/api-reference/conversations/send-a-message-in-an-explicit-conversation",
+          "href": "/reference/conversations/send-a-message-in-an-explicit-conversation",
           "metadata": {
             "title": "Send conversation message",
             "sidebarTitle": "Send conversation message"
@@ -5284,7 +4930,7 @@
         ],
         "summary": "List tools",
         "x-mint": {
-          "href": "/api-reference/tools/list-available-tools",
+          "href": "/reference/tools/list-available-tools",
           "metadata": {
             "title": "List tools",
             "sidebarTitle": "List tools"
@@ -5363,7 +5009,7 @@
         ],
         "summary": "Run tool",
         "x-mint": {
-          "href": "/api-reference/tools/run-an-owner-scoped-tool",
+          "href": "/reference/tools/run-an-owner-scoped-tool",
           "metadata": {
             "title": "Run tool",
             "sidebarTitle": "Run tool"
@@ -5447,10 +5093,12 @@
     "/tasks": {
       "get": {
         "operationId": "listTasks",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
         "summary": "List tasks",
+        "description": "Deprecated compatibility alias. Use `GET /goals`.",
         "parameters": [
           {
             "name": "agentId",
@@ -5535,10 +5183,12 @@
       },
       "post": {
         "operationId": "createTask",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
         "summary": "Create task",
+        "description": "Deprecated compatibility alias. Use `POST /goals`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5614,6 +5264,7 @@
     "/tasks/{id}": {
       "get": {
         "operationId": "getTask",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
@@ -5699,6 +5350,7 @@
       },
       "patch": {
         "operationId": "updateTask",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
@@ -5788,11 +5440,12 @@
     "/tasks/{id}/actions": {
       "post": {
         "operationId": "actOnTask",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
         "summary": "Change task status",
-        "description": "Draft tasks can activate or archive; active tasks can pause, complete, or archive; paused tasks can resume, complete, or archive; completed tasks can only archive.",
+        "description": "Deprecated compatibility alias for the goal lifecycle. Use `POST /goals/{id}/actions`.",
         "parameters": [
           {
             "name": "id",
@@ -5878,6 +5531,7 @@
     "/tasks/{id}/publication-approvals": {
       "post": {
         "operationId": "requestTaskPublicationApproval",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
@@ -5959,11 +5613,12 @@
     "/tasks/{id}/publication-requests": {
       "post": {
         "operationId": "requestTaskPublication",
+        "deprecated": true,
         "tags": [
           "Tasks"
         ],
         "summary": "Request task publication",
-        "description": "Creates an actionable request to publish a private task. Darwin does not publish the task until the account resolves the request.",
+        "description": "Deprecated compatibility alias. Use `POST /goals/{id}/publication-requests`.",
         "parameters": [
           {
             "name": "id",
@@ -6041,13 +5696,12 @@
     "/goals": {
       "get": {
         "operationId": "listGoals",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
         "summary": "List goals",
         "x-mint": {
-          "href": "/api-reference/goals/list-goals-for-an-agent",
+          "href": "/reference/goals/list-goals-for-an-agent",
           "metadata": {
             "title": "List goals",
             "sidebarTitle": "List goals"
@@ -6060,6 +5714,14 @@
             "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "description": "Filter tasks by the user-facing workflow mode.",
+            "schema": {
+              "$ref": "#/components/schemas/WorkMode"
             }
           }
         ],
@@ -6129,13 +5791,12 @@
       },
       "post": {
         "operationId": "createGoal",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
         "summary": "Create goal",
         "x-mint": {
-          "href": "/api-reference/goals/create-a-demand-supply-or-chat-goal",
+          "href": "/reference/goals/create-a-demand-supply-or-chat-goal",
           "metadata": {
             "title": "Create goal",
             "sidebarTitle": "Create goal"
@@ -6216,7 +5877,6 @@
     "/goals/{id}": {
       "get": {
         "operationId": "getGoal",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
@@ -6302,13 +5962,12 @@
       },
       "patch": {
         "operationId": "updateGoal",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
         "summary": "Update goal",
         "x-mint": {
-          "href": "/api-reference/goals/update-goal-details-or-policy",
+          "href": "/reference/goals/update-goal-details-or-policy",
           "metadata": {
             "title": "Update goal",
             "sidebarTitle": "Update goal"
@@ -6399,19 +6058,18 @@
     "/goals/{id}/actions": {
       "post": {
         "operationId": "actOnGoal",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
         "summary": "Change goal status",
         "x-mint": {
-          "href": "/api-reference/goals/pause-resume-complete-or-archive-a-goal",
+          "href": "/reference/goals/pause-resume-complete-or-archive-a-goal",
           "metadata": {
             "title": "Change goal status",
             "sidebarTitle": "Change goal status"
           }
         },
-        "description": "Draft goals can activate or archive; active goals can pause, complete, or archive; paused goals can resume, complete, or archive; completed goals can only archive.",
+        "description": "Draft goals can activate; active goals can pause or complete; paused goals can resume or complete; completed goals can archive. Completion is blocked while negotiations, transactions, or recurring agreements remain active.",
         "parameters": [
           {
             "name": "id",
@@ -6497,13 +6155,12 @@
     "/goals/{id}/publication-requests": {
       "post": {
         "operationId": "requestGoalPublication",
-        "deprecated": true,
         "tags": [
           "Goals"
         ],
         "summary": "Request goal publication",
         "x-mint": {
-          "href": "/api-reference/goals/request-goal-publication",
+          "href": "/reference/goals/request-goal-publication",
           "metadata": {
             "title": "Request goal publication",
             "sidebarTitle": "Request goal publication"
@@ -6592,7 +6249,7 @@
         ],
         "summary": "List deals",
         "x-mint": {
-          "href": "/api-reference/deals/list-deals",
+          "href": "/reference/deals/list-deals",
           "metadata": {
             "title": "List deals",
             "sidebarTitle": "List deals"
@@ -6680,7 +6337,7 @@
         ],
         "summary": "Create deal",
         "x-mint": {
-          "href": "/api-reference/deals/create-a-deal",
+          "href": "/reference/deals/create-a-deal",
           "metadata": {
             "title": "Create deal",
             "sidebarTitle": "Create deal"
@@ -6844,7 +6501,7 @@
         ],
         "summary": "Update deal",
         "x-mint": {
-          "href": "/api-reference/deals/update-a-draft-deal",
+          "href": "/reference/deals/update-a-draft-deal",
           "metadata": {
             "title": "Update deal",
             "sidebarTitle": "Update deal"
@@ -6941,7 +6598,7 @@
         ],
         "summary": "Change deal status",
         "x-mint": {
-          "href": "/api-reference/deals/send-accept-reject-or-withdraw-a-deal",
+          "href": "/reference/deals/send-accept-reject-or-withdraw-a-deal",
           "metadata": {
             "title": "Change deal status",
             "sidebarTitle": "Change deal status"
@@ -7037,7 +6694,7 @@
         ],
         "summary": "List deal payments",
         "x-mint": {
-          "href": "/api-reference/deals/list-deal-payments",
+          "href": "/reference/deals/list-deal-payments",
           "metadata": {
             "title": "List deal payments",
             "sidebarTitle": "List deal payments"
@@ -7741,7 +7398,7 @@
         ],
         "summary": "Get integrations",
         "x-mint": {
-          "href": "/api-reference/integrations/get-integrations-and-skills",
+          "href": "/reference/integrations/get-integrations-and-skills",
           "metadata": {
             "title": "Get integrations",
             "sidebarTitle": "Get integrations"
@@ -7810,7 +7467,7 @@
         ],
         "summary": "List applications",
         "x-mint": {
-          "href": "/api-reference/platform/list-applications",
+          "href": "/reference/platform/list-applications",
           "metadata": {
             "title": "List applications",
             "sidebarTitle": "List applications"
@@ -7887,7 +7544,7 @@
         ],
         "summary": "Create application",
         "x-mint": {
-          "href": "/api-reference/platform/create-application",
+          "href": "/reference/platform/create-application",
           "metadata": {
             "title": "Create application",
             "sidebarTitle": "Create application"
@@ -8050,7 +7707,7 @@
         ],
         "summary": "Update application",
         "x-mint": {
-          "href": "/api-reference/platform/update-application",
+          "href": "/reference/platform/update-application",
           "metadata": {
             "title": "Update application",
             "sidebarTitle": "Update application"
@@ -8224,7 +7881,7 @@
         ],
         "summary": "List linked agents",
         "x-mint": {
-          "href": "/api-reference/platform/list-linked-agents",
+          "href": "/reference/platform/list-linked-agents",
           "metadata": {
             "title": "List linked agents",
             "sidebarTitle": "List linked agents"
@@ -8311,7 +7968,7 @@
         ],
         "summary": "Link agent",
         "x-mint": {
-          "href": "/api-reference/platform/link-agent",
+          "href": "/reference/platform/link-agent",
           "metadata": {
             "title": "Link agent",
             "sidebarTitle": "Link agent"
@@ -8407,7 +8064,7 @@
         ],
         "summary": "Unlink agent",
         "x-mint": {
-          "href": "/api-reference/platform/unlink-agent",
+          "href": "/reference/platform/unlink-agent",
           "metadata": {
             "title": "Unlink agent",
             "sidebarTitle": "Unlink agent"
@@ -8501,7 +8158,7 @@
         ],
         "summary": "List enrollment links",
         "x-mint": {
-          "href": "/api-reference/platform/list-enrollment-links",
+          "href": "/reference/platform/list-enrollment-links",
           "metadata": {
             "title": "List enrollment links",
             "sidebarTitle": "List enrollment links"
@@ -8588,7 +8245,7 @@
         ],
         "summary": "Create enrollment link",
         "x-mint": {
-          "href": "/api-reference/platform/create-enrollment-link",
+          "href": "/reference/platform/create-enrollment-link",
           "metadata": {
             "title": "Create enrollment link",
             "sidebarTitle": "Create enrollment link"
@@ -8941,14 +8598,14 @@
         }
       }
     },
-    "/applications/{applicationId}/ephemeral-tasks": {
+    "/applications/{applicationId}/ephemeral-goals": {
       "post": {
-        "operationId": "createEphemeralTask",
+        "operationId": "createEphemeralGoal",
         "tags": [
-          "Ephemeral Tasks"
+          "Ephemeral Goals"
         ],
-        "summary": "Create an application-funded ephemeral task",
-        "description": "Creates pseudonymous work without first creating a Darwin agent for the external user. The application remains the accountable principal.",
+        "summary": "Create an application-funded ephemeral goal",
+        "description": "Creates a pseudonymous goal without first creating a Darwin agent for the external user. The application remains the accountable principal.",
         "parameters": [
           {
             "name": "applicationId",
@@ -8975,24 +8632,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateEphemeralTaskRequest"
+                "$ref": "#/components/schemas/CreateEphemeralGoalRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "The new ephemeral task.",
+            "description": "The new ephemeral goal.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "task"
+                    "goal"
                   ],
                   "properties": {
-                    "task": {
-                      "$ref": "#/components/schemas/EphemeralTask"
+                    "goal": {
+                      "$ref": "#/components/schemas/EphemeralGoal"
                     }
                   }
                 }
@@ -9042,13 +8699,13 @@
         }
       }
     },
-    "/applications/{applicationId}/ephemeral-tasks/{taskId}": {
+    "/applications/{applicationId}/ephemeral-goals/{goalId}": {
       "get": {
-        "operationId": "getEphemeralTask",
+        "operationId": "getEphemeralGoal",
         "tags": [
-          "Ephemeral Tasks"
+          "Ephemeral Goals"
         ],
-        "summary": "Get an ephemeral task",
+        "summary": "Get an ephemeral goal",
         "parameters": [
           {
             "name": "applicationId",
@@ -9059,7 +8716,7 @@
             }
           },
           {
-            "name": "taskId",
+            "name": "goalId",
             "in": "path",
             "required": true,
             "schema": {
@@ -9069,17 +8726,17 @@
         ],
         "responses": {
           "200": {
-            "description": "The requested ephemeral task.",
+            "description": "The requested ephemeral goal.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "task"
+                    "goal"
                   ],
                   "properties": {
-                    "task": {
-                      "$ref": "#/components/schemas/EphemeralTask"
+                    "goal": {
+                      "$ref": "#/components/schemas/EphemeralGoal"
                     }
                   }
                 }
@@ -9129,13 +8786,13 @@
         }
       }
     },
-    "/applications/{applicationId}/ephemeral-tasks/{taskId}/casts": {
+    "/applications/{applicationId}/ephemeral-goals/{goalId}/casts": {
       "post": {
-        "operationId": "castEphemeralTask",
+        "operationId": "castEphemeralGoal",
         "tags": [
-          "Ephemeral Tasks"
+          "Ephemeral Goals"
         ],
-        "summary": "Cast an ephemeral task to eligible agents",
+        "summary": "Cast an ephemeral goal to eligible agents",
         "parameters": [
           {
             "name": "applicationId",
@@ -9146,7 +8803,7 @@
             }
           },
           {
-            "name": "taskId",
+            "name": "goalId",
             "in": "path",
             "required": true,
             "schema": {
@@ -9156,17 +8813,17 @@
         ],
         "responses": {
           "201": {
-            "description": "The cast task.",
+            "description": "The cast goal.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "task"
+                    "goal"
                   ],
                   "properties": {
-                    "task": {
-                      "$ref": "#/components/schemas/EphemeralTask"
+                    "goal": {
+                      "$ref": "#/components/schemas/EphemeralGoal"
                     }
                   }
                 }
@@ -9216,13 +8873,13 @@
         }
       }
     },
-    "/applications/{applicationId}/ephemeral-tasks/{taskId}/actions": {
+    "/applications/{applicationId}/ephemeral-goals/{goalId}/actions": {
       "post": {
-        "operationId": "actOnEphemeralTask",
+        "operationId": "actOnEphemeralGoal",
         "tags": [
-          "Ephemeral Tasks"
+          "Ephemeral Goals"
         ],
-        "summary": "Cancel an ephemeral task",
+        "summary": "Cancel an ephemeral goal",
         "parameters": [
           {
             "name": "applicationId",
@@ -9233,7 +8890,7 @@
             }
           },
           {
-            "name": "taskId",
+            "name": "goalId",
             "in": "path",
             "required": true,
             "schema": {
@@ -9246,24 +8903,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EphemeralTaskActionRequest"
+                "$ref": "#/components/schemas/EphemeralGoalActionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The canceled task.",
+            "description": "The canceled goal.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "task"
+                    "goal"
                   ],
                   "properties": {
-                    "task": {
-                      "$ref": "#/components/schemas/EphemeralTask"
+                    "goal": {
+                      "$ref": "#/components/schemas/EphemeralGoal"
                     }
                   }
                 }
@@ -9502,7 +9159,7 @@
         ],
         "summary": "List service accounts",
         "x-mint": {
-          "href": "/api-reference/platform/list-service-accounts",
+          "href": "/reference/platform/list-service-accounts",
           "metadata": {
             "title": "List service accounts",
             "sidebarTitle": "List service accounts"
@@ -9589,7 +9246,7 @@
         ],
         "summary": "Create service account",
         "x-mint": {
-          "href": "/api-reference/platform/create-service-account",
+          "href": "/reference/platform/create-service-account",
           "metadata": {
             "title": "Create service account",
             "sidebarTitle": "Create service account"
@@ -9772,7 +9429,7 @@
         ],
         "summary": "List webhooks",
         "x-mint": {
-          "href": "/api-reference/webhooks/list-application-webhooks",
+          "href": "/reference/webhooks/list-application-webhooks",
           "metadata": {
             "title": "List webhooks",
             "sidebarTitle": "List webhooks"
@@ -9859,7 +9516,7 @@
         ],
         "summary": "Create webhook",
         "x-mint": {
-          "href": "/api-reference/webhooks/create-a-signed-webhook-subscription",
+          "href": "/reference/webhooks/create-a-signed-webhook-subscription",
           "metadata": {
             "title": "Create webhook",
             "sidebarTitle": "Create webhook"
@@ -10042,7 +9699,7 @@
         ],
         "summary": "List deliveries",
         "x-mint": {
-          "href": "/api-reference/webhooks/list-webhook-delivery-attempts",
+          "href": "/reference/webhooks/list-webhook-delivery-attempts",
           "metadata": {
             "title": "List deliveries",
             "sidebarTitle": "List deliveries"
@@ -10149,7 +9806,7 @@
         ],
         "summary": "Retry delivery",
         "x-mint": {
-          "href": "/api-reference/webhooks/retry-a-failed-webhook-delivery",
+          "href": "/reference/webhooks/retry-a-failed-webhook-delivery",
           "metadata": {
             "title": "Retry delivery",
             "sidebarTitle": "Retry delivery"
@@ -10254,203 +9911,6 @@
       }
     },
     "schemas": {
-      "BillingCatalog": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "currency",
-          "product"
-        ],
-        "properties": {
-          "currency": {
-            "type": "string",
-            "enum": [
-              "usd"
-            ]
-          },
-          "product": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "plans",
-              "agentCreditPacks",
-              "marketplaceFeeBps"
-            ],
-            "properties": {
-              "plans": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/ProductPlanCatalogEntry"
-                }
-              },
-              "agentCreditPacks": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AgentCreditPackCatalogEntry"
-                }
-              },
-              "marketplaceFeeBps": {
-                "type": "integer",
-                "minimum": 0,
-                "description": "Buyer-side fee for Darwin network marketplace transactions."
-              }
-            }
-          }
-        }
-      },
-      "ProductPlanCatalogEntry": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "family",
-          "capacity",
-          "interval",
-          "amountMinor",
-          "aiCreditsMonthly",
-          "supplySpendMinorMonthly"
-        ],
-        "properties": {
-          "family": {
-            "type": "string",
-            "enum": [
-              "free",
-              "plus",
-              "business"
-            ]
-          },
-          "capacity": {
-            "type": "string",
-            "enum": [
-              "base",
-              "5x",
-              "10x",
-              "20x"
-            ]
-          },
-          "interval": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "enum": [
-              "monthly",
-              "annual",
-              null
-            ]
-          },
-          "amountMinor": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "aiCreditsMonthly": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "supplySpendMinorMonthly": {
-            "type": "integer",
-            "minimum": 0
-          }
-        }
-      },
-      "AgentCreditPackCatalogEntry": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "credits",
-          "amountMinor",
-          "currency"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "credits": {
-            "type": "integer",
-            "enum": [
-              500,
-              1000,
-              2500,
-              5000,
-              10000,
-              20000,
-              50000,
-              100000
-            ]
-          },
-          "amountMinor": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "currency": {
-            "type": "string",
-            "enum": [
-              "usd"
-            ]
-          }
-        }
-      },
-      "AgentPlan": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "family",
-          "capacity",
-          "interval",
-          "status",
-          "cancelAtPeriodEnd",
-          "currentPeriodStart",
-          "currentPeriodEnd"
-        ],
-        "properties": {
-          "family": {
-            "type": "string",
-            "enum": [
-              "free",
-              "plus",
-              "business",
-              "enterprise"
-            ]
-          },
-          "capacity": {
-            "type": "string",
-            "enum": [
-              "base",
-              "5x",
-              "10x",
-              "20x",
-              "custom"
-            ]
-          },
-          "interval": {
-            "type": "string",
-            "enum": [
-              "monthly",
-              "annual"
-            ]
-          },
-          "status": {
-            "type": "string"
-          },
-          "cancelAtPeriodEnd": {
-            "type": "boolean"
-          },
-          "currentPeriodStart": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "currentPeriodEnd": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          }
-        }
-      },
       "AutoTopupSettings": {
         "type": "object",
         "additionalProperties": false,
@@ -10483,14 +9943,10 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "plan",
           "autoTopup",
           "payoutSchedule"
         ],
         "properties": {
-          "plan": {
-            "$ref": "#/components/schemas/AgentPlan"
-          },
           "autoTopup": {
             "$ref": "#/components/schemas/AutoTopupSettings"
           },
@@ -10498,6 +9954,7 @@
             "type": "string",
             "enum": [
               "manual",
+              "weekly",
               "monthly"
             ]
           }
@@ -10511,6 +9968,7 @@
           "funded",
           "earned",
           "pendingEarned",
+          "reserved",
           "earnedDeficit",
           "spendable",
           "withdrawable"
@@ -10519,7 +9977,7 @@
           "promotional": {
             "type": "integer",
             "minimum": 0,
-            "description": "Plan-granted wallet money. Spendable, nonwithdrawable, and expiring."
+            "description": "Darwin-issued wallet money. Spendable and nonwithdrawable."
           },
           "funded": {
             "type": "integer",
@@ -10536,6 +9994,11 @@
             "minimum": 0,
             "description": "Seller proceeds awaiting settlement."
           },
+          "reserved": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Funds held for approved work."
+          },
           "earnedDeficit": {
             "type": "integer",
             "minimum": 0
@@ -10547,67 +10010,6 @@
           "withdrawable": {
             "type": "integer",
             "minimum": 0
-          }
-        }
-      },
-      "AgentCreditExpiration": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "source",
-          "amount",
-          "expiresAt"
-        ],
-        "properties": {
-          "source": {
-            "type": "string",
-            "enum": [
-              "monthly",
-              "purchased"
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "expiresAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "AgentCreditBalance": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "monthly",
-          "purchased",
-          "reserved",
-          "available",
-          "expirations"
-        ],
-        "properties": {
-          "monthly": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "purchased": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "reserved": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "available": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "expirations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AgentCreditExpiration"
-            }
           }
         }
       },
@@ -10636,7 +10038,6 @@
           "currency",
           "account",
           "wallet",
-          "aiCredits",
           "actions",
           "feePolicy"
         ],
@@ -10653,27 +10054,15 @@
           "wallet": {
             "$ref": "#/components/schemas/AgentWalletBalance"
           },
-          "aiCredits": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AgentCreditBalance"
-              }
-            ],
-            "description": "Agent Credits used for agent skills and compute. API field names retain `aiCredits`."
-          },
           "actions": {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "canBuyAiCredits",
               "canWithdraw",
               "hasPaymentMethod",
               "payoutReady"
             ],
             "properties": {
-              "canBuyAiCredits": {
-                "type": "boolean"
-              },
               "canWithdraw": {
                 "type": "boolean"
               },
@@ -10712,7 +10101,6 @@
         "additionalProperties": false,
         "required": [
           "wallet",
-          "aiCredits",
           "nextCursor"
         ],
         "properties": {
@@ -10752,44 +10140,11 @@
               }
             }
           },
-          "aiCredits": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "id",
-                "kind",
-                "availableDelta",
-                "reservedDelta",
-                "createdAt"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "kind": {
-                  "type": "string"
-                },
-                "availableDelta": {
-                  "type": "integer"
-                },
-                "reservedDelta": {
-                  "type": "integer"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              }
-            }
-          },
           "nextCursor": {
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "wallet",
-              "aiCredits"
+              "wallet"
             ],
             "properties": {
               "wallet": {
@@ -10797,51 +10152,8 @@
                   "string",
                   "null"
                 ]
-              },
-              "aiCredits": {
-                "type": [
-                  "string",
-                  "null"
-                ]
               }
             }
-          }
-        }
-      },
-      "CheckoutRedirect": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "checkoutUrl"
-        ],
-        "properties": {
-          "checkoutUrl": {
-            "type": "string",
-            "format": "uri"
-          }
-        }
-      },
-      "SubscriptionChangeResult": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "checkoutUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "effective": {
-            "type": "string",
-            "enum": [
-              "immediate_pending_webhook",
-              "renewal"
-            ]
-          },
-          "effectiveAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "plan": {
-            "type": "string"
           }
         }
       },
@@ -10999,65 +10311,6 @@
           "url": {
             "type": "string",
             "format": "uri"
-          }
-        }
-      },
-      "AgentSubscriptionRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "family",
-          "capacity",
-          "interval"
-        ],
-        "properties": {
-          "family": {
-            "type": "string",
-            "enum": [
-              "plus",
-              "business"
-            ]
-          },
-          "capacity": {
-            "type": "string",
-            "enum": [
-              "5x",
-              "10x",
-              "20x"
-            ]
-          },
-          "interval": {
-            "type": "string",
-            "enum": [
-              "monthly",
-              "annual"
-            ]
-          },
-          "source": {
-            "type": "string",
-            "maxLength": 100
-          }
-        }
-      },
-      "AgentCreditCheckoutRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "packId"
-        ],
-        "properties": {
-          "packId": {
-            "type": "string",
-            "enum": [
-              "ai-credits-500",
-              "ai-credits-1000",
-              "ai-credits-2500",
-              "ai-credits-5000",
-              "ai-credits-10000",
-              "ai-credits-20000",
-              "ai-credits-50000",
-              "ai-credits-100000"
-            ]
           }
         }
       },
@@ -12218,6 +11471,7 @@
         "type": "object",
         "required": [
           "id",
+          "goalId",
           "agentId",
           "title",
           "intent",
@@ -12235,6 +11489,10 @@
         "properties": {
           "id": {
             "type": "string"
+          },
+          "goalId": {
+            "type": "string",
+            "description": "Canonical Goal identifier. Equal to id."
           },
           "agentId": {
             "type": "string"
@@ -12347,7 +11605,8 @@
             "properties": {
               "taskId": {
                 "type": "string",
-                "description": "Canonical Task identifier. Equal to id during migration."
+                "deprecated": true,
+                "description": "Deprecated compatibility alias for goalId."
               }
             }
           }
@@ -12358,6 +11617,7 @@
         "required": [
           "id",
           "agentId",
+          "goalId",
           "mode",
           "direction",
           "title",
@@ -12380,7 +11640,9 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "deprecated": true,
+            "description": "Deprecated compatibility alias for goalId."
           },
           "goalId": {
             "type": [
@@ -12511,7 +11773,6 @@
         "required": [
           "id",
           "transactionId",
-          "taskId",
           "goalId",
           "dealId",
           "mode",
@@ -12534,13 +11795,13 @@
           "transactionId": {
             "type": "string"
           },
-          "taskId": {
+          "goalId": {
             "type": "string"
           },
-          "goalId": {
+          "taskId": {
             "type": "string",
             "deprecated": true,
-            "description": "Deprecated compatibility alias for taskId."
+            "description": "Deprecated compatibility alias for goalId."
           },
           "dealId": {
             "type": "string"
@@ -12701,6 +11962,7 @@
           "id",
           "outcomeId",
           "sessionId",
+          "goalId",
           "mode",
           "status",
           "canonical",
@@ -12717,19 +11979,19 @@
           "sessionId": {
             "type": "string"
           },
-          "taskId": {
+          "goalId": {
             "type": [
               "string",
               "null"
             ]
           },
-          "goalId": {
+          "taskId": {
             "type": [
               "string",
               "null"
             ],
             "deprecated": true,
-            "description": "Deprecated compatibility alias for taskId."
+            "description": "Deprecated compatibility alias for goalId."
           },
           "dealId": {
             "type": [
@@ -12764,6 +12026,7 @@
           "id",
           "outcomeId",
           "sourcePrincipalType",
+          "goalId",
           "digest",
           "verificationStatus",
           "disputeState",
@@ -12787,11 +12050,19 @@
               "counterparty"
             ]
           },
-          "taskId": {
+          "goalId": {
             "type": [
               "string",
               "null"
             ]
+          },
+          "taskId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "deprecated": true,
+            "description": "Deprecated compatibility alias for goalId."
           },
           "dealId": {
             "type": [
@@ -13442,12 +12713,12 @@
           }
         }
       },
-      "EphemeralTask": {
+      "EphemeralGoal": {
         "type": "object",
         "additionalProperties": true,
         "required": [
           "id",
-          "taskId",
+          "goalId",
           "externalUserReference",
           "accountablePrincipal",
           "mode",
@@ -13459,7 +12730,7 @@
           "id": {
             "type": "string"
           },
-          "taskId": {
+          "goalId": {
             "type": "string"
           },
           "externalUserReference": {
@@ -13576,6 +12847,8 @@
                 "usage:read",
                 "verification:read",
                 "deployment:read",
+                "ephemeral-goals:read",
+                "ephemeral-goals:write",
                 "ephemeral-tasks:read",
                 "ephemeral-tasks:write"
               ]
@@ -14592,13 +13865,13 @@
             "type": "string",
             "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent."
           },
-          "taskId": {
+          "goalId": {
             "type": "string"
           },
-          "goalId": {
+          "taskId": {
             "type": "string",
             "deprecated": true,
-            "description": "Deprecated compatibility alias for taskId."
+            "description": "Deprecated compatibility alias for goalId."
           },
           "mode": {
             "type": "string",
@@ -14919,7 +14192,7 @@
           }
         }
       },
-      "CreateEphemeralTaskRequest": {
+      "CreateEphemeralGoalRequest": {
         "type": "object",
         "required": [
           "externalUserReference",
@@ -14961,7 +14234,7 @@
           }
         }
       },
-      "EphemeralTaskActionRequest": {
+      "EphemeralGoalActionRequest": {
         "type": "object",
         "required": [
           "action"
@@ -15016,6 +14289,8 @@
                 "usage:read",
                 "verification:read",
                 "deployment:read",
+                "ephemeral-goals:read",
+                "ephemeral-goals:write",
                 "ephemeral-tasks:read",
                 "ephemeral-tasks:write"
               ]
@@ -15187,28 +14462,52 @@
         "type": "object",
         "required": [
           "agentId",
-          "aiCredits",
+          "agentUsage",
           "wallet",
-          "activeTasks",
+          "activeGoals",
           "activeDeals"
         ],
         "properties": {
           "agentId": {
             "type": "string"
           },
-          "aiCredits": {
+          "agentUsage": {
             "type": "object",
-            "additionalProperties": {
-              "type": "integer"
+            "required": [
+              "currency",
+              "capturedMinor",
+              "reservedMinor"
+            ],
+            "properties": {
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "usd"
+                ]
+              },
+              "capturedMinor": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "reservedMinor": {
+                "type": "integer",
+                "minimum": 0
+              }
             }
           },
           "wallet": {
             "type": "object",
             "additionalProperties": true
           },
-          "activeTasks": {
+          "activeGoals": {
             "type": "integer",
             "minimum": 0
+          },
+          "activeTasks": {
+            "type": "integer",
+            "minimum": 0,
+            "deprecated": true,
+            "description": "Deprecated compatibility alias for activeGoals."
           },
           "activeDeals": {
             "type": "integer",
@@ -15433,7 +14732,11 @@
           "applicationId",
           "currency",
           "availableAmountMinor",
-          "reservedAmountMinor"
+          "reservedAmountMinor",
+          "operationalAvailableAmountMinor",
+          "operationalReservedAmountMinor",
+          "pendingFeeEarningsMinor",
+          "availableFeeEarningsMinor"
         ],
         "properties": {
           "applicationId": {
@@ -15449,6 +14752,21 @@
           "reservedAmountMinor": {
             "type": "integer",
             "minimum": 0
+          },
+          "operationalAvailableAmountMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "operationalReservedAmountMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pendingFeeEarningsMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "availableFeeEarningsMinor": {
+            "type": "integer"
           }
         }
       },
