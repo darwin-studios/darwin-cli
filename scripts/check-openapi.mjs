@@ -28,7 +28,7 @@ const contract = JSON.parse(await readFile(contractPath, 'utf8'));
 const problems = [];
 const expectedTags = [
   'Account',
-  'Agents',
+  'ais',
   'Permissions',
   'Reputation',
   'Skills',
@@ -56,10 +56,10 @@ const expectedTags = [
 const expectedOperations = [
   ['get', '/account', 'getAccount'],
   ['get', '/account/skills', 'listSkillCatalog'],
-  ['get', '/agents', 'listAgents'],
+  ['get', '/ais', 'listAIs'],
   ['get', '/requests', 'listRequests'],
   ['post', '/requests/{requestId}/actions', 'actOnRequest'],
-  ['post', '/agent/messages', 'createMessage'],
+  ['post', '/ai/messages', 'createMessage'],
   ['get', '/tasks', 'listTasks'],
   ['post', '/tasks', 'createTask'],
   ['post', '/tasks/{id}/publication-requests', 'requestTaskPublication'],
@@ -96,8 +96,8 @@ function checkLocalSchemaReferences(value, location = '#') {
 if (contract.openapi !== '3.1.0') {
   problems.push(`expected OpenAPI 3.1.0, received ${String(contract.openapi)}`);
 }
-if (contract.info?.version !== '1.5.0') {
-  problems.push(`expected Darwin API 1.5.0, received ${String(contract.info?.version)}`);
+if (contract.info?.version !== '1.6.0') {
+  problems.push(`expected Darwin API 1.6.0, received ${String(contract.info?.version)}`);
 }
 if (
   !Array.isArray(contract.servers) ||

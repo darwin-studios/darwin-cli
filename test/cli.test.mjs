@@ -35,9 +35,9 @@ test('prints concise help', () => {
     encoding: 'utf8',
   });
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /darwin agents <list\|get\|create\|update\|activity>/);
-  assert.match(result.stdout, /darwin agents skills/);
-  assert.match(result.stdout, /darwin agents integrations/);
+  assert.match(result.stdout, /darwin ais <list\|get\|create\|update\|activity>/);
+  assert.match(result.stdout, /darwin ais skills/);
+  assert.match(result.stdout, /darwin ais integrations/);
   assert.match(result.stdout, /darwin requests <list\|action>/);
   assert.match(result.stdout, /darwin conversations <send\|list\|create\|get\|message>/);
   assert.match(result.stdout, /darwin goals <list\|get\|create\|update\|action\|publish>/);
@@ -101,7 +101,7 @@ test('stores configuration in the XDG config directory with redacted output', as
 
 test('accepts conversation options without changing command dispatch', async (t) => {
   const server = http.createServer((request, response) => {
-    assert.equal(request.url, '/agent/conversation?limit=7&cursor=next-page');
+    assert.equal(request.url, '/ai/conversation?limit=7&cursor=next-page');
     assert.equal(request.headers.authorization, 'Bearer test-key');
     response.setHeader('Content-Type', 'application/json');
     response.end(JSON.stringify({ messages: [] }));
@@ -193,10 +193,10 @@ test('keeps the task command as an undocumented compatibility alias', async (t) 
   assert.deepEqual(JSON.parse(result.stdout), { task: { taskId: 'task/123', status: 'ACTIVE' } });
 });
 
-test('updates an agent profile with typed flags and structured data', async (t) => {
+test('updates an AI profile with typed flags and structured data', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'PATCH');
-    assert.equal(request.url, '/agents/agent%2F123');
+    assert.equal(request.url, '/ais/agent%2F123');
 
     let body = '';
     request.setEncoding('utf8');
@@ -223,7 +223,7 @@ test('updates an agent profile with typed flags and structured data', async (t) 
       process.execPath,
       [
         'dist/index.js',
-        'agents',
+        'ais',
         'update',
         'agent/123',
         '--description',
@@ -431,14 +431,14 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       '--idempotency-key',
       'create-sealed-session-key',
     ],
-    ['sessions', 'list', '--agent', 'agent/1', '--status', 'pending_provider', '--limit', '4', '--cursor', 'next'],
-    ['sessions', 'invitations', '--agent', 'agent/1', '--limit', '3'],
+    ['sessions', 'list', '--ai', 'agent/1', '--status', 'pending_provider', '--limit', '4', '--cursor', 'next'],
+    ['sessions', 'invitations', '--ai', 'agent/1', '--limit', '3'],
     [
       'sessions',
       'invitation',
       'invitation/1',
       'accept',
-      '--agent',
+      '--ai',
       'agent/1',
       '--idempotency-key',
       'accept-invitation-key',
@@ -448,7 +448,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       'invitation',
       'invitation/2',
       'decline',
-      '--agent',
+      '--ai',
       'agent/1',
       '--idempotency-key',
       'decline-invitation-key',
@@ -550,7 +550,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
           title: 'Coordinate a launch',
           description: 'Coordinate a launch',
         },
-        targetAgentIds: ['agent/2'],
+        targetAIIds: ['agent/2'],
         dataPolicy: {
           contentMode: 'managed',
           learningMode: 'outcomes_only',
@@ -564,7 +564,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       idempotencyKey: 'create-sealed-session-key',
       body: {
         kind: 'direct',
-        targetAgentIds: ['agent/3'],
+        targetAIIds: ['agent/3'],
         dataPolicy: {
           contentMode: 'sealed',
           learningMode: 'outcomes_only',
@@ -574,13 +574,13 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
     },
     {
       method: 'GET',
-      url: '/sessions?agentId=agent%2F1&status=pending_provider&limit=4&cursor=next',
+      url: '/sessions?aiId=agent%2F1&status=pending_provider&limit=4&cursor=next',
       idempotencyKey: undefined,
       body: undefined,
     },
     {
       method: 'GET',
-      url: '/session-invitations?agentId=agent%2F1&limit=3',
+      url: '/session-invitations?aiId=agent%2F1&limit=3',
       idempotencyKey: undefined,
       body: undefined,
     },
@@ -588,13 +588,13 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       method: 'POST',
       url: '/session-invitations/invitation%2F1/actions',
       idempotencyKey: 'accept-invitation-key',
-      body: { action: 'accept', agentId: 'agent/1' },
+      body: { action: 'accept', aiId: 'agent/1' },
     },
     {
       method: 'POST',
       url: '/session-invitations/invitation%2F2/actions',
       idempotencyKey: 'decline-invitation-key',
-      body: { action: 'decline', agentId: 'agent/1' },
+      body: { action: 'decline', aiId: 'agent/1' },
     },
     {
       method: 'GET',
@@ -648,7 +648,7 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
       method: 'POST',
       url: '/sessions/session%2F1/resolutions',
       idempotencyKey: 'replan-key',
-      body: { limit: 12, excludeAgentIds: ['agent/9'] },
+      body: { limit: 12, excludeAIIds: ['agent/9'] },
     },
     {
       method: 'POST',

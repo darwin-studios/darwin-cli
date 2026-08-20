@@ -252,8 +252,8 @@ function textArgument(args: string[], start: number, valueOptions: readonly stri
   return words.join(' ').trim();
 }
 
-function agentQuery(args: string[]) {
-  return { agentId: option(args, '--agent') };
+function aiQuery(args: string[]) {
+  return { aiId: option(args, '--ai') };
 }
 
 function mergeFields(body: Record<string, unknown>, fields: Array<[key: string, value: unknown]>) {
@@ -321,9 +321,9 @@ Usage:
   darwin config show
   darwin logout
   darwin account show
-  darwin agents <list|get|create|update|activity> [...]
-  darwin agents skills
-  darwin agents integrations
+  darwin ais <list|get|create|update|activity> [...]
+  darwin ais skills
+  darwin ais integrations
   darwin requests <list|action> [...]
   darwin conversations <send|list|create|get|message> [...]
   darwin goals <list|get|create|update|action|publish> [...]
@@ -332,7 +332,7 @@ Usage:
   darwin outcomes <list|get|evidence> [...]
 
 Options:
-  --agent <id>     Explicitly target an accessible agent
+  --ai <id>     Explicitly target an accessible AI
   --data <json>    Supply or extend a JSON request body
   -h, --help       Show help
   -v, --version    Show the installed version
@@ -347,6 +347,14 @@ https://docs.darwin.so/cli
 
 async function main() {
   let args = process.argv.slice(2);
+  if (args[0] === 'agents') args[0] = 'ais';
+  if (args[0] === 'agent') args[0] = 'ai';
+  if ((args[0] === 'connect' || args[0] === 'applications') && args[1] === 'agents') args[1] = 'ais';
+  if ((args[0] === 'connect' || args[0] === 'applications') && args[1] === 'link-agent') args[1] = 'link-ai';
+  if ((args[0] === 'connect' || args[0] === 'applications') && args[1] === 'unlink-agent') args[1] = 'unlink-ai';
+  args = args.map((value) =>
+    value === '--agent' ? '--ai' : value === '--exclude-agent' ? '--exclude-ai' : value,
+  );
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     help();
     return;
@@ -383,14 +391,14 @@ async function main() {
 
   if (resource === 'account') {
     result = await request(auth.apiKey, auth.baseUrl, '/account');
-  } else if (resource === 'agents' && operation === 'skills') {
+  } else if (resource === 'ais' && operation === 'skills') {
     result = await request(auth.apiKey, auth.baseUrl, '/account/skills');
-  } else if (resource === 'agents' && operation === 'integrations') {
+  } else if (resource === 'ais' && operation === 'integrations') {
     result = await request(auth.apiKey, auth.baseUrl, '/integrations');
   } else if (resource === 'requests' && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, '/requests', {
       query: {
-        ...agentQuery(args),
+        ...aiQuery(args),
         limit: integerOption(args, '--limit'),
       },
     });
@@ -407,44 +415,44 @@ async function main() {
         method: 'POST',
         body: {
           action,
-          ...(option(args, '--agent') ? { agentId: option(args, '--agent') } : {}),
+          ...(option(args, '--ai') ? { aiId: option(args, '--ai') } : {}),
         },
         headers: idempotencyHeaders(args),
       },
     );
   } else if (
-    (resource === 'agent' && operation === 'message') ||
+    (resource === 'ai' && operation === 'message') ||
     (resource === 'conversations' && operation === 'send')
   ) {
-    const content = textArgument(args, 2, ['--agent', '--request-id']);
+    const content = textArgument(args, 2, ['--ai', '--request-id']);
     if (!content) {
       throw new Error('Pass a message after "darwin conversations send".');
     }
-    result = await request(auth.apiKey, auth.baseUrl, '/agent/messages', {
+    result = await request(auth.apiKey, auth.baseUrl, '/ai/messages', {
       method: 'POST',
       body: {
         content,
-        agentId: option(args, '--agent'),
+        aiId: option(args, '--ai'),
         requestId: option(args, '--request-id'),
       },
     });
   } else if (resource === 'conversation') {
-    result = await request(auth.apiKey, auth.baseUrl, '/agent/conversation', {
+    result = await request(auth.apiKey, auth.baseUrl, '/ai/conversation', {
       query: {
-        ...agentQuery(args),
+        ...aiQuery(args),
         limit: integerOption(args, '--limit'),
         cursor: option(args, '--cursor'),
       },
     });
-  } else if (resource === 'agents' && operation === 'list') {
-    result = await request(auth.apiKey, auth.baseUrl, '/agents');
-  } else if (resource === 'agents' && operation === 'get') {
+  } else if (resource === 'ais' && operation === 'list') {
+    result = await request(auth.apiKey, auth.baseUrl, '/ais');
+  } else if (resource === 'ais' && operation === 'get') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents get".')}`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais get".')}`,
     );
-  } else if (resource === 'agents' && operation === 'create') {
+  } else if (resource === 'ais' && operation === 'create') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['handle', option(args, '--handle')],
@@ -453,10 +461,10 @@ async function main() {
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
     ]);
     if (typeof body.name !== 'string' || !body.name.trim()) {
-      throw new Error('Pass an agent name with --name or in --data.');
+      throw new Error('Pass an AI name with --name or in --data.');
     }
-    result = await request(auth.apiKey, auth.baseUrl, '/agents', { method: 'POST', body });
-  } else if (resource === 'agents' && operation === 'update') {
+    result = await request(auth.apiKey, auth.baseUrl, '/ais', { method: 'POST', body });
+  } else if (resource === 'ais' && operation === 'update') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['handle', option(args, '--handle')],
@@ -470,14 +478,14 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents update".')}`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais update".')}`,
       { method: 'PATCH', body },
     );
-  } else if (resource === 'agents' && operation === 'activity') {
+  } else if (resource === 'ais' && operation === 'activity') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents activity".')}/activity`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais activity".')}/activity`,
       {
         query: {
           limit: integerOption(args, '--limit'),
@@ -485,17 +493,17 @@ async function main() {
         },
       },
     );
-  } else if (resource === 'agents' && operation === 'members') {
+  } else if (resource === 'ais' && operation === 'members') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents members".')}/members`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais members".')}/members`,
     );
-  } else if (resource === 'agents' && operation === 'invite') {
+  } else if (resource === 'ais' && operation === 'invite') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents invite".')}/invitations`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais invite".')}/invitations`,
       {
         method: 'POST',
         body: {
@@ -504,43 +512,43 @@ async function main() {
         },
       },
     );
-  } else if (resource === 'agents' && operation === 'invitations') {
+  } else if (resource === 'ais' && operation === 'invitations') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents invitations".')}/invitations`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais invitations".')}/invitations`,
     );
-  } else if (resource === 'agents' && operation === 'revoke-invitation') {
+  } else if (resource === 'ais' && operation === 'revoke-invitation') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID.')}/invitations/${id(args[3], 'Pass an invitation ID.')}`,
+      `/ais/${id(args[2], 'Pass an AI ID.')}/invitations/${id(args[3], 'Pass an invitation ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'agents' && operation === 'update-member') {
+  } else if (resource === 'ais' && operation === 'update-member') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID.')}/members/${id(args[3], 'Pass a membership ID.')}`,
+      `/ais/${id(args[2], 'Pass an AI ID.')}/members/${id(args[3], 'Pass a membership ID.')}`,
       {
         method: 'PATCH',
         body: { role: requiredOption(args, '--role') },
       },
     );
-  } else if (resource === 'agents' && operation === 'remove-member') {
+  } else if (resource === 'ais' && operation === 'remove-member') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID.')}/members/${id(args[3], 'Pass a membership ID.')}`,
+      `/ais/${id(args[2], 'Pass an AI ID.')}/members/${id(args[3], 'Pass a membership ID.')}`,
       { method: 'DELETE' },
     );
-  } else if (resource === 'agents' && operation === 'policies') {
+  } else if (resource === 'ais' && operation === 'policies') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents policies".')}/access-policies`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais policies".')}/access-policies`,
     );
-  } else if (resource === 'agents' && operation === 'create-policy') {
+  } else if (resource === 'ais' && operation === 'create-policy') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
@@ -549,11 +557,11 @@ async function main() {
     if (typeof body.name !== 'string' || typeof body.visibility !== 'string') {
       throw new Error('Pass --name and --visibility, or provide both in --data.');
     }
-    result = await request(auth.apiKey, auth.baseUrl, `/agents/${id(args[2], 'Pass an agent ID.')}/access-policies`, {
+    result = await request(auth.apiKey, auth.baseUrl, `/ais/${id(args[2], 'Pass an AI ID.')}/access-policies`, {
       method: 'POST',
       body,
     });
-  } else if (resource === 'agents' && operation === 'update-policy') {
+  } else if (resource === 'ais' && operation === 'update-policy') {
     const body = mergeFields(dataOption(args), [
       ['name', option(args, '--name')],
       ['visibility', enumOption(args, '--visibility', ['PUBLIC', 'RESTRICTED', 'PRIVATE'])],
@@ -563,20 +571,20 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID.')}/access-policies/${id(args[3], 'Pass a policy ID.')}`,
+      `/ais/${id(args[2], 'Pass an AI ID.')}/access-policies/${id(args[3], 'Pass a policy ID.')}`,
       { method: 'PATCH', body },
     );
-  } else if (resource === 'agents' && operation === 'conversations') {
+  } else if (resource === 'ais' && operation === 'conversations') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents conversations".')}/conversations`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais conversations".')}/conversations`,
     );
-  } else if (resource === 'agents' && operation === 'create-conversation') {
+  } else if (resource === 'ais' && operation === 'create-conversation') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(args[2], 'Pass an agent ID after "darwin agents create-conversation".')}/conversations`,
+      `/ais/${id(args[2], 'Pass an AI ID after "darwin ais create-conversation".')}/conversations`,
       { method: 'POST' },
     );
   } else if (resource === 'conversations' && operation === 'get') {
@@ -604,14 +612,14 @@ async function main() {
       },
     );
   } else if (resource === 'conversations' && (operation === 'list' || operation === 'create')) {
-    const path = `/agents/${id(args[2], `Pass an agent ID after "darwin conversations ${operation}".`)}/conversations`;
+    const path = `/ais/${id(args[2], `Pass an AI ID after "darwin conversations ${operation}".`)}/conversations`;
     result = await request(auth.apiKey, auth.baseUrl, path, {
       method: operation === 'create' ? 'POST' : 'GET',
     });
   } else if ((resource === 'tasks' || resource === 'goals') && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, `/${resource}`, {
       query: {
-        ...agentQuery(args),
+        ...aiQuery(args),
         mode: enumOption(args, '--mode', ['BUY', 'SELL', 'CHAT']),
       },
     });
@@ -620,11 +628,11 @@ async function main() {
       auth.apiKey,
       auth.baseUrl,
       `/${resource}/${id(args[2], `Pass a goal ID after "darwin ${resource} get".`)}`,
-      { query: agentQuery(args) },
+      { query: aiQuery(args) },
     );
   } else if ((resource === 'tasks' || resource === 'goals') && operation === 'create') {
     const body = mergeFields(dataOption(args), [
-      ['agentId', option(args, '--agent')],
+      ['aiId', option(args, '--ai')],
       ['intent', option(args, '--intent')],
       ['title', option(args, '--title')],
       ['kind', option(args, '--kind')?.toUpperCase()],
@@ -679,7 +687,7 @@ async function main() {
       { method: 'POST', body: dataOption(args) },
     );
   } else if (resource === 'deals' && operation === 'list') {
-    result = await request(auth.apiKey, auth.baseUrl, '/deals', { query: agentQuery(args) });
+    result = await request(auth.apiKey, auth.baseUrl, '/deals', { query: aiQuery(args) });
   } else if (resource === 'deals' && operation === 'get') {
     result = await request(
       auth.apiKey,
@@ -688,7 +696,7 @@ async function main() {
     );
   } else if (resource === 'deals' && operation === 'create') {
     const body = mergeFields(dataOption(args), [
-      ['agentId', option(args, '--agent')],
+      ['aiId', option(args, '--ai')],
       ['mode', enumOption(args, '--mode', ['BUY', 'SELL'])],
       ['direction', enumOption(args, '--direction', ['DEMAND', 'SUPPLY'])],
       ['title', option(args, '--title')],
@@ -730,13 +738,13 @@ async function main() {
       `/deals/${id(args[2], 'Pass a deal ID after "darwin deals payments".')}/payments`,
     );
   } else if (resource === 'transactions' && operation === 'list') {
-    result = await request(auth.apiKey, auth.baseUrl, '/transactions', { query: agentQuery(args) });
+    result = await request(auth.apiKey, auth.baseUrl, '/transactions', { query: aiQuery(args) });
   } else if (resource === 'transactions' && operation === 'get') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
       `/transactions/${id(args[2], 'Pass a transaction ID after "darwin transactions get".')}`,
-      { query: agentQuery(args) },
+      { query: aiQuery(args) },
     );
   } else if (resource === 'transactions' && operation === 'action') {
     const action = args[3]?.toUpperCase();
@@ -754,7 +762,7 @@ async function main() {
       { method: 'POST', body, headers: idempotencyHeaders(args) },
     );
   } else if (resource === 'outcomes' && operation === 'list') {
-    result = await request(auth.apiKey, auth.baseUrl, '/outcomes', { query: agentQuery(args) });
+    result = await request(auth.apiKey, auth.baseUrl, '/outcomes', { query: aiQuery(args) });
   } else if (resource === 'outcomes' && operation === 'get') {
     result = await request(
       auth.apiKey,
@@ -777,7 +785,7 @@ async function main() {
   } else if (resource === 'sessions' && operation === 'list') {
     result = await request(auth.apiKey, auth.baseUrl, '/sessions', {
       query: {
-        agentId: option(args, '--agent'),
+        aiId: option(args, '--ai'),
         status: lowerEnumOption(args, '--status', [
           'pending_provider',
           'planning',
@@ -793,7 +801,7 @@ async function main() {
   } else if (resource === 'sessions' && operation === 'invitations') {
     result = await request(auth.apiKey, auth.baseUrl, '/session-invitations', {
       query: {
-        agentId: option(args, '--agent'),
+        aiId: option(args, '--ai'),
         limit: integerOption(args, '--limit'),
       },
     });
@@ -810,7 +818,7 @@ async function main() {
         method: 'POST',
         body: {
           action,
-          ...(option(args, '--agent') ? { agentId: option(args, '--agent') } : {}),
+          ...(option(args, '--ai') ? { aiId: option(args, '--ai') } : {}),
         },
         headers: idempotencyHeaders(args),
       },
@@ -840,7 +848,7 @@ async function main() {
     };
   } else if (resource === 'sessions' && operation === 'create') {
     const body = mergeFields(dataOption(args), [
-      ['agentId', option(args, '--agent')],
+      ['aiId', option(args, '--ai')],
       ['kind', lowerEnumOption(args, '--kind', ['direct', 'discovery', 'buy', 'sell', 'coordination'])],
       ['goalId', option(args, '--goal')],
       ['conversationId', option(args, '--conversation')],
@@ -866,8 +874,8 @@ async function main() {
         description,
       };
     }
-    const targetAgentIds = repeatedOption(args, '--target');
-    if (targetAgentIds.length > 0) body.targetAgentIds = targetAgentIds;
+    const targetAIIds = repeatedOption(args, '--target');
+    if (targetAIIds.length > 0) body.targetAIIds = targetAIIds;
 
     const descriptor = option(args, '--discovery-descriptor');
     if (descriptor !== undefined) {
@@ -994,8 +1002,8 @@ async function main() {
     const body = dataOption(args);
     const limit = integerOption(args, '--limit');
     if (limit !== undefined) body.limit = limit;
-    const excludeAgentIds = repeatedOption(args, '--exclude-agent');
-    if (excludeAgentIds.length > 0) body.excludeAgentIds = excludeAgentIds;
+    const excludeAIIds = repeatedOption(args, '--exclude-ai');
+    if (excludeAIIds.length > 0) body.excludeAIIds = excludeAIIds;
     result = await request(
       auth.apiKey,
       auth.baseUrl,
@@ -1125,19 +1133,19 @@ async function main() {
       { method: 'POST', body, headers: idempotencyHeaders(args) },
     );
   } else if (resource === 'directory' && operation === 'search') {
-    result = await request(auth.apiKey, auth.baseUrl, '/directory/agents', {
+    result = await request(auth.apiKey, auth.baseUrl, '/directory/ais', {
       query: {
         query: textArgument(args, 2, ['--limit']) || undefined,
         limit: integerOption(args, '--limit'),
       },
     });
   } else if (resource === 'directory' && operation === 'get') {
-    result = await request(auth.apiKey, auth.baseUrl, `/directory/agents/${id(args[2], 'Pass a directory agent ID.')}`);
+    result = await request(auth.apiKey, auth.baseUrl, `/directory/ais/${id(args[2], 'Pass a directory AI ID.')}`);
   } else if (resource === 'offers' && operation === 'list') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(option(args, '--agent'), 'Pass an agent ID with --agent.')}/offers`,
+      `/ais/${id(option(args, '--ai'), 'Pass an AI ID with --ai.')}/offers`,
     );
   } else if (resource === 'offers' && operation === 'get') {
     result = await request(
@@ -1158,7 +1166,7 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(option(args, '--agent'), 'Pass an agent ID with --agent.')}/offers`,
+      `/ais/${id(option(args, '--ai'), 'Pass an AI ID with --ai.')}/offers`,
       { method: 'POST', body },
     );
   } else if (resource === 'offers' && operation === 'update') {
@@ -1188,13 +1196,13 @@ async function main() {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(option(args, '--agent'), 'Pass an agent ID with --agent.')}/payment-account`,
+      `/ais/${id(option(args, '--ai'), 'Pass an AI ID with --ai.')}/payment-account`,
     );
   } else if (resource === 'payments' && operation === 'list') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/agents/${id(option(args, '--agent'), 'Pass an agent ID with --agent.')}/payments`,
+      `/ais/${id(option(args, '--ai'), 'Pass an AI ID with --ai.')}/payments`,
     );
   } else if (resource === 'payments' && operation === 'get') {
     result = await request(
@@ -1237,26 +1245,26 @@ async function main() {
     result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}`, {
       method: 'DELETE',
     });
-  } else if (resource === 'connect' && operation === 'agents') {
-    result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}/agents`);
-  } else if (resource === 'connect' && operation === 'link-agent') {
+  } else if (resource === 'connect' && operation === 'ais') {
+    result = await request(auth.apiKey, auth.baseUrl, `/applications/${id(args[2], 'Pass an application ID.')}/ais`);
+  } else if (resource === 'connect' && operation === 'link-ai') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/applications/${id(args[2], 'Pass an application ID.')}/agents`,
+      `/applications/${id(args[2], 'Pass an application ID.')}/ais`,
       {
         method: 'POST',
         body: {
-          agentId: requiredOption(args, '--agent'),
+          aiId: requiredOption(args, '--ai'),
           role: option(args, '--role'),
         },
       },
     );
-  } else if (resource === 'connect' && operation === 'unlink-agent') {
+  } else if (resource === 'connect' && operation === 'unlink-ai') {
     result = await request(
       auth.apiKey,
       auth.baseUrl,
-      `/applications/${id(args[2], 'Pass an application ID.')}/agents/${id(args[3], 'Pass an agent ID.')}`,
+      `/applications/${id(args[2], 'Pass an application ID.')}/ais/${id(args[3], 'Pass an AI ID.')}`,
       { method: 'DELETE' },
     );
   } else if (resource === 'connect' && operation === 'enrollments') {
@@ -1360,7 +1368,7 @@ async function main() {
     }
     const path = args[2]?.trim();
     if (!path || path.includes('://')) {
-      throw new Error('Pass a relative API path, such as /agents.');
+      throw new Error('Pass a relative API path, such as /ais.');
     }
     const body = dataOption(args);
     result = await request(auth.apiKey, auth.baseUrl, path, {

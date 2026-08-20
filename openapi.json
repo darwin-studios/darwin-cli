@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Darwin API",
-    "version": "1.5.0",
-    "description": "Use the Product API to control your own Darwin agents and the Connect API to embed Darwin identity, linking, app-funded work, and webhooks in another product. Both surfaces share Goals, Conversations, Deals, Transactions, and Outcomes. Tasks remain a deprecated compatibility alias inside /api/v1.",
+    "version": "1.6.0",
+    "description": "Use the Product API to control your own Darwin AIs and the Connect API to embed Darwin identity, linking, app-funded work, and webhooks in another product. Both surfaces share Goals, Conversations, Deals, Transactions, and Outcomes. Tasks remain a deprecated compatibility alias inside /api/v1.",
     "contact": {
       "name": "Darwin",
       "url": "https://docs.darwin.so"
@@ -18,15 +18,16 @@
   "tags": [
     {
       "name": "Account",
-      "description": "Inspect the authenticated Darwin account and its agent inventory."
+      "description": "Inspect the authenticated Darwin account and its AI inventory."
     },
     {
-      "name": "Agents",
-      "description": "Manage canonical personal and business agent identities."
+      "name": "ais",
+      "description": "Manage canonical personal and business AI identities.",
+      "x-displayName": "AIs"
     },
     {
       "name": "Permissions",
-      "description": "Inspect the visibility and access policies applied to an agent."
+      "description": "Inspect the visibility and access policies applied to an AI."
     },
     {
       "name": "Reputation",
@@ -34,7 +35,7 @@
     },
     {
       "name": "Skills",
-      "description": "Inspect and configure versioned agent skills."
+      "description": "Inspect and configure versioned AI skills."
     },
     {
       "name": "Integrations",
@@ -46,11 +47,11 @@
     },
     {
       "name": "Notifications",
-      "description": "Read the notification policy effective for an agent."
+      "description": "Read the notification policy effective for an AI."
     },
     {
       "name": "Usage",
-      "description": "Read sanitized Agent Wallet, dollar-denominated usage, goal, and deal projections."
+      "description": "Read sanitized AI Wallet, dollar-denominated usage, goal, and deal projections."
     },
     {
       "name": "Verification",
@@ -70,11 +71,11 @@
     },
     {
       "name": "Conversations",
-      "description": "Start conversations and exchange messages with an account’s agents."
+      "description": "Start conversations and exchange messages with an account’s AIs."
     },
     {
       "name": "Goals",
-      "description": "Create and manage the durable outcomes an agent pursues across buy, sell, and chat."
+      "description": "Create and manage the durable outcomes an AI pursues across buy, sell, and chat."
     },
     {
       "name": "Tasks",
@@ -94,11 +95,11 @@
     },
     {
       "name": "Billing",
-      "description": "Inspect the Agent Wallet, add funds, configure automatic top-ups, and manage eligible earned-fund payouts."
+      "description": "Inspect the AI Wallet, add funds, configure automatic top-ups, and manage eligible earned-fund payouts."
     },
     {
       "name": "Applications",
-      "description": "Manage external applications, linked agents, service accounts, and wallets."
+      "description": "Manage external applications, linked AIs, service accounts, and wallets."
     },
     {
       "name": "Enrollment",
@@ -106,7 +107,7 @@
     },
     {
       "name": "Ephemeral Goals",
-      "description": "Create application-funded goals without provisioning an end-user agent."
+      "description": "Create application-funded goals without provisioning an end-user AI."
     },
     {
       "name": "Webhooks",
@@ -131,7 +132,7 @@
         ],
         "summary": "Get account",
         "x-mint": {
-          "href": "/reference/account/get-the-account-and-agent-inventory",
+          "href": "/reference/account/get-the-account-and-AI-inventory",
           "metadata": {
             "title": "Get account",
             "sidebarTitle": "Get account"
@@ -140,7 +141,7 @@
         "description": "Requires a user API key.",
         "responses": {
           "200": {
-            "description": "The authenticated account and its accessible agents.",
+            "description": "The authenticated account and its accessible AIs.",
             "content": {
               "application/json": {
                 "schema": {
@@ -196,7 +197,7 @@
       "get": {
         "operationId": "listSkillCatalog",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "List available skills",
         "x-mint": {
@@ -206,10 +207,10 @@
             "sidebarTitle": "List available skills"
           }
         },
-        "description": "Lists skills that can be assigned to a personal or business agent. Assigned skills are managed on the agent.",
+        "description": "Lists skills that can be assigned to a personal or business AI. Assigned skills are managed on the AI.",
         "responses": {
           "200": {
-            "description": "The available agent skill catalog.",
+            "description": "The available AI skill catalog.",
             "content": {
               "application/json": {
                 "schema": {
@@ -221,7 +222,7 @@
                     "skills": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/AgentSkillCatalogEntry"
+                        "$ref": "#/components/schemas/AISkillCatalogEntry"
                       }
                     }
                   }
@@ -269,38 +270,39 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents": {
+    "/ais": {
       "get": {
-        "operationId": "listAgents",
+        "operationId": "listAIs",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "List agents",
+        "summary": "List AIs",
         "x-mint": {
-          "href": "/reference/agents/list-accessible-agents",
+          "href": "/reference/ais/list-accessible-AIs",
           "metadata": {
-            "title": "List agents",
-            "sidebarTitle": "List agents"
+            "title": "List AIs",
+            "sidebarTitle": "List AIs"
           }
         },
         "responses": {
           "200": {
-            "description": "Accessible personal and business agents.",
+            "description": "Accessible personal and business AIs.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agents"
+                    "ais"
                   ],
                   "properties": {
-                    "agents": {
+                    "ais": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Agent"
+                        "$ref": "#/components/schemas/AI"
                       }
                     }
                   }
@@ -348,45 +350,46 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "post": {
-        "operationId": "createAgent",
+        "operationId": "createAI",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Create agent",
+        "summary": "Create AI",
         "x-mint": {
-          "href": "/reference/agents/create-a-business-agent",
+          "href": "/reference/ais/create-a-business-AI",
           "metadata": {
-            "title": "Create agent",
-            "sidebarTitle": "Create agent"
+            "title": "Create AI",
+            "sidebarTitle": "Create AI"
           }
         },
-        "description": "Every Darwin account already owns exactly one personal agent. This endpoint creates an additional business agent. A verified phone number may own up to three business agents.",
+        "description": "Every Darwin account already owns exactly one personal AI. This endpoint creates an additional business AI. A verified phone number may own up to three business AIs.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentRequest"
+                "$ref": "#/components/schemas/CreateAIRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "The created business agent.",
+            "description": "The created business AI.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agent"
+                    "ai"
                   ],
                   "properties": {
-                    "agent": {
-                      "$ref": "#/components/schemas/Agent"
+                    "ai": {
+                      "$ref": "#/components/schemas/AI"
                     }
                   }
                 }
@@ -433,19 +436,20 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}": {
+    "/ais/{aiId}": {
       "get": {
-        "operationId": "getAgent",
+        "operationId": "getAI",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Get an agent",
+        "summary": "Get an AI",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -455,17 +459,17 @@
         ],
         "responses": {
           "200": {
-            "description": "The requested agent.",
+            "description": "The requested AI.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agent"
+                    "ai"
                   ],
                   "properties": {
-                    "agent": {
-                      "$ref": "#/components/schemas/Agent"
+                    "ai": {
+                      "$ref": "#/components/schemas/AI"
                     }
                   }
                 }
@@ -512,24 +516,25 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "patch": {
-        "operationId": "updateAgent",
+        "operationId": "updateAI",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Update agent",
+        "summary": "Update AI",
         "x-mint": {
-          "href": "/reference/agents/update-an-agent-profile",
+          "href": "/reference/ais/update-an-AI-profile",
           "metadata": {
-            "title": "Update agent",
-            "sidebarTitle": "Update agent"
+            "title": "Update AI",
+            "sidebarTitle": "Update AI"
           }
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -542,24 +547,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAgentRequest"
+                "$ref": "#/components/schemas/UpdateAIRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The updated agent.",
+            "description": "The updated AI.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agent"
+                    "ai"
                   ],
                   "properties": {
-                    "agent": {
-                      "$ref": "#/components/schemas/Agent"
+                    "ai": {
+                      "$ref": "#/components/schemas/AI"
                     }
                   }
                 }
@@ -606,12 +611,13 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/reputation": {
+    "/ais/{aiId}/reputation": {
       "get": {
-        "operationId": "getAgentReputation",
+        "operationId": "getAIReputation",
         "tags": [
           "Reputation"
         ],
@@ -619,7 +625,7 @@
         "description": "Returns a public tier and verified reliability metrics. Private events, detector reasons, evidence, disputes, and appeals are never included.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -629,7 +635,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The agent reputation projection.",
+            "description": "The AI reputation projection.",
             "content": {
               "application/json": {
                 "schema": {
@@ -639,7 +645,7 @@
                   ],
                   "properties": {
                     "reputation": {
-                      "$ref": "#/components/schemas/AgentReputation"
+                      "$ref": "#/components/schemas/AIReputation"
                     }
                   }
                 }
@@ -689,16 +695,16 @@
         }
       }
     },
-    "/agents/{agentId}/permissions": {
+    "/ais/{aiId}/permissions": {
       "get": {
-        "operationId": "getAgentPermissions",
+        "operationId": "getAIPermissions",
         "tags": [
           "Permissions"
         ],
-        "summary": "Get agent permissions",
+        "summary": "Get AI permissions",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -718,7 +724,7 @@
                   ],
                   "properties": {
                     "permissions": {
-                      "$ref": "#/components/schemas/AgentPermissions"
+                      "$ref": "#/components/schemas/AIPermissions"
                     }
                   }
                 }
@@ -768,16 +774,16 @@
         }
       }
     },
-    "/agents/{agentId}/notifications": {
+    "/ais/{aiId}/notifications": {
       "get": {
-        "operationId": "getAgentNotifications",
+        "operationId": "getAINotifications",
         "tags": [
           "Notifications"
         ],
         "summary": "Get notification preferences",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -791,7 +797,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentNotifications"
+                  "$ref": "#/components/schemas/AINotifications"
                 }
               }
             }
@@ -839,17 +845,17 @@
         }
       }
     },
-    "/agents/{agentId}/usage": {
+    "/ais/{aiId}/usage": {
       "get": {
-        "operationId": "getAgentUsage",
+        "operationId": "getAIUsage",
         "tags": [
           "Usage"
         ],
-        "summary": "Get agent usage",
+        "summary": "Get AI usage",
         "description": "Separates available and reserved balances. It does not expose provider billing identifiers.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -869,7 +875,7 @@
                   ],
                   "properties": {
                     "usage": {
-                      "$ref": "#/components/schemas/AgentUsage"
+                      "$ref": "#/components/schemas/AIUsage"
                     }
                   }
                 }
@@ -919,16 +925,16 @@
         }
       }
     },
-    "/agents/{agentId}/verification": {
+    "/ais/{aiId}/verification": {
       "get": {
-        "operationId": "getAgentVerification",
+        "operationId": "getAIVerification",
         "tags": [
           "Verification"
         ],
         "summary": "Get verification status",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -948,7 +954,7 @@
                   ],
                   "properties": {
                     "verification": {
-                      "$ref": "#/components/schemas/AgentVerification"
+                      "$ref": "#/components/schemas/AIVerification"
                     }
                   }
                 }
@@ -998,16 +1004,16 @@
         }
       }
     },
-    "/agents/{agentId}/deployment": {
+    "/ais/{aiId}/deployment": {
       "get": {
-        "operationId": "getAgentDeployment",
+        "operationId": "getAIDeployment",
         "tags": [
           "Deployment"
         ],
         "summary": "Get deployment status",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1027,7 +1033,7 @@
                   ],
                   "properties": {
                     "deployment": {
-                      "$ref": "#/components/schemas/AgentDeployment"
+                      "$ref": "#/components/schemas/AIDeployment"
                     }
                   }
                 }
@@ -1077,9 +1083,9 @@
         }
       }
     },
-    "/agents/{agentId}/deployment-requests": {
+    "/ais/{aiId}/deployment-requests": {
       "post": {
-        "operationId": "createAgentDeploymentRequest",
+        "operationId": "createAIDeploymentRequest",
         "tags": [
           "Deployment"
         ],
@@ -1087,7 +1093,7 @@
         "description": "Owner credentials only. This creates a reviewable request and never mutates infrastructure directly.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1111,7 +1117,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentDeploymentRequest"
+                "$ref": "#/components/schemas/CreateAIDeploymentRequest"
               }
             }
           }
@@ -1128,7 +1134,7 @@
                   ],
                   "properties": {
                     "deploymentRequest": {
-                      "$ref": "#/components/schemas/AgentDeploymentRequest"
+                      "$ref": "#/components/schemas/AIDeploymentRequest"
                     }
                   }
                 }
@@ -1178,16 +1184,16 @@
         }
       }
     },
-    "/agents/{agentId}/integrations": {
+    "/ais/{aiId}/integrations": {
       "get": {
-        "operationId": "getAgentIntegrations",
+        "operationId": "getAIIntegrations",
         "tags": [
           "Integrations"
         ],
         "summary": "List integration capabilities",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1249,16 +1255,16 @@
         }
       }
     },
-    "/agents/{agentId}/connections": {
+    "/ais/{aiId}/connections": {
       "get": {
-        "operationId": "listAgentConnections",
+        "operationId": "listAIConnections",
         "tags": [
           "Connections"
         ],
         "summary": "List authorized connections",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1331,7 +1337,7 @@
         }
       }
     },
-    "/agents/{agentId}/connections/authorization-sessions": {
+    "/ais/{aiId}/connections/authorization-sessions": {
       "post": {
         "operationId": "createConnectionAuthorizationSession",
         "tags": [
@@ -1341,7 +1347,7 @@
         "description": "Owner credentials only. Darwin hosts the provider OAuth flow and never returns provider credentials.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1413,7 +1419,7 @@
         }
       }
     },
-    "/agents/{agentId}/connections/authorization-sessions/complete": {
+    "/ais/{aiId}/connections/authorization-sessions/complete": {
       "post": {
         "operationId": "completeConnectionAuthorizationSession",
         "tags": [
@@ -1422,7 +1428,7 @@
         "summary": "Complete connection authorization",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1494,7 +1500,7 @@
         }
       }
     },
-    "/agents/{agentId}/connections/{connectionId}/grants/{toolkit}": {
+    "/ais/{aiId}/connections/{connectionId}/grants/{toolkit}": {
       "delete": {
         "operationId": "disableConnectionGrant",
         "tags": [
@@ -1504,7 +1510,7 @@
         "description": "Owner credentials only. This disables Darwin access without claiming the provider revoked one scope from a cumulative token.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1582,9 +1588,9 @@
         }
       }
     },
-    "/agents/{agentId}/connections/{connectionId}": {
+    "/ais/{aiId}/connections/{connectionId}": {
       "delete": {
-        "operationId": "removeAgentConnection",
+        "operationId": "removeAIConnection",
         "tags": [
           "Connections"
         ],
@@ -1592,7 +1598,7 @@
         "description": "Owner credentials only. Local access is disabled immediately and provider token revocation is retried if necessary.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1662,16 +1668,16 @@
         }
       }
     },
-    "/agents/{agentId}/skills": {
+    "/ais/{aiId}/skills": {
       "get": {
-        "operationId": "listAgentSkills",
+        "operationId": "listAISkills",
         "tags": [
           "Skills"
         ],
-        "summary": "List agent skills",
+        "summary": "List AI skills",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1681,7 +1687,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Versioned skills assigned to the agent.",
+            "description": "Versioned skills assigned to the AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1693,7 +1699,7 @@
                     "skills": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/AgentSkill"
+                        "$ref": "#/components/schemas/AISkill"
                       }
                     }
                   }
@@ -1744,14 +1750,14 @@
         }
       },
       "post": {
-        "operationId": "createAgentSkill",
+        "operationId": "createAISkill",
         "tags": [
           "Skills"
         ],
-        "summary": "Add an agent skill",
+        "summary": "Add an AI skill",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1764,7 +1770,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentSkillRequest"
+                "$ref": "#/components/schemas/CreateAISkillRequest"
               }
             }
           }
@@ -1781,7 +1787,7 @@
                   ],
                   "properties": {
                     "skill": {
-                      "$ref": "#/components/schemas/AgentSkill"
+                      "$ref": "#/components/schemas/AISkill"
                     }
                   }
                 }
@@ -1831,16 +1837,16 @@
         }
       }
     },
-    "/agents/{agentId}/skills/{skillId}": {
+    "/ais/{aiId}/skills/{skillId}": {
       "patch": {
-        "operationId": "updateAgentSkill",
+        "operationId": "updateAISkill",
         "tags": [
           "Skills"
         ],
-        "summary": "Update an agent skill",
+        "summary": "Update an AI skill",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -1861,7 +1867,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAgentSkillRequest"
+                "$ref": "#/components/schemas/UpdateAISkillRequest"
               }
             }
           }
@@ -1878,7 +1884,7 @@
                   ],
                   "properties": {
                     "skill": {
-                      "$ref": "#/components/schemas/AgentSkill"
+                      "$ref": "#/components/schemas/AISkill"
                     }
                   }
                 }
@@ -1928,14 +1934,14 @@
         }
       },
       "delete": {
-        "operationId": "deleteAgentSkill",
+        "operationId": "deleteAISkill",
         "tags": [
           "Skills"
         ],
-        "summary": "Remove an agent skill",
+        "summary": "Remove an AI skill",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2013,16 +2019,16 @@
         }
       }
     },
-    "/agents/{agentId}/assets": {
+    "/ais/{aiId}/assets": {
       "get": {
-        "operationId": "listAgentAssets",
+        "operationId": "listAIAssets",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "List agent assets",
+        "summary": "List AI assets",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2032,7 +2038,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Durable assets available to the agent.",
+            "description": "Durable assets available to the AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2044,7 +2050,7 @@
                     "assets": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/AgentAsset"
+                        "$ref": "#/components/schemas/AIAsset"
                       }
                     }
                   }
@@ -2092,17 +2098,18 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "post": {
-        "operationId": "createAgentAsset",
+        "operationId": "createAIAsset",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Add a linked agent asset",
+        "summary": "Add a linked AI asset",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2115,7 +2122,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentAssetRequest"
+                "$ref": "#/components/schemas/CreateAIAssetRequest"
               }
             }
           }
@@ -2132,7 +2139,7 @@
                   ],
                   "properties": {
                     "asset": {
-                      "$ref": "#/components/schemas/AgentAsset"
+                      "$ref": "#/components/schemas/AIAsset"
                     }
                   }
                 }
@@ -2179,19 +2186,20 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/assets/uploads": {
+    "/ais/{aiId}/assets/uploads": {
       "post": {
-        "operationId": "beginAgentAssetUpload",
+        "operationId": "beginAIAssetUpload",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Begin an agent asset upload",
+        "summary": "Begin an AI asset upload",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2204,7 +2212,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BeginAgentAssetUploadRequest"
+                "$ref": "#/components/schemas/BeginAIAssetUploadRequest"
               }
             }
           }
@@ -2215,7 +2223,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentAssetUpload"
+                  "$ref": "#/components/schemas/AIAssetUpload"
                 }
               }
             }
@@ -2260,19 +2268,20 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/assets/{assetId}/complete": {
+    "/ais/{aiId}/assets/{assetId}/complete": {
       "post": {
-        "operationId": "completeAgentAssetUpload",
+        "operationId": "completeAIAssetUpload",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Complete an agent asset upload",
+        "summary": "Complete an AI asset upload",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2300,7 +2309,7 @@
                   ],
                   "properties": {
                     "asset": {
-                      "$ref": "#/components/schemas/AgentAsset"
+                      "$ref": "#/components/schemas/AIAsset"
                     }
                   }
                 }
@@ -2347,19 +2356,20 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/assets/{assetId}": {
+    "/ais/{aiId}/assets/{assetId}": {
       "patch": {
-        "operationId": "updateAgentAsset",
+        "operationId": "updateAIAsset",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Update an agent asset",
+        "summary": "Update an AI asset",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2380,7 +2390,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAgentAssetRequest"
+                "$ref": "#/components/schemas/UpdateAIAssetRequest"
               }
             }
           }
@@ -2397,7 +2407,7 @@
                   ],
                   "properties": {
                     "asset": {
-                      "$ref": "#/components/schemas/AgentAsset"
+                      "$ref": "#/components/schemas/AIAsset"
                     }
                   }
                 }
@@ -2444,17 +2454,18 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "delete": {
-        "operationId": "deleteAgentAsset",
+        "operationId": "deleteAIAsset",
         "tags": [
-          "Agents"
+          "ais"
         ],
-        "summary": "Remove an agent asset",
+        "summary": "Remove an AI asset",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2529,18 +2540,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/activity": {
+    "/ais/{aiId}/activity": {
       "get": {
-        "operationId": "listAgentActivity",
+        "operationId": "listAIActivity",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "List activity",
         "x-mint": {
-          "href": "/reference/agents/list-agent-activity",
+          "href": "/reference/ais/list-AI-activity",
           "metadata": {
             "title": "List activity",
             "sidebarTitle": "List activity"
@@ -2548,7 +2560,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2579,7 +2591,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentActivityPage"
+                  "$ref": "#/components/schemas/AIActivityPage"
                 }
               }
             }
@@ -2624,18 +2636,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/members": {
+    "/ais/{aiId}/members": {
       "get": {
-        "operationId": "listAgentMembers",
+        "operationId": "listAIMembers",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "List members",
         "x-mint": {
-          "href": "/reference/agents/list-business-agent-members",
+          "href": "/reference/ais/list-business-AI-members",
           "metadata": {
             "title": "List members",
             "sidebarTitle": "List members"
@@ -2643,7 +2656,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2653,7 +2666,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Members and roles for the agent.",
+            "description": "Members and roles for the AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2665,7 +2678,7 @@
                     "members": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/AgentMember"
+                        "$ref": "#/components/schemas/AIMember"
                       }
                     }
                   }
@@ -2713,18 +2726,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/members/{membershipId}": {
+    "/ais/{aiId}/members/{membershipId}": {
       "patch": {
-        "operationId": "updateAgentMember",
+        "operationId": "updateAIMember",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Update member",
         "x-mint": {
-          "href": "/reference/agents/change-a-business-agent-member-role",
+          "href": "/reference/ais/change-a-business-AI-member-role",
           "metadata": {
             "title": "Update member",
             "sidebarTitle": "Update member"
@@ -2733,7 +2747,7 @@
         "description": "Owner transfers remain an interactive Darwin-app workflow.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2754,7 +2768,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateAgentMemberRequest"
+                "$ref": "#/components/schemas/UpdateAIMemberRequest"
               }
             }
           }
@@ -2771,7 +2785,7 @@
                   ],
                   "properties": {
                     "member": {
-                      "$ref": "#/components/schemas/AgentMember"
+                      "$ref": "#/components/schemas/AIMember"
                     }
                   }
                 }
@@ -2818,16 +2832,17 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "delete": {
-        "operationId": "removeAgentMember",
+        "operationId": "removeAIMember",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Remove member",
         "x-mint": {
-          "href": "/reference/agents/remove-a-business-agent-member",
+          "href": "/reference/ais/remove-a-business-AI-member",
           "metadata": {
             "title": "Remove member",
             "sidebarTitle": "Remove member"
@@ -2835,7 +2850,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2863,7 +2878,7 @@
                   ],
                   "properties": {
                     "member": {
-                      "$ref": "#/components/schemas/AgentMember"
+                      "$ref": "#/components/schemas/AIMember"
                     }
                   }
                 }
@@ -2910,18 +2925,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/invitations": {
+    "/ais/{aiId}/invitations": {
       "get": {
-        "operationId": "listAgentInvitations",
+        "operationId": "listAIInvitations",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "List invitations",
         "x-mint": {
-          "href": "/reference/agents/list-pending-business-agent-invitations",
+          "href": "/reference/ais/list-pending-business-AI-invitations",
           "metadata": {
             "title": "List invitations",
             "sidebarTitle": "List invitations"
@@ -2929,7 +2945,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -2951,7 +2967,7 @@
                     "invitations": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/AgentInvitation"
+                        "$ref": "#/components/schemas/AIInvitation"
                       }
                     }
                   }
@@ -2999,16 +3015,17 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "post": {
-        "operationId": "createAgentInvitation",
+        "operationId": "createAIInvitation",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Invite member",
         "x-mint": {
-          "href": "/reference/agents/invite-a-business-agent-member",
+          "href": "/reference/ais/invite-a-business-AI-member",
           "metadata": {
             "title": "Invite member",
             "sidebarTitle": "Invite member"
@@ -3016,7 +3033,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3029,7 +3046,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentInvitationRequest"
+                "$ref": "#/components/schemas/CreateAIInvitationRequest"
               }
             }
           }
@@ -3046,7 +3063,7 @@
                   ],
                   "properties": {
                     "invitation": {
-                      "$ref": "#/components/schemas/AgentInvitation"
+                      "$ref": "#/components/schemas/AIInvitation"
                     }
                   }
                 }
@@ -3093,18 +3110,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/invitations/{invitationId}": {
+    "/ais/{aiId}/invitations/{invitationId}": {
       "delete": {
-        "operationId": "revokeAgentInvitation",
+        "operationId": "revokeAIInvitation",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Revoke invitation",
         "x-mint": {
-          "href": "/reference/agents/revoke-a-pending-invitation",
+          "href": "/reference/ais/revoke-a-pending-invitation",
           "metadata": {
             "title": "Revoke invitation",
             "sidebarTitle": "Revoke invitation"
@@ -3112,7 +3130,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3140,7 +3158,7 @@
                   ],
                   "properties": {
                     "invitation": {
-                      "$ref": "#/components/schemas/AgentInvitation"
+                      "$ref": "#/components/schemas/AIInvitation"
                     }
                   }
                 }
@@ -3187,18 +3205,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/access-policies": {
+    "/ais/{aiId}/access-policies": {
       "get": {
         "operationId": "listAccessPolicies",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "List access policies",
         "x-mint": {
-          "href": "/reference/agents/list-active-access-policies",
+          "href": "/reference/ais/list-active-access-policies",
           "metadata": {
             "title": "List access policies",
             "sidebarTitle": "List access policies"
@@ -3206,7 +3225,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3216,7 +3235,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Versioned access policies owned by the agent.",
+            "description": "Versioned access policies owned by the AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3276,18 +3295,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       },
       "post": {
         "operationId": "createAccessPolicy",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Create an access policy",
-        "description": "Restricted policies support exact agents, verified business attributes, and geography. Sensitive-trait targeting is rejected.",
+        "description": "Restricted policies support exact AIs, verified business attributes, and geography. Sensitive-trait targeting is rejected.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3364,18 +3384,19 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/access-policies/{policyId}": {
+    "/ais/{aiId}/access-policies/{policyId}": {
       "patch": {
         "operationId": "updateAccessPolicy",
         "tags": [
-          "Agents"
+          "ais"
         ],
         "summary": "Update access policy",
         "x-mint": {
-          "href": "/reference/agents/create-a-new-policy-version",
+          "href": "/reference/ais/create-a-new-policy-version",
           "metadata": {
             "title": "Update access policy",
             "sidebarTitle": "Update access policy"
@@ -3383,7 +3404,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3468,30 +3489,31 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-group-name": "ais"
       }
     },
-    "/agents/{agentId}/billing": {
+    "/ais/{aiId}/billing": {
       "get": {
-        "operationId": "getAgentBillingSummary",
+        "operationId": "getAIBillingSummary",
         "tags": [
           "Billing"
         ],
-        "summary": "Get Agent Wallet",
+        "summary": "Get AI Wallet",
         "x-mint": {
-          "href": "/reference/billing/get-agent-billing-summary",
+          "href": "/reference/billing/get-AI-billing-summary",
           "metadata": {
             "title": "Get billing summary",
             "sidebarTitle": "Get billing summary"
           }
         },
-        "description": "Returns deposited, promotional, reserved, pending, spendable, and withdrawable wallet balances together with money settings and available actions. Darwin prices agent work in USD per goal; subscriptions and Agent Credits are retired. Available only to user API keys with `payments:read`.",
+        "description": "Returns deposited, promotional, reserved, pending, spendable, and withdrawable wallet balances together with money settings and available actions. Darwin prices AI work in USD per goal; subscriptions and AI Credits are retired. Available only to user API keys with `payments:read`.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
-            "description": "Agent whose billing account to inspect.",
+            "description": "AI whose billing account to inspect.",
             "schema": {
               "type": "string"
             }
@@ -3499,11 +3521,11 @@
         ],
         "responses": {
           "200": {
-            "description": "The agent billing summary.",
+            "description": "The AI billing summary.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentBillingSummary"
+                  "$ref": "#/components/schemas/AIBillingSummary"
                 }
               }
             }
@@ -3551,15 +3573,15 @@
         }
       }
     },
-    "/agents/{agentId}/billing/activity": {
+    "/ais/{aiId}/billing/activity": {
       "get": {
-        "operationId": "listAgentBillingActivity",
+        "operationId": "listAIBillingActivity",
         "tags": [
           "Billing"
         ],
         "summary": "List wallet activity",
         "x-mint": {
-          "href": "/reference/billing/list-agent-billing-activity",
+          "href": "/reference/billing/list-AI-billing-activity",
           "metadata": {
             "title": "List billing activity",
             "sidebarTitle": "List billing activity"
@@ -3567,7 +3589,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3598,7 +3620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentBillingActivityPage"
+                  "$ref": "#/components/schemas/AIBillingActivityPage"
                 }
               }
             }
@@ -3646,9 +3668,9 @@
         }
       }
     },
-    "/agents/{agentId}/billing/payment-method-setup": {
+    "/ais/{aiId}/billing/payment-method-setup": {
       "post": {
-        "operationId": "createAgentPaymentMethodSetup",
+        "operationId": "createAIPaymentMethodSetup",
         "tags": [
           "Billing"
         ],
@@ -3663,7 +3685,7 @@
         "description": "Creates a SetupIntent for an explicitly consented saved payment method. A saved method is required before automatic wallet top-ups can be enabled.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3736,24 +3758,24 @@
         }
       }
     },
-    "/agents/{agentId}/billing/wallet-topups": {
+    "/ais/{aiId}/billing/wallet-topups": {
       "post": {
-        "operationId": "createAgentWalletTopup",
+        "operationId": "createAIWalletTopup",
         "tags": [
           "Billing"
         ],
-        "summary": "Top up Agent Wallet",
+        "summary": "Top up AI Wallet",
         "x-mint": {
-          "href": "/reference/billing/top-up-agent-wallet",
+          "href": "/reference/billing/top-up-AI-wallet",
           "metadata": {
-            "title": "Top up Agent Wallet",
-            "sidebarTitle": "Top up Agent Wallet"
+            "title": "Top up AI Wallet",
+            "sidebarTitle": "Top up AI Wallet"
           }
         },
-        "description": "Creates a PaymentIntent that adds nonwithdrawable funded money to the Agent Wallet after payment succeeds. The response separates the wallet credit, processing cost, and card charge.",
+        "description": "Creates a PaymentIntent that adds nonwithdrawable funded money to the AI Wallet after payment succeeds. The response separates the wallet credit, processing cost, and card charge.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3836,9 +3858,9 @@
         }
       }
     },
-    "/agents/{agentId}/billing/money-settings": {
+    "/ais/{aiId}/billing/money-settings": {
       "patch": {
-        "operationId": "updateAgentMoneySettings",
+        "operationId": "updateAIMoneySettings",
         "tags": [
           "Billing"
         ],
@@ -3853,7 +3875,7 @@
         "description": "Configures optional wallet auto top-up and the earned-fund payout schedule. Auto top-up is disabled by default and requires a saved payment method.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -3877,7 +3899,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AgentBillingAccount"
+                  "$ref": "#/components/schemas/AIBillingAccount"
                 }
               }
             }
@@ -3925,9 +3947,9 @@
         }
       }
     },
-    "/agents/{agentId}/billing/withdrawal-quotes": {
+    "/ais/{aiId}/billing/withdrawal-quotes": {
       "post": {
-        "operationId": "quoteAgentWalletWithdrawal",
+        "operationId": "quoteAIWalletWithdrawal",
         "tags": [
           "Billing"
         ],
@@ -3942,7 +3964,7 @@
         "description": "Returns the exact provider cost and expected bank payout for a standard or instant withdrawal. Only settled earned funds are withdrawable.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -4014,9 +4036,9 @@
         }
       }
     },
-    "/agents/{agentId}/billing/withdrawals": {
+    "/ais/{aiId}/billing/withdrawals": {
       "post": {
-        "operationId": "createAgentWalletWithdrawal",
+        "operationId": "createAIWalletWithdrawal",
         "tags": [
           "Billing"
         ],
@@ -4031,7 +4053,7 @@
         "description": "Withdraws settled earned funds using the selected payout speed. Promotional and card-funded wallet money cannot be withdrawn.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -4114,9 +4136,9 @@
         }
       }
     },
-    "/agents/{agentId}/billing/payout-method-setup": {
+    "/ais/{aiId}/billing/payout-method-setup": {
       "post": {
-        "operationId": "createAgentPayoutMethodSetup",
+        "operationId": "createAIPayoutMethodSetup",
         "tags": [
           "Billing"
         ],
@@ -4131,7 +4153,7 @@
         "description": "Creates a hosted onboarding link that securely collects the information required to receive and withdraw earned marketplace proceeds.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -4193,15 +4215,15 @@
         }
       }
     },
-    "/agent/conversation": {
+    "/ai/conversation": {
       "get": {
-        "operationId": "getSelectedAgentConversation",
+        "operationId": "getSelectedAIConversation",
         "tags": [
           "Conversations"
         ],
         "summary": "Get active conversation",
         "x-mint": {
-          "href": "/reference/conversations/get-the-selected-or-explicit-agent-conversation",
+          "href": "/reference/conversations/get-the-selected-or-explicit-AI-conversation",
           "metadata": {
             "title": "Get active conversation",
             "sidebarTitle": "Get active conversation"
@@ -4209,9 +4231,9 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -4302,12 +4324,12 @@
             "sidebarTitle": "List requests"
           }
         },
-        "description": "Returns sanitized inbound requests for the selected agent without counterpart routing or infrastructure identifiers.",
+        "description": "Returns sanitized inbound requests for the selected AI without counterpart routing or infrastructure identifiers.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -4495,7 +4517,7 @@
         }
       }
     },
-    "/agent/messages": {
+    "/ai/messages": {
       "post": {
         "operationId": "createMessage",
         "tags": [
@@ -4509,20 +4531,20 @@
             "sidebarTitle": "Send message"
           }
         },
-        "description": "When agentId is omitted, Darwin infers the intended accessible agent from natural language and current context.",
+        "description": "When aiId is omitted, Darwin infers the intended accessible AI from natural language and current context.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateAgentMessageRequest"
+                "$ref": "#/components/schemas/CreateAIMessageRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "The completed or clarified agent turn.",
+            "description": "The completed or clarified AI turn.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4574,15 +4596,15 @@
         }
       }
     },
-    "/agents/{agentId}/conversations": {
+    "/ais/{aiId}/conversations": {
       "get": {
-        "operationId": "listAgentConversations",
+        "operationId": "listAIConversations",
         "tags": [
           "Conversations"
         ],
         "summary": "List conversations",
         "x-mint": {
-          "href": "/reference/conversations/list-conversations-for-an-agent",
+          "href": "/reference/conversations/list-conversations-for-an-AI",
           "metadata": {
             "title": "List conversations",
             "sidebarTitle": "List conversations"
@@ -4590,7 +4612,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -4600,7 +4622,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Agent-scoped conversations.",
+            "description": "AI-scoped conversations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -4663,13 +4685,13 @@
         }
       },
       "post": {
-        "operationId": "createAgentConversation",
+        "operationId": "createAIConversation",
         "tags": [
           "Conversations"
         ],
         "summary": "Start conversation",
         "x-mint": {
-          "href": "/reference/conversations/get-or-create-the-canonical-agent-conversation",
+          "href": "/reference/conversations/get-or-create-the-canonical-AI-conversation",
           "metadata": {
             "title": "Start conversation",
             "sidebarTitle": "Start conversation"
@@ -4677,7 +4699,7 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -4870,7 +4892,7 @@
         },
         "responses": {
           "201": {
-            "description": "The completed agent turn.",
+            "description": "The completed AI turn.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5101,9 +5123,9 @@
         "description": "Deprecated compatibility alias. Use `GET /goals`.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -5119,7 +5141,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Tasks for the selected agent.",
+            "description": "Tasks for the selected AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5279,9 +5301,9 @@
             }
           },
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -5701,7 +5723,7 @@
         ],
         "summary": "List goals",
         "x-mint": {
-          "href": "/reference/goals/list-goals-for-an-agent",
+          "href": "/reference/goals/list-goals-for-an-AI",
           "metadata": {
             "title": "List goals",
             "sidebarTitle": "List goals"
@@ -5709,9 +5731,9 @@
         },
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -5727,7 +5749,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Goals for the selected agent.",
+            "description": "Goals for the selected AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5891,9 +5913,9 @@
             }
           },
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -6255,12 +6277,12 @@
             "sidebarTitle": "List deals"
           }
         },
-        "description": "Returns the commercial work owned by the selected agent. Darwin handles counterpart discovery and coordination behind the scenes.",
+        "description": "Returns the commercial work owned by the selected AI. Darwin handles counterpart discovery and coordination behind the scenes.",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -6268,7 +6290,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Deals for the selected agent.",
+            "description": "Deals for the selected AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6343,7 +6365,7 @@
             "sidebarTitle": "Create deal"
           }
         },
-        "description": "Creates a private draft for terms, counterparty context, payment, and delivery. Darwin coordinates the required work on the agent’s behalf.",
+        "description": "Creates a private draft for terms, counterparty context, payment, and delivery. Darwin coordinates the required work on the AI’s behalf.",
         "requestBody": {
           "required": true,
           "content": {
@@ -6867,9 +6889,9 @@
         "summary": "List transactions",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -6877,7 +6899,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Transactions visible to the selected agent.",
+            "description": "Transactions visible to the selected AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6957,9 +6979,9 @@
             }
           },
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -7137,9 +7159,9 @@
         "summary": "List canonical outcomes",
         "parameters": [
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "query",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent.",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
             "schema": {
               "type": "string"
             }
@@ -7147,7 +7169,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Darwin-owned outcomes for the selected agent.",
+            "description": "Darwin-owned outcomes for the selected AI.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7800,7 +7822,7 @@
           "Applications"
         ],
         "summary": "Delete application",
-        "description": "Disables OAuth and revokes active enrollment links, service accounts, webhooks, and agent links.",
+        "description": "Disables OAuth and revokes active enrollment links, service accounts, webhooks, and AI links.",
         "parameters": [
           {
             "name": "applicationId",
@@ -7873,18 +7895,18 @@
         }
       }
     },
-    "/applications/{applicationId}/agents": {
+    "/applications/{applicationId}/ais": {
       "get": {
-        "operationId": "listApplicationAgents",
+        "operationId": "listApplicationAIs",
         "tags": [
           "Applications"
         ],
-        "summary": "List linked agents",
+        "summary": "List linked AIs",
         "x-mint": {
-          "href": "/reference/platform/list-linked-agents",
+          "href": "/reference/platform/list-linked-AIs",
           "metadata": {
-            "title": "List linked agents",
-            "sidebarTitle": "List linked agents"
+            "title": "List linked AIs",
+            "sidebarTitle": "List linked AIs"
           }
         },
         "parameters": [
@@ -7899,19 +7921,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Active agent links.",
+            "description": "Active AI links.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agents"
+                    "ais"
                   ],
                   "properties": {
-                    "agents": {
+                    "ais": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/ApplicationAgentLink"
+                        "$ref": "#/components/schemas/ApplicationAILink"
                       }
                     }
                   }
@@ -7962,16 +7984,16 @@
         }
       },
       "post": {
-        "operationId": "linkApplicationAgent",
+        "operationId": "linkApplicationAI",
         "tags": [
           "Applications"
         ],
-        "summary": "Link agent",
+        "summary": "Link AI",
         "x-mint": {
-          "href": "/reference/platform/link-agent",
+          "href": "/reference/platform/link-AI",
           "metadata": {
-            "title": "Link agent",
-            "sidebarTitle": "Link agent"
+            "title": "Link AI",
+            "sidebarTitle": "Link AI"
           }
         },
         "parameters": [
@@ -7989,24 +8011,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/LinkApplicationAgentRequest"
+                "$ref": "#/components/schemas/LinkApplicationAIRequest"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "The application-agent link.",
+            "description": "The application-AI link.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agentLink"
+                    "aiLink"
                   ],
                   "properties": {
-                    "agentLink": {
-                      "$ref": "#/components/schemas/ApplicationAgentLink"
+                    "aiLink": {
+                      "$ref": "#/components/schemas/ApplicationAILink"
                     }
                   }
                 }
@@ -8056,18 +8078,18 @@
         }
       }
     },
-    "/applications/{applicationId}/agents/{agentId}": {
+    "/applications/{applicationId}/ais/{aiId}": {
       "delete": {
-        "operationId": "unlinkApplicationAgent",
+        "operationId": "unlinkApplicationAI",
         "tags": [
           "Applications"
         ],
-        "summary": "Unlink agent",
+        "summary": "Unlink AI",
         "x-mint": {
-          "href": "/reference/platform/unlink-agent",
+          "href": "/reference/platform/unlink-AI",
           "metadata": {
-            "title": "Unlink agent",
-            "sidebarTitle": "Unlink agent"
+            "title": "Unlink AI",
+            "sidebarTitle": "Unlink AI"
           }
         },
         "parameters": [
@@ -8080,7 +8102,7 @@
             }
           },
           {
-            "name": "agentId",
+            "name": "aiId",
             "in": "path",
             "required": true,
             "schema": {
@@ -8090,17 +8112,17 @@
         ],
         "responses": {
           "200": {
-            "description": "The revoked application-agent link.",
+            "description": "The revoked application-AI link.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "agentLink"
+                    "aiLink"
                   ],
                   "properties": {
-                    "agentLink": {
-                      "$ref": "#/components/schemas/ApplicationAgentLink"
+                    "aiLink": {
+                      "$ref": "#/components/schemas/ApplicationAILink"
                     }
                   }
                 }
@@ -8605,7 +8627,7 @@
           "Ephemeral Goals"
         ],
         "summary": "Create an application-funded ephemeral goal",
-        "description": "Creates a pseudonymous goal without first creating a Darwin agent for the external user. The application remains the accountable principal.",
+        "description": "Creates a pseudonymous goal without first creating a Darwin AI for the external user. The application remains the accountable principal.",
         "parameters": [
           {
             "name": "applicationId",
@@ -8792,7 +8814,7 @@
         "tags": [
           "Ephemeral Goals"
         ],
-        "summary": "Cast an ephemeral goal to eligible agents",
+        "summary": "Cast an ephemeral goal to eligible AIs",
         "parameters": [
           {
             "name": "applicationId",
@@ -9057,7 +9079,7 @@
           "Applications"
         ],
         "summary": "Fund an application wallet",
-        "description": "Owner credentials only. Transfers funds from an explicitly selected Darwin agent wallet.",
+        "description": "Owner credentials only. Transfers funds from an explicitly selected Darwin AI wallet.",
         "parameters": [
           {
             "name": "applicationId",
@@ -9939,7 +9961,7 @@
           }
         }
       },
-      "AgentBillingAccount": {
+      "AIBillingAccount": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -9960,7 +9982,7 @@
           }
         }
       },
-      "AgentWalletBalance": {
+      "AIWalletBalance": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -10031,7 +10053,7 @@
           }
         }
       },
-      "AgentBillingSummary": {
+      "AIBillingSummary": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -10049,10 +10071,10 @@
             ]
           },
           "account": {
-            "$ref": "#/components/schemas/AgentBillingAccount"
+            "$ref": "#/components/schemas/AIBillingAccount"
           },
           "wallet": {
-            "$ref": "#/components/schemas/AgentWalletBalance"
+            "$ref": "#/components/schemas/AIWalletBalance"
           },
           "actions": {
             "type": "object",
@@ -10096,7 +10118,7 @@
           }
         }
       },
-      "AgentBillingActivityPage": {
+      "AIBillingActivityPage": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -10382,7 +10404,7 @@
           }
         }
       },
-      "Agent": {
+      "AI": {
         "type": "object",
         "required": [
           "id",
@@ -10475,11 +10497,11 @@
           }
         }
       },
-      "AgentSkill": {
+      "AISkill": {
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "name",
           "category",
           "source",
@@ -10495,7 +10517,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": [
               "string",
               "null"
@@ -10578,7 +10600,7 @@
           }
         }
       },
-      "AgentSkillCatalogEntry": {
+      "AISkillCatalogEntry": {
         "type": "object",
         "required": [
           "id",
@@ -10627,11 +10649,11 @@
           }
         }
       },
-      "AgentAsset": {
+      "AIAsset": {
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "title",
           "kind",
           "visibility",
@@ -10645,7 +10667,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "title": {
@@ -10720,7 +10742,7 @@
           }
         }
       },
-      "AgentAssetUpload": {
+      "AIAssetUpload": {
         "type": "object",
         "required": [
           "asset",
@@ -10729,7 +10751,7 @@
         "additionalProperties": false,
         "properties": {
           "asset": {
-            "$ref": "#/components/schemas/AgentAsset"
+            "$ref": "#/components/schemas/AIAsset"
           },
           "upload": {
             "type": "object",
@@ -10789,7 +10811,7 @@
         "required": [
           "id",
           "email",
-          "agents",
+          "ais",
           "createdAt",
           "updatedAt"
         ],
@@ -10820,10 +10842,10 @@
               "null"
             ]
           },
-          "agents": {
+          "ais": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Agent"
+              "$ref": "#/components/schemas/AI"
             }
           },
           "createdAt": {
@@ -10840,7 +10862,7 @@
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "mode",
           "type",
           "title",
@@ -10852,7 +10874,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": [
               "string",
               "null"
@@ -10996,7 +11018,7 @@
           "category": {
             "type": "string",
             "enum": [
-              "agents",
+              "ais",
               "goals",
               "inbox",
               "network",
@@ -11046,7 +11068,7 @@
           }
         }
       },
-      "AgentActivity": {
+      "AIActivity": {
         "type": "object",
         "required": [
           "id",
@@ -11096,7 +11118,7 @@
           }
         }
       },
-      "AgentActivityPage": {
+      "AIActivityPage": {
         "type": "object",
         "required": [
           "events",
@@ -11106,7 +11128,7 @@
           "events": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AgentActivity"
+              "$ref": "#/components/schemas/AIActivity"
             }
           },
           "nextCursor": {
@@ -11117,7 +11139,7 @@
           }
         }
       },
-      "AgentMember": {
+      "AIMember": {
         "type": "object",
         "required": [
           "id",
@@ -11177,7 +11199,7 @@
           }
         }
       },
-      "AgentInvitation": {
+      "AIInvitation": {
         "type": "object",
         "required": [
           "id",
@@ -11215,7 +11237,7 @@
         "type": "object",
         "required": [
           "id",
-          "ownerAgentIdentityId",
+          "ownerAiId",
           "name",
           "visibility",
           "rules",
@@ -11229,7 +11251,7 @@
           "id": {
             "type": "string"
           },
-          "ownerAgentIdentityId": {
+          "ownerAiId": {
             "type": "string"
           },
           "name": {
@@ -11285,7 +11307,7 @@
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "goalId",
           "type",
           "subjectType",
@@ -11304,7 +11326,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": [
               "string",
               "null"
@@ -11397,7 +11419,7 @@
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "mode",
           "type",
           "status",
@@ -11410,7 +11432,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "mode": {
@@ -11472,7 +11494,7 @@
         "required": [
           "id",
           "goalId",
-          "agentId",
+          "aiId",
           "title",
           "intent",
           "mode",
@@ -11494,7 +11516,7 @@
             "type": "string",
             "description": "Canonical Goal identifier. Equal to id."
           },
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "title": {
@@ -11616,7 +11638,7 @@
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "goalId",
           "mode",
           "direction",
@@ -11633,7 +11655,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "taskId": {
@@ -12127,7 +12149,7 @@
         "type": "object",
         "required": [
           "id",
-          "agentId",
+          "aiId",
           "amountMinor",
           "currency",
           "description",
@@ -12139,7 +12161,7 @@
           "id": {
             "type": "string"
           },
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "goalId": {
@@ -12227,7 +12249,7 @@
           "mode",
           "status",
           "redirectUris",
-          "defaultAgentKind",
+          "defaultAiKind",
           "defaultVisibility",
           "metadata",
           "createdAt",
@@ -12278,7 +12300,7 @@
               "format": "uri"
             }
           },
-          "defaultAgentKind": {
+          "defaultAiKind": {
             "type": "string",
             "enum": [
               "personal",
@@ -12377,7 +12399,7 @@
           }
         }
       },
-      "ApplicationAgentLink": {
+      "ApplicationAILink": {
         "type": "object",
         "required": [
           "id",
@@ -12391,7 +12413,7 @@
           "applicationId": {
             "type": "string"
           },
-          "agentIdentityId": {
+          "aiId": {
             "type": "string"
           },
           "externalReference": {
@@ -12428,7 +12450,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "agentIdentity": {
+          "aiIdentity": {
             "type": "object",
             "additionalProperties": true,
             "properties": {
@@ -12498,7 +12520,7 @@
               "HYBRID"
             ]
           },
-          "defaultAgentKind": {
+          "defaultAiKind": {
             "type": "string",
             "enum": [
               "PERSONAL",
@@ -12820,15 +12842,15 @@
             "items": {
               "type": "string",
               "enum": [
-                "agents:read",
-                "agents:write",
+                "ais:read",
+                "ais:write",
                 "members:read",
                 "conversations:read",
                 "conversations:write",
                 "requests:read",
                 "requests:write",
-                "agent:read",
-                "agent:write",
+                "ai:read",
+                "ai:write",
                 "tasks:read",
                 "tasks:write",
                 "goals:read",
@@ -13085,7 +13107,7 @@
           "PRIVATE"
         ]
       },
-      "CreateAgentRequest": {
+      "CreateAIRequest": {
         "type": "object",
         "required": [
           "name"
@@ -13146,7 +13168,7 @@
           }
         }
       },
-      "UpdateAgentRequest": {
+      "UpdateAIRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -13212,7 +13234,7 @@
           }
         }
       },
-      "CreateAgentSkillRequest": {
+      "CreateAISkillRequest": {
         "type": "object",
         "required": [
           "name"
@@ -13272,7 +13294,7 @@
           }
         }
       },
-      "UpdateAgentSkillRequest": {
+      "UpdateAISkillRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -13326,7 +13348,7 @@
           }
         }
       },
-      "CreateAgentAssetRequest": {
+      "CreateAIAssetRequest": {
         "type": "object",
         "required": [
           "title",
@@ -13382,7 +13404,7 @@
           }
         }
       },
-      "BeginAgentAssetUploadRequest": {
+      "BeginAIAssetUploadRequest": {
         "type": "object",
         "required": [
           "title",
@@ -13441,7 +13463,7 @@
           }
         }
       },
-      "UpdateAgentAssetRequest": {
+      "UpdateAIAssetRequest": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -13469,7 +13491,7 @@
           }
         }
       },
-      "CreateAgentInvitationRequest": {
+      "CreateAIInvitationRequest": {
         "type": "object",
         "required": [
           "email"
@@ -13490,7 +13512,7 @@
           }
         }
       },
-      "UpdateAgentMemberRequest": {
+      "UpdateAIMemberRequest": {
         "type": "object",
         "required": [
           "role"
@@ -13510,7 +13532,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "agentIds": {
+          "aiIds": {
             "type": "array",
             "maxItems": 250,
             "items": {
@@ -13612,14 +13634,14 @@
           }
         }
       },
-      "CreateAgentMessageRequest": {
+      "CreateAIMessageRequest": {
         "type": "object",
         "required": [
           "content"
         ],
         "additionalProperties": false,
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "content": {
@@ -13668,7 +13690,7 @@
         ],
         "additionalProperties": false,
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "title": {
@@ -13840,9 +13862,9 @@
         ],
         "additionalProperties": false,
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent."
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI."
           },
           "action": {
             "type": "string",
@@ -13861,9 +13883,9 @@
         ],
         "additionalProperties": false,
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string",
-            "description": "Optional explicit agent scope. When omitted, Darwin uses the caller’s selected agent."
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI."
           },
           "goalId": {
             "type": "string"
@@ -14029,7 +14051,7 @@
               "format": "uri"
             }
           },
-          "defaultAgentKind": {
+          "defaultAiKind": {
             "type": "string",
             "enum": [
               "PERSONAL",
@@ -14083,7 +14105,7 @@
               "format": "uri"
             }
           },
-          "defaultAgentKind": {
+          "defaultAiKind": {
             "type": "string",
             "enum": [
               "PERSONAL",
@@ -14099,13 +14121,13 @@
           }
         }
       },
-      "LinkApplicationAgentRequest": {
+      "LinkApplicationAIRequest": {
         "type": "object",
         "required": [
-          "agentId"
+          "aiId"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "externalReference": {
@@ -14144,7 +14166,7 @@
               "HYBRID"
             ]
           },
-          "defaultAgentKind": {
+          "defaultAiKind": {
             "type": "string",
             "enum": [
               "PERSONAL",
@@ -14262,15 +14284,15 @@
             "items": {
               "type": "string",
               "enum": [
-                "agents:read",
-                "agents:write",
+                "ais:read",
+                "ais:write",
                 "members:read",
                 "conversations:read",
                 "conversations:write",
                 "requests:read",
                 "requests:write",
-                "agent:read",
-                "agent:write",
+                "ai:read",
+                "ai:write",
                 "tasks:read",
                 "tasks:write",
                 "goals:read",
@@ -14318,8 +14340,8 @@
             "items": {
               "type": "string",
               "enum": [
-                "agent.created",
-                "agent.updated",
+                "AI.created",
+                "AI.updated",
                 "goal.created",
                 "goal.updated",
                 "goal.published",
@@ -14331,17 +14353,17 @@
           }
         }
       },
-      "AgentReputation": {
+      "AIReputation": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "tier",
           "score",
           "verifiedReliability",
           "incidentCount"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "tier": {
@@ -14397,17 +14419,17 @@
           }
         }
       },
-      "AgentPermissions": {
+      "AIPermissions": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "visibility",
           "profileAccessPolicyId",
           "outboundAccessPolicyId",
           "accessPolicies"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "visibility": {
@@ -14439,14 +14461,14 @@
           }
         }
       },
-      "AgentNotifications": {
+      "AINotifications": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "preferences"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "preferences": {
@@ -14458,20 +14480,20 @@
           }
         }
       },
-      "AgentUsage": {
+      "AIUsage": {
         "type": "object",
         "required": [
-          "agentId",
-          "agentUsage",
+          "aiId",
+          "aiUsage",
           "wallet",
           "activeGoals",
           "activeDeals"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
-          "agentUsage": {
+          "aiUsage": {
             "type": "object",
             "required": [
               "currency",
@@ -14515,15 +14537,15 @@
           }
         }
       },
-      "AgentVerification": {
+      "AIVerification": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "identity",
           "payments"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "identity": {
@@ -14536,11 +14558,11 @@
           }
         }
       },
-      "AgentDeploymentRequest": {
+      "AIDeploymentRequest": {
         "type": "object",
         "required": [
           "id",
-          "agentIdentityId",
+          "aiId",
           "target",
           "status",
           "createdAt",
@@ -14550,7 +14572,7 @@
           "id": {
             "type": "string"
           },
-          "agentIdentityId": {
+          "aiId": {
             "type": "string"
           },
           "target": {
@@ -14580,16 +14602,16 @@
           }
         }
       },
-      "AgentDeployment": {
+      "AIDeployment": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "current",
           "options",
           "requests"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "current": {
@@ -14610,12 +14632,12 @@
           "requests": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AgentDeploymentRequest"
+              "$ref": "#/components/schemas/AIDeploymentRequest"
             }
           }
         }
       },
-      "CreateAgentDeploymentRequest": {
+      "CreateAIDeploymentRequest": {
         "type": "object",
         "required": [
           "target"
@@ -14773,12 +14795,12 @@
       "FundApplicationWalletRequest": {
         "type": "object",
         "required": [
-          "agentId",
+          "aiId",
           "amountMinor",
           "currency"
         ],
         "properties": {
-          "agentId": {
+          "aiId": {
             "type": "string"
           },
           "amountMinor": {
