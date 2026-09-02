@@ -28,10 +28,12 @@ const contract = JSON.parse(await readFile(contractPath, 'utf8'));
 const problems = [];
 const expectedTags = [
   'Account',
+  'Network',
   'ais',
   'Permissions',
   'Reputation',
   'Skills',
+  'Listings',
   'Integrations',
   'Connections',
   'Notifications',
@@ -73,6 +75,10 @@ const expectedOperations = [
   ['get', '/outcomes', 'listOutcomes'],
   ['get', '/applications', 'listApplications'],
   ['post', '/applications/{applicationId}/ephemeral-goals', 'createEphemeralGoal'],
+  ['get', '/ais/{aiId}/listings', 'listListings'],
+  ['post', '/ais/{aiId}/listings', 'createListing'],
+  ['get', '/network', 'browseNetwork'],
+  ['get', '/network/ais/{handle}', 'getNetworkAI'],
 ];
 
 function checkLocalSchemaReferences(value, location = '#') {
@@ -117,8 +123,8 @@ const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
     .map(([, operation]) => operation),
 );
 const operationIds = operations.map((operation) => operation.operationId);
-if (operationIds.length !== 111 || new Set(operationIds).size !== operationIds.length) {
-  problems.push('expected 111 uniquely named public operations');
+if (operationIds.length !== 120 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 120 uniquely named public operations');
 }
 for (const operation of operations) {
   if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {
