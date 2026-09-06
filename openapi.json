@@ -671,6 +671,27 @@
             }
           },
           {
+            "name": "executionDomain",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ListingExecutionDomain"
+            }
+          },
+          {
+            "name": "capabilityKind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "API",
+                "BROWSER_AUTOMATION",
+                "MCP",
+                "SOFTWARE_ACTION",
+                "OTHER"
+              ]
+            }
+          },
+          {
             "name": "status",
             "in": "query",
             "schema": {
@@ -1988,6 +2009,200 @@
                       "items": {
                         "$ref": "#/components/schemas/Connection"
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ais/{aiId}/connections/{connectionId}/assignments": {
+      "post": {
+        "operationId": "createConnectionAssignment",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "Assign an authorized account",
+        "description": "Owner user credentials only. Assigns a sanitized provider authorization to one AI, Listing, or transaction without exposing credentials. Request-only assignments must expire within 24 hours; saved assignments require explicit consent.",
+        "parameters": [
+          {
+            "name": "aiId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionAssignmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The scoped account assignment.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "assignment"
+                  ],
+                  "properties": {
+                    "assignment": {
+                      "$ref": "#/components/schemas/ConnectionAssignment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ais/{aiId}/connections/{connectionId}/assignments/{assignmentId}": {
+      "delete": {
+        "operationId": "revokeConnectionAssignment",
+        "tags": [
+          "Connections"
+        ],
+        "summary": "Revoke an account assignment",
+        "description": "Owner user credentials only. Revocation takes effect before the next fulfillment check.",
+        "parameters": [
+          {
+            "name": "aiId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The revoked assignment.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "assignment"
+                  ],
+                  "properties": {
+                    "assignment": {
+                      "$ref": "#/components/schemas/ConnectionAssignment"
                     }
                   }
                 }
@@ -7694,7 +7909,7 @@
           "Transactions"
         ],
         "summary": "Reserve funds for an accepted deal",
-        "description": "Creates an idempotent reservation for the accepted maximum cap. Performance settlement releases any unused amount.",
+        "description": "Creates an idempotent reservation for the accepted maximum cap. Choose Darwin-managed payment or the application-managed Shared Payment Token preview. Performance settlement releases any unused amount.",
         "parameters": [
           {
             "name": "dealId",
@@ -7716,6 +7931,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransactionFundingRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "The reservation or exact funding requirement.",
@@ -7939,6 +8164,94 @@
         }
       }
     },
+    "/transactions/{transactionId}/account-requirement": {
+      "get": {
+        "operationId": "getTransactionAccountRequirement",
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Get the customer-account requirement",
+        "description": "User credentials only. Returns the provider, scopes, retention choices, and current authorization state needed after funding and before fulfillment.",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "aiId",
+            "in": "query",
+            "description": "Optional explicit AI scope. When omitted, Darwin uses the caller’s selected AI.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The post-funding external-account requirement.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "accountRequirement"
+                  ],
+                  "properties": {
+                    "accountRequirement": {
+                      "$ref": "#/components/schemas/TransactionAccountRequirement"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions/{transactionId}/actions": {
       "post": {
         "operationId": "actOnTransaction",
@@ -7991,6 +8304,107 @@
                   "properties": {
                     "transaction": {
                       "$ref": "#/components/schemas/Transaction"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transactionId}/payment-authorizations": {
+      "post": {
+        "operationId": "authorizeTransactionPayment",
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Exchange an application-managed payment authorization",
+        "description": "Private preview. Validates and consumes one transaction-scoped Stripe Shared Payment Token. Generic PaymentMethod IDs, card data, and caller assertions that a payment occurred are rejected.",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "A caller-generated key, unique to this operation and payload.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationPaymentAuthorizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The transaction-scoped payment authorization state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "paymentAuthorization"
+                  ],
+                  "properties": {
+                    "paymentAuthorization": {
+                      "$ref": "#/components/schemas/ApplicationPaymentAuthorization"
                     }
                   }
                 }
@@ -8738,6 +9152,256 @@
                       "$ref": "#/components/schemas/Application"
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/monetization": {
+      "get": {
+        "operationId": "getApplicationMonetization",
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Get application monetization",
+        "description": "Returns the buyer-paid application fee policy. The configured fee is snapshotted into each immutable fee quote before buyer confirmation.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The application monetization policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "monetization"
+                  ],
+                  "properties": {
+                    "monetization": {
+                      "$ref": "#/components/schemas/ApplicationMonetizationPolicy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateApplicationMonetization",
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Update application monetization",
+        "description": "Owner credentials only. Configures no fee, a fixed buyer-paid fee, or a percentage of seller subtotal with a mandatory maximum cap.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationMonetizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated application monetization policy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "monetization"
+                  ],
+                  "properties": {
+                    "monetization": {
+                      "$ref": "#/components/schemas/ApplicationMonetizationPolicy"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications/{applicationId}/users/resolve": {
+      "post": {
+        "operationId": "resolveApplicationUser",
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Resolve an application user",
+        "description": "Service-account or authorized application credentials only. Reuses a durable app-scoped user mapping when one exists; otherwise returns a short-lived Darwin-hosted onboarding or reauthentication URL. OIDC and trusted-application proof exchange remain fail-closed preview capabilities.",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveApplicationUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The durable Darwin user and Personal AI, or the hosted next step.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationUserResolutionResult"
                 }
               }
             }
@@ -11389,15 +12053,135 @@
       },
       "ListingType": {
         "type": "string",
+        "description": "The economic object. CAPACITY is displayed as Reservations in Darwin clients. Legacy values are accepted only by compatibility endpoints.",
         "enum": [
           "PRODUCT",
           "SERVICE",
+          "CAPABILITY",
+          "CAPACITY",
           "ASSET",
           "DATA",
-          "SOFTWARE_API",
-          "ACCESS",
-          "CONVERSATION"
+          "RIGHT"
         ]
+      },
+      "ListingExecutionDomain": {
+        "type": "string",
+        "enum": [
+          "HUMAN",
+          "DIGITAL",
+          "PHYSICAL"
+        ]
+      },
+      "ListingCapabilityKind": {
+        "type": "string",
+        "enum": [
+          "API",
+          "BROWSER_AUTOMATION",
+          "MCP",
+          "SOFTWARE_ACTION",
+          "OTHER"
+        ]
+      },
+      "SellerAcceptancePolicy": {
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "INSTANT",
+              "RULES",
+              "MANUAL"
+            ]
+          },
+          "ruleRevisionId": {
+            "type": "string",
+            "maxLength": 200
+          }
+        }
+      },
+      "CustomerAccountPolicy": {
+        "type": "object",
+        "required": [
+          "requirement",
+          "allowedRetention"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "requirement": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "OPTIONAL",
+              "REQUIRED"
+            ]
+          },
+          "providerKey": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "requiredScopes": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 160
+            }
+          },
+          "allowedRetention": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "items": {
+              "type": "string",
+              "enum": [
+                "REQUEST_ONLY",
+                "SAVED_WITH_CONSENT"
+              ]
+            }
+          }
+        }
+      },
+      "FulfillmentDefinition": {
+        "type": "object",
+        "required": [
+          "mechanism"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "mechanism": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "NATIVE_CONNECTOR",
+              "PROTOBALLS_WORKFLOW",
+              "EXTERNAL_REDIRECT"
+            ]
+          },
+          "bindingRef": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "inputSchema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "outputSchema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "effects": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 160
+            }
+          }
+        }
       },
       "ListingStatus": {
         "type": "string",
@@ -11512,6 +12296,7 @@
           "id",
           "aiId",
           "type",
+          "executionDomain",
           "title",
           "status",
           "visibility",
@@ -11528,6 +12313,22 @@
           },
           "type": {
             "$ref": "#/components/schemas/ListingType"
+          },
+          "executionDomain": {
+            "$ref": "#/components/schemas/ListingExecutionDomain"
+          },
+          "capabilityKind": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "API",
+              "BROWSER_AUTOMATION",
+              "MCP",
+              "SOFTWARE_ACTION",
+              "OTHER"
+            ]
           },
           "title": {
             "type": "string"
@@ -11576,13 +12377,39 @@
             "type": "object",
             "additionalProperties": true
           },
-          "capacity": {
+          "availabilityLimits": {
             "type": "object",
             "additionalProperties": true
+          },
+          "capacity": {
+            "type": "object",
+            "additionalProperties": true,
+            "deprecated": true,
+            "description": "Compatibility alias for availabilityLimits."
           },
           "attributes": {
             "type": "object",
             "additionalProperties": true
+          },
+          "sellerAcceptancePolicy": {
+            "$ref": "#/components/schemas/SellerAcceptancePolicy"
+          },
+          "customerAccountPolicy": {
+            "$ref": "#/components/schemas/CustomerAccountPolicy"
+          },
+          "fulfillmentDefinition": {
+            "$ref": "#/components/schemas/FulfillmentDefinition"
+          },
+          "operationalReadiness": {
+            "type": "string",
+            "enum": [
+              "UNCONFIGURED",
+              "ACTIVATING",
+              "READY",
+              "DEGRADED",
+              "DISABLED"
+            ],
+            "description": "Private owner projection only. Public Browse responses omit this field."
           },
           "preferredDealTemplateKey": {
             "type": [
@@ -13560,6 +14387,15 @@
               "performance"
             ]
           },
+          "sellerAcceptanceStatus": {
+            "type": "string"
+          },
+          "customerAccountStatus": {
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "type": "string"
+          },
           "fundedAt": {
             "type": [
               "string",
@@ -13616,7 +14452,10 @@
             "type": "string",
             "enum": [
               "ready",
-              "requires_funding"
+              "requires_funding",
+              "payment_authorization_required",
+              "recurring_approval_required",
+              "recurring_scheduled"
             ]
           },
           "transaction": {
@@ -13638,6 +14477,109 @@
               "null"
             ],
             "writeOnly": true
+          }
+        }
+      },
+      "ApplicationPaymentAuthorization": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "authorizationId",
+          "transactionId",
+          "status"
+        ],
+        "properties": {
+          "authorizationId": {
+            "type": "string"
+          },
+          "transactionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "providerPaymentIntentId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nextActionRequired": {
+            "type": "boolean"
+          },
+          "clientSecret": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "writeOnly": true
+          }
+        }
+      },
+      "TransactionAccountRequirement": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "transactionId",
+          "transactionStatus",
+          "requirement",
+          "providerKey",
+          "requiredScopes",
+          "allowedRetention",
+          "status",
+          "missingScopes"
+        ],
+        "properties": {
+          "transactionId": {
+            "type": "string"
+          },
+          "transactionStatus": {
+            "type": "string"
+          },
+          "requirement": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "OPTIONAL",
+              "REQUIRED"
+            ]
+          },
+          "providerKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "requiredScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedRetention": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "REQUEST_ONLY",
+                "SAVED_WITH_CONSENT"
+              ]
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NOT_REQUIRED",
+              "OPTIONAL_MISSING",
+              "REQUIRED",
+              "AUTHORIZED"
+            ]
+          },
+          "missingScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -15353,12 +16295,19 @@
         "type": "object",
         "required": [
           "type",
+          "executionDomain",
           "title"
         ],
         "additionalProperties": false,
         "properties": {
           "type": {
             "$ref": "#/components/schemas/ListingType"
+          },
+          "executionDomain": {
+            "$ref": "#/components/schemas/ListingExecutionDomain"
+          },
+          "capabilityKind": {
+            "$ref": "#/components/schemas/ListingCapabilityKind"
           },
           "title": {
             "type": "string",
@@ -15415,13 +16364,28 @@
             "type": "object",
             "additionalProperties": true
           },
-          "capacity": {
+          "availabilityLimits": {
             "type": "object",
             "additionalProperties": true
+          },
+          "capacity": {
+            "type": "object",
+            "additionalProperties": true,
+            "deprecated": true,
+            "description": "Compatibility alias for availabilityLimits."
           },
           "attributes": {
             "type": "object",
             "additionalProperties": true
+          },
+          "sellerAcceptancePolicy": {
+            "$ref": "#/components/schemas/SellerAcceptancePolicy"
+          },
+          "customerAccountPolicy": {
+            "$ref": "#/components/schemas/CustomerAccountPolicy"
+          },
+          "fulfillmentDefinition": {
+            "$ref": "#/components/schemas/FulfillmentDefinition"
           },
           "preferredDealTemplateKey": {
             "type": [
@@ -15472,6 +16436,12 @@
           "type": {
             "$ref": "#/components/schemas/ListingType"
           },
+          "executionDomain": {
+            "$ref": "#/components/schemas/ListingExecutionDomain"
+          },
+          "capabilityKind": {
+            "$ref": "#/components/schemas/ListingCapabilityKind"
+          },
           "title": {
             "type": "string",
             "minLength": 1,
@@ -15527,13 +16497,28 @@
             "type": "object",
             "additionalProperties": true
           },
-          "capacity": {
+          "availabilityLimits": {
             "type": "object",
             "additionalProperties": true
+          },
+          "capacity": {
+            "type": "object",
+            "additionalProperties": true,
+            "deprecated": true,
+            "description": "Compatibility alias for availabilityLimits."
           },
           "attributes": {
             "type": "object",
             "additionalProperties": true
+          },
+          "sellerAcceptancePolicy": {
+            "$ref": "#/components/schemas/SellerAcceptancePolicy"
+          },
+          "customerAccountPolicy": {
+            "$ref": "#/components/schemas/CustomerAccountPolicy"
+          },
+          "fulfillmentDefinition": {
+            "$ref": "#/components/schemas/FulfillmentDefinition"
           },
           "preferredDealTemplateKey": {
             "type": [
@@ -15925,6 +16910,47 @@
             "type": "integer",
             "minimum": 1,
             "description": "Optional partial refund amount. Omit to request the remaining refundable amount."
+          }
+        }
+      },
+      "CreateTransactionFundingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "paymentMode": {
+            "type": "string",
+            "enum": [
+              "DARWIN_MANAGED",
+              "APPLICATION_MANAGED"
+            ],
+            "default": "DARWIN_MANAGED"
+          }
+        }
+      },
+      "ApplicationPaymentAuthorizationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "networkProfileId",
+          "grantedToken"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "STRIPE_SHARED_PAYMENT_TOKEN"
+          },
+          "networkProfileId": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Darwin seller network identifier used when the application provisions the SPT."
+          },
+          "grantedToken": {
+            "type": "string",
+            "maxLength": 200,
+            "pattern": "^spt_[A-Za-z0-9]+$",
+            "writeOnly": true,
+            "description": "One transaction-scoped, time-limited Stripe Shared Payment Token."
           }
         }
       },
@@ -16635,6 +17661,138 @@
         "description": "A sanitized provider account and its toolkit grants. Provider token material is never returned.",
         "additionalProperties": true
       },
+      "ConnectionAssignment": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "targetKind",
+          "targetId",
+          "retentionMode",
+          "scopes",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "targetKind": {
+            "type": "string",
+            "enum": [
+              "AI",
+              "LISTING",
+              "TRANSACTION"
+            ]
+          },
+          "targetId": {
+            "type": "string"
+          },
+          "retentionMode": {
+            "type": "string",
+            "enum": [
+              "REQUEST_ONLY",
+              "SAVED_WITH_CONSENT"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "CONSUMED",
+              "REVOKED"
+            ]
+          },
+          "consentedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "consumedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateConnectionAssignmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "targetKind",
+          "targetId",
+          "retention",
+          "scopes"
+        ],
+        "properties": {
+          "targetKind": {
+            "type": "string",
+            "enum": [
+              "AI",
+              "LISTING",
+              "TRANSACTION"
+            ]
+          },
+          "targetId": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "retention": {
+            "type": "string",
+            "enum": [
+              "REQUEST_ONLY",
+              "SAVED_WITH_CONSENT"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "consented": {
+            "type": "boolean",
+            "description": "Must be true for SAVED_WITH_CONSENT after the user completes Darwin-hosted consent."
+          }
+        }
+      },
       "CreateConnectionAuthorizationRequest": {
         "type": "object",
         "required": [
@@ -16756,6 +17914,305 @@
             "type": "integer"
           }
         }
+      },
+      "ApplicationMonetizationPolicy": {
+        "type": "object",
+        "required": [
+          "applicationId",
+          "mode",
+          "currency",
+          "payoutSchedule",
+          "status",
+          "revision"
+        ],
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "FIXED",
+              "PERCENTAGE"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "fixedAmountMinor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "percentageBps": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "maximumFeeMinor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "payoutSchedule": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "description": "Stored payout preference. Fee withdrawal and scheduled payout operations remain preview until their public endpoints ship."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DISABLED"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateApplicationMonetizationRequest": {
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "FIXED",
+              "PERCENTAGE"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "default": "usd"
+          },
+          "fixedAmountMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "percentageBps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "maximumFeeMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Required for percentage fees."
+          },
+          "payoutSchedule": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "default": "MANUAL",
+            "description": "Stores the desired payout cadence. Automatic and manual fee-earnings payout operations remain preview until their public endpoints ship."
+          }
+        }
+      },
+      "ResolveApplicationUserRequest": {
+        "type": "object",
+        "required": [
+          "externalUserReference"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "externalUserReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Stable application-scoped identifier. Darwin stores only a normalized digest in the durable mapping."
+          },
+          "claims": {
+            "type": "array",
+            "maxItems": 10,
+            "description": "Preview-only verified-claim hints. They do not affect current hosted-onboarding resolution, never authorize a global account merge by themselves, and are not logged.",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "value",
+                "verified"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "EMAIL",
+                    "PHONE"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "maxLength": 500,
+                  "writeOnly": true
+                },
+                "verified": {
+                  "type": "boolean",
+                  "const": true
+                }
+              }
+            }
+          },
+          "proof": {
+            "description": "Preview proof envelope. It is shape-validated and redacted, but public proof exchange is not active yet; omit it to reuse a mapping or receive hosted onboarding.",
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "type",
+                  "authorizationCode"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "DARWIN_OAUTH"
+                  },
+                  "authorizationCode": {
+                    "type": "string",
+                    "maxLength": 2000,
+                    "writeOnly": true
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "type",
+                  "token",
+                  "nonce"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "OIDC_ID_TOKEN"
+                  },
+                  "token": {
+                    "type": "string",
+                    "maxLength": 20000,
+                    "writeOnly": true
+                  },
+                  "nonce": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "writeOnly": true
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": [
+                  "type",
+                  "assertion"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "TRUSTED_APPLICATION_ATTESTATION"
+                  },
+                  "assertion": {
+                    "type": "string",
+                    "maxLength": 20000,
+                    "writeOnly": true
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "ApplicationUserResolutionResult": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "status",
+              "darwinUserRef",
+              "darwinAiRef"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "const": "READY"
+              },
+              "darwinUserRef": {
+                "type": "string"
+              },
+              "darwinAiRef": {
+                "type": "string"
+              },
+              "verificationMethod": {
+                "type": "string"
+              },
+              "consentScopes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "status",
+              "hostedUrl",
+              "expiresAt"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ONBOARDING_REQUIRED",
+                  "REAUTH_REQUIRED"
+                ]
+              },
+              "hostedUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
       },
       "FundApplicationWalletRequest": {
         "type": "object",
