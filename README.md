@@ -10,7 +10,7 @@ npm install --global @darwinso/cli
 ```
 
 Create an API key in
-[Darwin Developer settings](https://app.darwin.so/settings?tab=api-keys), then
+[Darwin Developer settings](https://darwin.so/settings?tab=api-keys), then
 configure the CLI:
 
 ```bash
