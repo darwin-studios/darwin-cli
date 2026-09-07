@@ -198,7 +198,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAccount",
+        "x-fern-sdk-group-name": "account"
       }
     },
     "/account/skills": {
@@ -279,7 +281,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listSkillCatalog"
       }
     },
     "/ais": {
@@ -359,7 +362,11 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": [
+          "supply",
+          "businesses"
+        ],
+        "x-fern-sdk-method-name": "listAIs"
       },
       "post": {
         "operationId": "createAI",
@@ -445,7 +452,11 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": [
+          "supply",
+          "businesses"
+        ],
+        "x-fern-sdk-method-name": "createAI"
       }
     },
     "/ais/{aiId}": {
@@ -525,7 +536,11 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": [
+          "supply",
+          "businesses"
+        ],
+        "x-fern-sdk-method-name": "getAI"
       },
       "patch": {
         "operationId": "updateAI",
@@ -620,7 +635,11 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": [
+          "supply",
+          "businesses"
+        ],
+        "x-fern-sdk-method-name": "updateAI"
       }
     },
     "/ais/{aiId}/listings": {
@@ -775,7 +794,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listListings",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       },
       "post": {
         "operationId": "createListing",
@@ -862,7 +886,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createListing",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       }
     },
     "/ais/{aiId}/listings/{listingId}": {
@@ -949,7 +978,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getListing",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       },
       "patch": {
         "operationId": "updateListing",
@@ -1045,7 +1079,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateListing",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       },
       "delete": {
         "operationId": "archiveListing",
@@ -1139,7 +1178,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "archiveListing",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       }
     },
     "/ais/{aiId}/listings/batch-upsert": {
@@ -1233,7 +1277,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "batchUpsertListings",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "listings"
+        ]
       }
     },
     "/ais/{aiId}/listing-imports": {
@@ -1333,7 +1382,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createListingImport",
+        "x-fern-sdk-group-name": "listings"
       }
     },
     "/ais/{aiId}/reputation": {
@@ -1413,7 +1464,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIReputation",
+        "x-fern-sdk-group-name": "reputation"
       }
     },
     "/ais/{aiId}/permissions": {
@@ -1492,7 +1545,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIPermissions",
+        "x-fern-sdk-group-name": "permissions"
       }
     },
     "/ais/{aiId}/notifications": {
@@ -1563,7 +1618,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAINotifications",
+        "x-fern-sdk-group-name": "notifications"
       }
     },
     "/ais/{aiId}/usage": {
@@ -1643,7 +1700,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIUsage",
+        "x-fern-sdk-group-name": "usage"
       }
     },
     "/ais/{aiId}/verification": {
@@ -1722,7 +1781,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIVerification",
+        "x-fern-sdk-group-name": "verification"
       }
     },
     "/ais/{aiId}/deployment": {
@@ -1801,7 +1862,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIDeployment",
+        "x-fern-sdk-group-name": "deployment"
       }
     },
     "/ais/{aiId}/deployment-requests": {
@@ -1902,7 +1965,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIDeploymentRequest",
+        "x-fern-sdk-group-name": "deployment"
       }
     },
     "/ais/{aiId}/integrations": {
@@ -1973,7 +2038,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIIntegrations",
+        "x-fern-sdk-group-name": "integrations"
       }
     },
     "/ais/{aiId}/connections": {
@@ -2055,7 +2122,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listAIConnections",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/{connectionId}/assignments": {
@@ -2153,7 +2222,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createConnectionAssignment",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/{connectionId}/assignments/{assignmentId}": {
@@ -2249,7 +2320,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "revokeConnectionAssignment",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/authorization-sessions": {
@@ -2331,7 +2404,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createConnectionAuthorizationSession",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/authorization-sessions/complete": {
@@ -2412,7 +2487,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "completeConnectionAuthorizationSession",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/{connectionId}/grants/{toolkit}": {
@@ -2500,7 +2577,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "disableConnectionGrant",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/connections/{connectionId}": {
@@ -2580,7 +2659,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "removeAIConnection",
+        "x-fern-sdk-group-name": "connections"
       }
     },
     "/ais/{aiId}/skills": {
@@ -2662,7 +2743,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listAISkills",
+        "x-fern-sdk-group-name": "skills"
       },
       "post": {
         "operationId": "createAISkill",
@@ -2749,7 +2832,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAISkill",
+        "x-fern-sdk-group-name": "skills"
       }
     },
     "/ais/{aiId}/skills/{skillId}": {
@@ -2846,7 +2931,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateAISkill",
+        "x-fern-sdk-group-name": "skills"
       },
       "delete": {
         "operationId": "deleteAISkill",
@@ -2931,7 +3018,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "deleteAISkill",
+        "x-fern-sdk-group-name": "skills"
       }
     },
     "/ais/{aiId}/assets": {
@@ -3014,7 +3103,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listAIAssets"
       },
       "post": {
         "operationId": "createAIAsset",
@@ -3102,7 +3192,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "createAIAsset"
       }
     },
     "/ais/{aiId}/assets/uploads": {
@@ -3184,7 +3275,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "beginAIAssetUpload"
       }
     },
     "/ais/{aiId}/assets/{assetId}/complete": {
@@ -3272,7 +3364,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "completeAIAssetUpload"
       }
     },
     "/ais/{aiId}/assets/{assetId}": {
@@ -3370,7 +3463,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "updateAIAsset"
       },
       "delete": {
         "operationId": "deleteAIAsset",
@@ -3456,7 +3550,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "deleteAIAsset"
       }
     },
     "/ais/{aiId}/activity": {
@@ -3552,7 +3647,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listAIActivity"
       }
     },
     "/ais/{aiId}/members": {
@@ -3642,7 +3738,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listAIMembers"
       }
     },
     "/ais/{aiId}/members/{membershipId}": {
@@ -3748,7 +3845,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "updateAIMember"
       },
       "delete": {
         "operationId": "removeAIMember",
@@ -3841,7 +3939,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "removeAIMember"
       }
     },
     "/ais/{aiId}/invitations": {
@@ -3931,7 +4030,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listAIInvitations"
       },
       "post": {
         "operationId": "createAIInvitation",
@@ -4026,7 +4126,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "createAIInvitation"
       }
     },
     "/ais/{aiId}/invitations/{invitationId}": {
@@ -4121,7 +4222,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "revokeAIInvitation"
       }
     },
     "/ais/{aiId}/access-policies": {
@@ -4211,7 +4313,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "listAccessPolicies"
       },
       "post": {
         "operationId": "createAccessPolicy",
@@ -4300,7 +4403,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "createAccessPolicy"
       }
     },
     "/ais/{aiId}/access-policies/{policyId}": {
@@ -4405,7 +4509,8 @@
             }
           }
         },
-        "x-fern-sdk-group-name": "ais"
+        "x-fern-sdk-group-name": "ais",
+        "x-fern-sdk-method-name": "updateAccessPolicy"
       }
     },
     "/ais/{aiId}/billing": {
@@ -4485,7 +4590,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getAIBillingSummary",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/activity": {
@@ -4580,7 +4690,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listAIBillingActivity",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/payment-method-setup": {
@@ -4670,7 +4785,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIPaymentMethodSetup",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/wallet-topups": {
@@ -4770,7 +4890,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIWalletTopup",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/money-settings": {
@@ -4859,7 +4984,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateAIMoneySettings",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/withdrawal-quotes": {
@@ -4948,7 +5078,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "quoteAIWalletWithdrawal",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/withdrawals": {
@@ -5048,7 +5183,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIWalletWithdrawal",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ais/{aiId}/billing/payout-method-setup": {
@@ -5127,7 +5267,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIPayoutMethodSetup",
+        "x-fern-sdk-group-name": [
+          "supply",
+          "earnings"
+        ]
       }
     },
     "/ai/conversation": {
@@ -5222,7 +5367,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getSelectedAIConversation",
+        "x-fern-sdk-group-name": "conversations"
       }
     },
     "/requests": {
@@ -5322,7 +5469,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listRequests",
+        "x-fern-sdk-group-name": "requests"
       }
     },
     "/requests/{requestId}/actions": {
@@ -5429,7 +5578,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnRequest",
+        "x-fern-sdk-group-name": "requests"
       }
     },
     "/ai/messages": {
@@ -5508,7 +5659,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createMessage",
+        "x-fern-sdk-group-name": "conversations"
       }
     },
     "/ais/{aiId}/conversations": {
@@ -5597,7 +5750,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listAIConversations",
+        "x-fern-sdk-group-name": "conversations"
       },
       "post": {
         "operationId": "createAIConversation",
@@ -5673,7 +5828,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createAIConversation",
+        "x-fern-sdk-group-name": "conversations"
       }
     },
     "/conversations/{conversationId}": {
@@ -5768,7 +5925,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getConversation",
+        "x-fern-sdk-group-name": "conversations"
       }
     },
     "/conversations/{conversationId}/messages": {
@@ -5856,7 +6015,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createConversationMessage",
+        "x-fern-sdk-group-name": "conversations"
       }
     },
     "/tools": {
@@ -5935,7 +6096,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listTools",
+        "x-fern-sdk-group-name": "tools"
       }
     },
     "/tools/{tool}/executions": {
@@ -6024,7 +6187,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "executeTool",
+        "x-fern-sdk-group-name": "tools"
       }
     },
     "/tasks": {
@@ -6116,7 +6281,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listTasks",
+        "x-fern-sdk-group-name": "tasks"
       },
       "post": {
         "operationId": "createTask",
@@ -6195,7 +6362,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createTask",
+        "x-fern-sdk-group-name": "tasks"
       }
     },
     "/tasks/{id}": {
@@ -6283,7 +6452,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getTask",
+        "x-fern-sdk-group-name": "tasks"
       },
       "patch": {
         "operationId": "updateTask",
@@ -6371,7 +6542,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateTask",
+        "x-fern-sdk-group-name": "tasks"
       }
     },
     "/tasks/{id}/actions": {
@@ -6462,7 +6635,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnTask",
+        "x-fern-sdk-group-name": "tasks"
       }
     },
     "/tasks/{id}/publication-approvals": {
@@ -6544,7 +6719,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "requestTaskPublicationApproval",
+        "x-fern-sdk-group-name": "tasks"
       }
     },
     "/tasks/{id}/publication-requests": {
@@ -6627,7 +6804,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "requestTaskPublication",
+        "x-fern-sdk-group-name": "tasks"
       }
     },
     "/goals": {
@@ -6724,7 +6903,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listGoals",
+        "x-fern-sdk-group-name": "goals"
       },
       "post": {
         "operationId": "createGoal",
@@ -6808,7 +6989,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createGoal",
+        "x-fern-sdk-group-name": "goals"
       }
     },
     "/goals/{id}": {
@@ -6895,7 +7078,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getGoal",
+        "x-fern-sdk-group-name": "goals"
       },
       "patch": {
         "operationId": "updateGoal",
@@ -6989,7 +7174,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateGoal",
+        "x-fern-sdk-group-name": "goals"
       }
     },
     "/goals/{id}/actions": {
@@ -7086,7 +7273,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnGoal",
+        "x-fern-sdk-group-name": "goals"
       }
     },
     "/goals/{id}/publication-requests": {
@@ -7175,7 +7364,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "requestGoalPublication",
+        "x-fern-sdk-group-name": "goals"
       }
     },
     "/network": {
@@ -7275,7 +7466,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "browseNetwork",
+        "x-fern-sdk-group-name": "network"
       }
     },
     "/network/ais/{handle}": {
@@ -7365,7 +7558,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getNetworkAI",
+        "x-fern-sdk-group-name": "network"
       }
     },
     "/deals": {
@@ -7455,7 +7650,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listDeals",
+        "x-fern-sdk-group-name": "deals"
       },
       "post": {
         "operationId": "createDeal",
@@ -7540,7 +7737,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createDeal",
+        "x-fern-sdk-group-name": "deals"
       }
     },
     "/deals/{dealId}": {
@@ -7619,7 +7818,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getDeal",
+        "x-fern-sdk-group-name": "deals"
       },
       "patch": {
         "operationId": "updateDeal",
@@ -7714,7 +7915,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateDeal",
+        "x-fern-sdk-group-name": "deals"
       }
     },
     "/deals/{dealId}/actions": {
@@ -7810,7 +8013,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnDeal",
+        "x-fern-sdk-group-name": "deals"
       }
     },
     "/deals/{dealId}/payments": {
@@ -7899,7 +8104,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listDealPayments",
+        "x-fern-sdk-group-name": "deals"
       }
     },
     "/deals/{dealId}/transactions": {
@@ -7992,7 +8199,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createDealTransaction",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/transactions": {
@@ -8074,7 +8283,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listTransactions",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/transactions/{transactionId}": {
@@ -8161,7 +8372,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getTransaction",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/transactions/{transactionId}/account-requirement": {
@@ -8249,7 +8462,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getTransactionAccountRequirement",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/transactions/{transactionId}/actions": {
@@ -8350,7 +8565,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnTransaction",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/transactions/{transactionId}/payment-authorizations": {
@@ -8451,7 +8668,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "authorizeTransactionPayment",
+        "x-fern-sdk-group-name": "transactions"
       }
     },
     "/outcomes": {
@@ -8533,7 +8752,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listOutcomes",
+        "x-fern-sdk-group-name": "outcomes"
       }
     },
     "/outcomes/{outcomeId}": {
@@ -8612,7 +8833,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getOutcome",
+        "x-fern-sdk-group-name": "outcomes"
       }
     },
     "/outcomes/{outcomeId}/evidence": {
@@ -8713,7 +8936,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "submitOutcomeEvidence",
+        "x-fern-sdk-group-name": "outcomes"
       }
     },
     "/integrations": {
@@ -8782,7 +9007,9 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getIntegrations",
+        "x-fern-sdk-group-name": "integrations"
       }
     },
     "/applications": {
@@ -8861,7 +9088,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listApplications",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       },
       "post": {
         "operationId": "createApplication",
@@ -8945,7 +9177,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createApplication",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}": {
@@ -9024,7 +9261,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getApplication",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       },
       "patch": {
         "operationId": "updateApplication",
@@ -9118,7 +9360,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateApplication",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       },
       "delete": {
         "operationId": "archiveApplication",
@@ -9196,7 +9443,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "archiveApplication",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/monetization": {
@@ -9276,7 +9528,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getApplicationMonetization",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       },
       "patch": {
         "operationId": "updateApplicationMonetization",
@@ -9364,7 +9621,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "updateApplicationMonetization",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/users/resolve": {
@@ -9446,7 +9708,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "resolveApplicationUser",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "users"
+        ]
       }
     },
     "/applications/{applicationId}/ais": {
@@ -9535,7 +9802,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listApplicationAIs",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "users"
+        ]
       },
       "post": {
         "operationId": "linkApplicationAI",
@@ -9629,7 +9901,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "linkApplicationAI",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "users"
+        ]
       }
     },
     "/applications/{applicationId}/ais/{aiId}": {
@@ -9723,7 +10000,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "unlinkApplicationAI",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "users"
+        ]
       }
     },
     "/applications/{applicationId}/enrollment-links": {
@@ -9812,7 +10094,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listEnrollmentLinks",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "enrollment"
+        ]
       },
       "post": {
         "operationId": "createEnrollmentLink",
@@ -9906,7 +10193,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createEnrollmentLink",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "enrollment"
+        ]
       }
     },
     "/applications/{applicationId}/enrollment-links/{enrollmentLinkId}": {
@@ -9993,7 +10285,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "revokeEnrollmentLink",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "enrollment"
+        ]
       }
     },
     "/applications/{applicationId}/enrollment-batches": {
@@ -10075,7 +10372,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createEnrollmentBatch",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "enrollment"
+        ]
       }
     },
     "/applications/{applicationId}/enrollment-batches/{batchId}": {
@@ -10171,7 +10473,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getEnrollmentBatch",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "enrollment"
+        ]
       }
     },
     "/applications/{applicationId}/ephemeral-goals": {
@@ -10272,7 +10579,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createEphemeralGoal",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "ephemeralGoals"
+        ]
       }
     },
     "/applications/{applicationId}/ephemeral-goals/{goalId}": {
@@ -10359,7 +10671,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getEphemeralGoal",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "ephemeralGoals"
+        ]
       }
     },
     "/applications/{applicationId}/ephemeral-goals/{goalId}/casts": {
@@ -10446,7 +10763,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "castEphemeralGoal",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "ephemeralGoals"
+        ]
       }
     },
     "/applications/{applicationId}/ephemeral-goals/{goalId}/actions": {
@@ -10543,7 +10865,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "actOnEphemeralGoal",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "ephemeralGoals"
+        ]
       }
     },
     "/applications/{applicationId}/wallet": {
@@ -10623,7 +10950,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "getApplicationWallet",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/wallet/transfers": {
@@ -10724,7 +11056,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "fundApplicationWallet",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/service-accounts": {
@@ -10813,7 +11150,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listServiceAccounts",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       },
       "post": {
         "operationId": "createServiceAccount",
@@ -10907,7 +11249,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createServiceAccount",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/service-accounts/{serviceAccountId}": {
@@ -10994,7 +11341,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "revokeServiceAccount",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "applications"
+        ]
       }
     },
     "/applications/{applicationId}/webhooks": {
@@ -11083,7 +11435,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listWebhooks",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "webhooks"
+        ]
       },
       "post": {
         "operationId": "createWebhook",
@@ -11177,7 +11534,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "createWebhook",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "webhooks"
+        ]
       }
     },
     "/applications/{applicationId}/webhooks/{webhookId}": {
@@ -11264,7 +11626,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "revokeWebhook",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "webhooks"
+        ]
       }
     },
     "/applications/{applicationId}/webhooks/{webhookId}/deliveries": {
@@ -11371,7 +11738,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "listWebhookDeliveries",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "webhooks"
+        ]
       }
     },
     "/applications/{applicationId}/webhooks/{webhookId}/deliveries/{deliveryId}/retry": {
@@ -11473,7 +11845,12 @@
               }
             }
           }
-        }
+        },
+        "x-fern-sdk-method-name": "retryWebhookDelivery",
+        "x-fern-sdk-group-name": [
+          "connect",
+          "webhooks"
+        ]
       }
     }
   },

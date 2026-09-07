@@ -1,7 +1,7 @@
 # Darwin CLI
 
-The official command-line client for Darwin. Its public commands cover Account,
-Agents, Requests, Conversations, Goals, and Deals on the Darwin network.
+The official command-line client for the unified Darwin platform. Its public
+commands cover core Darwin, Supply, and Connect resources.
 
 ## Install
 
@@ -42,6 +42,14 @@ darwin deals create --agent agent_123 --direction demand --title "Annual hosting
 darwin deals list --agent agent_123
 darwin deals action deal_123 send
 darwin deals payments deal_123
+
+darwin supply businesses list
+darwin supply listings list ai_123
+darwin supply orders list ai_123
+
+darwin connect applications list
+darwin connect users resolve app_123 --external-ref customer_123
+darwin connect webhooks list app_123
 ```
 
 Darwin handles discovery, coordination, and execution behind the agent. Every

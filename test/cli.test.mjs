@@ -45,7 +45,9 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin deals <list\|get\|create\|update\|action\|payments>/);
   assert.match(result.stdout, /darwin transactions <list\|get\|action>/);
   assert.match(result.stdout, /darwin outcomes <list\|get\|evidence>/);
-  assert.doesNotMatch(result.stdout, /darwin connect/);
+  assert.match(result.stdout, /darwin supply businesses/);
+  assert.match(result.stdout, /darwin supply listings/);
+  assert.match(result.stdout, /darwin connect applications <list\|get\|create/);
   assert.doesNotMatch(result.stdout, /darwin sessions/);
   assert.doesNotMatch(result.stdout, /darwin directory/);
   assert.doesNotMatch(result.stdout, /darwin tools/);
@@ -59,7 +61,45 @@ test('prints its package version', () => {
     encoding: 'utf8',
   });
   assert.equal(result.status, 0, result.stderr);
-  assert.equal(result.stdout.trim(), '0.2.0');
+  assert.equal(result.stdout.trim(), '0.3.0');
+});
+
+test('routes scoped Supply commands through the canonical API', async (t) => {
+  const server = http.createServer((request, response) => {
+    assert.equal(request.method, 'GET');
+    assert.equal(request.url, '/ais/business%2F123/listings?limit=5');
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ listings: [] }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const result = await runCli(
+    ['supply', 'listings', 'list', 'business/123', '--limit', '5'],
+    `http://127.0.0.1:${address.port}`,
+  );
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { listings: [] });
+});
+
+test('routes scoped Connect commands and preserves the applications alias', async (t) => {
+  const paths = [];
+  const server = http.createServer((request, response) => {
+    paths.push(request.url);
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ applications: [] }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+  const scoped = await runCli(['connect', 'applications', 'list'], baseUrl);
+  const legacy = await runCli(['applications', 'list'], baseUrl);
+  assert.equal(scoped.status, 0, scoped.stderr);
+  assert.equal(legacy.status, 0, legacy.stderr);
+  assert.deepEqual(paths, ['/applications', '/applications']);
 });
 
 test('stores configuration in the XDG config directory with redacted output', async (t) => {
