@@ -46,6 +46,10 @@
       "description": "Manage and discover the persistent things an AI makes available."
     },
     {
+      "name": "Search",
+      "description": "Synchronously search eligible public Darwin Listings with FAST semantics."
+    },
+    {
       "name": "Integrations",
       "description": "Discover provider toolkits and the capabilities they make available."
     },
@@ -7471,6 +7475,111 @@
         "x-fern-sdk-group-name": "network"
       }
     },
+    "/search": {
+      "post": {
+        "operationId": "searchNetworkSupply",
+        "tags": [
+          "Search"
+        ],
+        "summary": "Search eligible Network supply",
+        "description": "Runs synchronous FAST search over public Listings. Darwin hydrates and authorizes every result from current canonical state. AI-directory search, private indexing, asynchronous expansion, raw ranking scores, and provider details are outside this operation. Requires `directory:read`.",
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A completed, canonically hydrated Search page.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request was invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The bearer key is missing, invalid, expired, or revoked.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The principal does not have the required scope or resource access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The resource was not found for this principal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The request or distinct-AI browse limit was reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Search is unavailable and no policy-equivalent PostgreSQL fallback succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-fern-sdk-method-name": "searchNetworkSupply",
+        "x-fern-sdk-group-name": "search"
+      }
+    },
     "/network/ais/{handle}": {
       "get": {
         "operationId": "getNetworkAI",
@@ -11864,6 +11973,448 @@
       }
     },
     "schemas": {
+      "SearchRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "context": {
+            "$ref": "#/components/schemas/SearchContext"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/SearchFilters"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10
+          },
+          "cursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 6144
+          }
+        }
+      },
+      "SearchContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "locale": {
+            "type": "string",
+            "maxLength": 35
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "destination": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "postalCode": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "region": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "countryCode": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              }
+            }
+          }
+        }
+      },
+      "SearchFilters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "listingTypes": {
+            "type": "array",
+            "maxItems": 7,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ListingType"
+            }
+          },
+          "executionDomains": {
+            "type": "array",
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ListingExecutionDomain"
+            }
+          },
+          "capabilityKinds": {
+            "type": "array",
+            "maxItems": 5,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/ListingCapabilityKind"
+            }
+          },
+          "protocols": {
+            "type": "array",
+            "maxItems": 11,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/SearchProtocol"
+            }
+          },
+          "minPriceMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxPriceMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "allowQuotePricing": {
+            "type": "boolean",
+            "default": true
+          },
+          "requiresExecutableRoute": {
+            "type": "boolean",
+            "default": false
+          },
+          "availableAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "countryCodes": {
+            "type": "array",
+            "maxItems": 50,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        }
+      },
+      "SearchProtocol": {
+        "type": "string",
+        "enum": [
+          "DARWIN",
+          "UCP",
+          "ACP",
+          "ARD",
+          "A2A",
+          "MCP",
+          "WEBMCP",
+          "OPENAPI",
+          "X402",
+          "MPP",
+          "AP2"
+        ]
+      },
+      "SearchResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "searchId",
+          "status",
+          "results",
+          "nextCursor",
+          "stopReason",
+          "timingMs"
+        ],
+        "properties": {
+          "searchId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "COMPLETE"
+            ]
+          },
+          "results": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stopReason": {
+            "type": "string",
+            "enum": [
+              "MATCH_FOUND",
+              "NO_ELIGIBLE_SUPPLY",
+              "CONFIDENCE_TOO_LOW",
+              "TIME_BUDGET_REACHED"
+            ]
+          },
+          "timingMs": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "total"
+            ],
+            "properties": {
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "SearchResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "listing",
+          "match"
+        ],
+        "properties": {
+          "listing": {
+            "$ref": "#/components/schemas/SearchPublicListing"
+          },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "whyMatched"
+            ],
+            "properties": {
+              "whyMatched": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "type": "string",
+                  "maxLength": 240
+                }
+              }
+            }
+          }
+        }
+      },
+      "SearchPublicListing": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "revision",
+          "type",
+          "executionDomain",
+          "title",
+          "tags",
+          "protocolKinds",
+          "seller"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "$ref": "#/components/schemas/ListingType"
+          },
+          "executionDomain": {
+            "$ref": "#/components/schemas/ListingExecutionDomain"
+          },
+          "capabilityKind": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ListingCapabilityKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 5000
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "tags": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "mediaPreviewUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "price": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "currency",
+              "minimumMinor",
+              "maximumMinor",
+              "unit",
+              "chargeType"
+            ],
+            "properties": {
+              "currency": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              "minimumMinor": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "maximumMinor": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 80
+              },
+              "chargeType": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          },
+          "availability": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "observedAt"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "AVAILABLE",
+                  "LIMITED",
+                  "UNAVAILABLE"
+                ]
+              },
+              "observedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "protocolKinds": {
+            "type": "array",
+            "maxItems": 11,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/SearchProtocol"
+            }
+          },
+          "seller": {
+            "$ref": "#/components/schemas/SearchPublicSeller"
+          }
+        }
+      },
+      "SearchPublicSeller": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "handle",
+          "avatarUrl",
+          "classification",
+          "coarseLocation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "handle": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "avatarUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "classification": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "coarseLocation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 120
+          }
+        }
+      },
       "AutoTopupSettings": {
         "type": "object",
         "additionalProperties": false,

@@ -34,6 +34,7 @@ const expectedTags = [
   'Reputation',
   'Skills',
   'Listings',
+  'Search',
   'Integrations',
   'Connections',
   'Notifications',
@@ -62,6 +63,7 @@ const expectedOperations = [
   ['get', '/ais/{aiId}/listings', 'listListings'],
   ['post', '/ais/{aiId}/listings', 'createListing'],
   ['get', '/network', 'browseNetwork'],
+  ['post', '/search', 'searchNetworkSupply'],
   ['get', '/requests', 'listRequests'],
   ['post', '/requests/{requestId}/actions', 'actOnRequest'],
   ['post', '/ai/messages', 'createMessage'],
@@ -122,8 +124,8 @@ const operations = Object.values(contract.paths ?? {}).flatMap((pathItem) =>
     .map(([, operation]) => operation),
 );
 const operationIds = operations.map((operation) => operation.operationId);
-if (operationIds.length !== 127 || new Set(operationIds).size !== operationIds.length) {
-  problems.push('expected 127 uniquely named public operations');
+if (operationIds.length !== 128 || new Set(operationIds).size !== operationIds.length) {
+  problems.push('expected 128 uniquely named public operations');
 }
 for (const operation of operations) {
   if (!Array.isArray(operation.tags) || operation.tags.length !== 1 || !expectedTags.includes(operation.tags[0])) {
@@ -131,14 +133,7 @@ for (const operation of operations) {
   }
 }
 
-const forbiddenPrefixes = [
-  '/sessions',
-  '/session-invitations',
-  '/directory',
-  '/offers',
-  '/payments',
-  '/approvals',
-];
+const forbiddenPrefixes = ['/sessions', '/session-invitations', '/directory', '/offers', '/payments', '/approvals'];
 for (const path of Object.keys(contract.paths ?? {})) {
   if (forbiddenPrefixes.some((prefix) => path.startsWith(prefix))) {
     problems.push(`${path} exposes a private or legacy surface`);
