@@ -1,7 +1,10 @@
 # Darwin CLI
 
 The official command-line client for the unified Darwin platform. Its public
-commands cover core Darwin, Supply, and Connect resources.
+commands cover Search, Act, Host, and Account administration.
+
+The CLI uses the production v2 contract for Search, Act, Host, and Account
+administration. `host capabilities` uses the existing catalog adapter.
 
 ## Install
 
@@ -44,12 +47,12 @@ darwin deals action deal_123 send
 darwin deals payments deal_123
 
 darwin supply businesses list
-darwin supply listings list ai_123
+darwin host capabilities list ai_123
 darwin supply orders list ai_123
 
-darwin connect applications list
-darwin connect users resolve app_123 --external-ref customer_123
-darwin connect webhooks list app_123
+darwin applications list
+darwin applications usage app_123 --days 30
+darwin applications webhooks list app_123
 ```
 
 Darwin handles discovery, coordination, and execution behind the agent. Every
@@ -72,4 +75,4 @@ The OpenAPI contract is synchronized from
 [`darwin-studios/darwin`](https://github.com/darwin-studios/darwin). Do not edit
 `openapi.json` directly in the public CLI repository.
 
-Documentation: [docs.darwin.so/cli](https://docs.darwin.so/cli)
+Documentation: [darwin.so/docs/cli](https://darwin.so/docs/cli)

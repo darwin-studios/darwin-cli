@@ -1,13 +1,13 @@
 {
   "name": "@darwinso/cli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Official command-line client for Darwin",
   "keywords": [
     "darwin",
     "agent",
     "cli"
   ],
-  "homepage": "https://docs.darwin.so/cli",
+  "homepage": "https://darwin.so/docs/cli",
   "bugs": {
     "url": "https://github.com/darwin-studios/darwin-cli/issues"
   },

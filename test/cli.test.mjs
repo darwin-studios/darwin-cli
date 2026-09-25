@@ -46,8 +46,9 @@ test('prints concise help', () => {
   assert.match(result.stdout, /darwin transactions <list\|get\|action>/);
   assert.match(result.stdout, /darwin outcomes <list\|get\|evidence>/);
   assert.match(result.stdout, /darwin supply businesses/);
-  assert.match(result.stdout, /darwin supply listings/);
-  assert.match(result.stdout, /darwin connect applications <list\|get\|create/);
+  assert.match(result.stdout, /darwin host capabilities/);
+  assert.match(result.stdout, /darwin applications <list\|get\|create/);
+  assert.doesNotMatch(result.stdout, /darwin connect/);
   assert.doesNotMatch(result.stdout, /darwin sessions/);
   assert.doesNotMatch(result.stdout, /darwin directory/);
   assert.doesNotMatch(result.stdout, /darwin tools/);
@@ -61,15 +62,15 @@ test('prints its package version', () => {
     encoding: 'utf8',
   });
   assert.equal(result.status, 0, result.stderr);
-  assert.equal(result.stdout.trim(), '0.3.0');
+  assert.equal(result.stdout.trim(), '0.4.0');
 });
 
-test('routes scoped Supply commands through the canonical API', async (t) => {
+test('routes Supply capability commands through the v2 Host API', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'GET');
-    assert.equal(request.url, '/ais/business%2F123/listings?limit=5');
+    assert.equal(request.url, '/host/ais/business%2F123/capabilities?limit=5');
     response.setHeader('Content-Type', 'application/json');
-    response.end(JSON.stringify({ listings: [] }));
+    response.end(JSON.stringify({ capabilities: [] }));
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   t.after(() => server.close());
@@ -80,10 +81,51 @@ test('routes scoped Supply commands through the canonical API', async (t) => {
     `http://127.0.0.1:${address.port}`,
   );
   assert.equal(result.status, 0, result.stderr);
-  assert.deepEqual(JSON.parse(result.stdout), { listings: [] });
+  assert.deepEqual(JSON.parse(result.stdout), { capabilities: [] });
 });
 
-test('routes scoped Connect commands and preserves the applications alias', async (t) => {
+test('exposes capability terminology from the v2 Host API', async (t) => {
+  const server = http.createServer((request, response) => {
+    assert.equal(request.url, '/host/ais/business%2F123/capabilities?limit=5');
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ capabilities: [{ id: 'cap_1' }], cursor: 'next' }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const result = await runCli(
+    ['host', 'capabilities', 'list', 'business/123', '--limit', '5'],
+    `http://127.0.0.1:${address.port}`,
+  );
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout), { capabilities: [{ id: 'cap_1' }], cursor: 'next' });
+});
+
+test('routes direct API calls to v2 and rejects paths outside Search, Act, Host, and Account', async (t) => {
+  const paths = [];
+  const server = http.createServer((request, response) => {
+    paths.push(request.url);
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ ais: [] }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  const valid = await runCli(['api', 'GET', '/host/ais'], baseUrl);
+  const invalid = await runCli(['api', 'GET', '/sessions'], baseUrl);
+  const traversal = await runCli(['api', 'GET', '/host/../../v1/sessions'], baseUrl);
+  assert.equal(valid.status, 0, valid.stderr);
+  assert.notEqual(invalid.status, 0);
+  assert.match(invalid.stderr, /v2 API path under/);
+  assert.notEqual(traversal.status, 0);
+  assert.match(traversal.stderr, /stay within the v2 endpoint/);
+  assert.deepEqual(paths, ['/api/v2/host/ais']);
+});
+
+test('routes application administration through v2 Account', async (t) => {
   const paths = [];
   const server = http.createServer((request, response) => {
     paths.push(request.url);
@@ -95,11 +137,190 @@ test('routes scoped Connect commands and preserves the applications alias', asyn
   const address = server.address();
   assert.ok(address && typeof address === 'object');
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  const scoped = await runCli(['connect', 'applications', 'list'], baseUrl);
-  const legacy = await runCli(['applications', 'list'], baseUrl);
-  assert.equal(scoped.status, 0, scoped.stderr);
-  assert.equal(legacy.status, 0, legacy.stderr);
-  assert.deepEqual(paths, ['/applications', '/applications']);
+  const result = await runCli(['applications', 'list'], baseUrl);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(paths, ['/account/applications']);
+});
+
+test('routes directory discovery and AI lookup through v2 Search', async (t) => {
+  const paths = [];
+  const server = http.createServer((request, response) => {
+    paths.push(request.url);
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify(request.url.includes('?')
+      ? { ais: [{ id: 'ai/1', capabilities: [] }] }
+      : { ai: { id: 'ai/1', capabilities: [] } }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  const list = await runCli(['directory', 'search', 'plumber', '--limit', '5'], baseUrl);
+  const get = await runCli(['directory', 'get', 'ai/1'], baseUrl);
+  assert.equal(list.status, 0, list.stderr);
+  assert.equal(get.status, 0, get.stderr);
+  assert.deepEqual(JSON.parse(list.stdout), { ais: [{ id: 'ai/1', capabilities: [] }] });
+  assert.deepEqual(JSON.parse(get.stdout), { ai: { id: 'ai/1', capabilities: [] } });
+  assert.deepEqual(paths, [
+    '/api/v2/search/directory/ais?query=plumber&limit=5',
+    '/api/v2/search/directory/ais/ai%2F1',
+  ]);
+});
+
+test('selects the v2 API base for migrated commands while leaving legacy commands on v1', async (t) => {
+  const paths = [];
+  const server = http.createServer((request, response) => {
+    paths.push(request.url);
+    response.setHeader('Content-Type', 'application/json');
+    response.end(JSON.stringify({ ais: [], applications: [], requests: [] }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  for (const args of [['supply', 'businesses', 'list'], ['applications', 'list'], ['requests', 'list'], ['sessions', 'list']]) {
+    const result = await runCli(args, baseUrl);
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert.deepEqual(paths, ['/api/v2/host/ais', '/api/v2/account/applications', '/api/v2/act/requests', '/api/v1/sessions']);
+});
+
+test('sends v2 Act decisions to explicit routes with valid bodies and idempotency keys', async (t) => {
+  const calls = [];
+  const server = http.createServer((request, response) => {
+    let raw = '';
+    request.setEncoding('utf8').on('data', (chunk) => { raw += chunk; });
+    request.on('end', () => {
+      calls.push({
+        method: request.method,
+        path: request.url,
+        key: request.headers['idempotency-key'],
+        body: raw ? JSON.parse(raw) : undefined,
+      });
+      response.setHeader('Content-Type', 'application/json');
+      response.end('{}');
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  for (const args of [
+    ['requests', 'action', 'req/1', 'accept', '--ai', 'ai/1', '--idempotency-key', 'accept-1'],
+    ['transactions', 'action', 'txn/1', 'request_refund', '--ai', 'ai/1', '--amount-minor', '500', '--idempotency-key', 'refund-1'],
+    ['deals', 'create', '--direction', 'DEMAND', '--title', 'Repair sink'],
+  ]) {
+    const result = await runCli(args, baseUrl);
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert.deepEqual(calls, [
+    { method: 'POST', path: '/api/v2/act/requests/req%2F1/accept', key: 'accept-1', body: { aiId: 'ai/1' } },
+    { method: 'POST', path: '/api/v2/act/transactions/txn%2F1/refunds', key: 'refund-1', body: { aiId: 'ai/1', amountMinor: 500 } },
+    { method: 'POST', path: '/api/v2/act/deals', key: undefined, body: { mode: 'BUY', title: 'Repair sink' } },
+  ]);
+});
+
+test('uses typed v2 Act goal routes and translates legacy goal options', async (t) => {
+  const calls = [];
+  const server = http.createServer((request, response) => {
+    let raw = '';
+    request.setEncoding('utf8').on('data', (chunk) => { raw += chunk; });
+    request.on('end', () => {
+      calls.push({ method: request.method, path: request.url,
+        body: raw ? JSON.parse(raw) : undefined, key: request.headers['idempotency-key'] });
+      response.setHeader('Content-Type', 'application/json');
+      response.end('{}');
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  for (const args of [
+    ['goals', 'create', '--intent', 'Find a plumber', '--type', 'DEMAND', '--data', '{"listingIds":["cap/1"]}'],
+    ['goals', 'update', 'goal/1', '--type', 'SUPPLY'],
+    ['goals', 'action', 'goal/1', 'pause', '--paused-until', '2026-10-01T00:00:00Z'],
+    ['goals', 'publish', 'goal/1', '--idempotency-key', 'publish-1'],
+  ]) {
+    const result = await runCli(args, baseUrl);
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert.deepEqual(calls, [
+    { method: 'POST', path: '/api/v2/act/goals', body: {
+      intent: 'Find a plumber', mode: 'BUY', capabilityIds: ['cap/1'],
+    }, key: undefined },
+    { method: 'PATCH', path: '/api/v2/act/goals/goal%2F1', body: { mode: 'SELL' }, key: undefined },
+    { method: 'POST', path: '/api/v2/act/goals/goal%2F1/pause',
+      body: { pausedUntil: '2026-10-01T00:00:00Z' }, key: undefined },
+    { method: 'POST', path: '/api/v2/act/goals/goal%2F1/publication-requests', body: {}, key: 'publish-1' },
+  ]);
+});
+
+test('manages application usage and webhooks through Account without legacy identity shortcuts', async (t) => {
+  const calls = [];
+  const server = http.createServer((request, response) => {
+    let raw = '';
+    request.setEncoding('utf8').on('data', (chunk) => { raw += chunk; });
+    request.on('end', () => {
+      calls.push({ path: request.url, body: raw ? JSON.parse(raw) : undefined });
+      response.setHeader('Content-Type', 'application/json');
+      response.end('{}');
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  const usage = await runCli(['applications', 'usage', 'app/1', '--days', '30'], baseUrl);
+  assert.equal(usage.status, 0, usage.stderr);
+  const webhook = await runCli(
+    ['applications', 'webhooks', 'create', 'app/1', '--url', 'https://example.com/hooks', '--data', '{"events":["goal.created"]}'],
+    baseUrl,
+  );
+  assert.equal(webhook.status, 0, webhook.stderr);
+  const retired = await runCli(['connect', 'applications', 'list'], baseUrl);
+  assert.equal(retired.status, 1);
+  assert.match(retired.stderr, /Unknown command/);
+  assert.deepEqual(calls, [
+    { path: '/api/v2/account/applications/app%2F1/usage?days=30', body: undefined },
+    { path: '/api/v2/account/applications/app%2F1/webhooks', body: { events: ['goal.created'], url: 'https://example.com/hooks' } },
+  ]);
+});
+
+test('keeps the legacy offers CLI shape while using typed v2 Act deals', async (t) => {
+  const calls = [];
+  const server = http.createServer((request, response) => {
+    let raw = '';
+    request.setEncoding('utf8').on('data', (chunk) => { raw += chunk; });
+    request.on('end', () => {
+      calls.push({ path: request.url, method: request.method, body: raw ? JSON.parse(raw) : undefined });
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify(request.method === 'GET' ? { deals: [{ id: 'deal-1' }] } : { deal: { id: 'deal-1' } }));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => server.close());
+  const address = server.address();
+  assert.ok(address && typeof address === 'object');
+  const baseUrl = `http://127.0.0.1:${address.port}/api/v1`;
+  const list = await runCli(['offers', 'list', '--ai', 'ai-1'], baseUrl);
+  const create = await runCli(['offers', 'create', '--ai', 'ai-1', '--direction', 'SUPPLY', '--title', 'Repair',
+    '--data', '{"listingSelections":[{"listingId":"cap-1","quantity":2}]}'], baseUrl);
+  assert.equal(list.status, 0, list.stderr);
+  assert.equal(create.status, 0, create.stderr);
+  assert.deepEqual(JSON.parse(list.stdout), { offers: [{ id: 'deal-1' }] });
+  assert.deepEqual(JSON.parse(create.stdout), { offer: { id: 'deal-1' } });
+  assert.deepEqual(calls, [
+    { path: '/api/v2/act/deals?aiId=ai-1', method: 'GET', body: undefined },
+    { path: '/api/v2/act/deals', method: 'POST', body: {
+      title: 'Repair', mode: 'SELL', aiId: 'ai-1', capabilitySelections: [{ capabilityId: 'cap-1', quantity: 2 }],
+    } },
+  ]);
 });
 
 test('stores configuration in the XDG config directory with redacted output', async (t) => {
@@ -141,7 +362,7 @@ test('stores configuration in the XDG config directory with redacted output', as
 
 test('accepts conversation options without changing command dispatch', async (t) => {
   const server = http.createServer((request, response) => {
-    assert.equal(request.url, '/ai/conversation?limit=7&cursor=next-page');
+    assert.equal(request.url, '/act/ai/conversation?limit=7&cursor=next-page');
     assert.equal(request.headers.authorization, 'Bearer test-key');
     response.setHeader('Content-Type', 'application/json');
     response.end(JSON.stringify({ messages: [] }));
@@ -179,9 +400,9 @@ test('accepts conversation options without changing command dispatch', async (t)
 test('gets a goal by ID', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'GET');
-    assert.equal(request.url, '/goals/goal%2F123');
+    assert.equal(request.url, '/act/goals/goal%2F123');
     response.setHeader('Content-Type', 'application/json');
-    response.end(JSON.stringify({ id: 'goal/123', status: 'ACTIVE' }));
+    response.end(JSON.stringify({ goal: { id: 'goal/123', status: 'ACTIVE' } }));
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   t.after(() => server.close());
@@ -210,18 +431,15 @@ test('gets a goal by ID', async (t) => {
   });
 
   assert.equal(result.status, 0, result.stderr);
-  assert.deepEqual(JSON.parse(result.stdout), {
-    id: 'goal/123',
-    status: 'ACTIVE',
-  });
+  assert.deepEqual(JSON.parse(result.stdout), { goal: { id: 'goal/123', status: 'ACTIVE' } });
 });
 
 test('keeps the task command as an undocumented compatibility alias', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'GET');
-    assert.equal(request.url, '/tasks/task%2F123');
+    assert.equal(request.url, '/act/goals/task%2F123');
     response.setHeader('Content-Type', 'application/json');
-    response.end(JSON.stringify({ task: { taskId: 'task/123', status: 'ACTIVE' } }));
+    response.end(JSON.stringify({ goal: { id: 'task/123', status: 'ACTIVE' } }));
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   t.after(() => server.close());
@@ -230,13 +448,13 @@ test('keeps the task command as an undocumented compatibility alias', async (t) 
   assert.ok(address && typeof address === 'object');
   const result = await runCli(['tasks', 'get', 'task/123'], `http://127.0.0.1:${address.port}`);
   assert.equal(result.status, 0, result.stderr);
-  assert.deepEqual(JSON.parse(result.stdout), { task: { taskId: 'task/123', status: 'ACTIVE' } });
+  assert.deepEqual(JSON.parse(result.stdout), { task: { id: 'task/123', taskId: 'task/123', status: 'ACTIVE' } });
 });
 
 test('updates an AI profile with typed flags and structured data', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'PATCH');
-    assert.equal(request.url, '/ais/agent%2F123');
+    assert.equal(request.url, '/host/ais/agent%2F123');
 
     let body = '';
     request.setEncoding('utf8');
@@ -303,7 +521,7 @@ test('updates an AI profile with typed flags and structured data', async (t) => 
 test('executes a reviewed Darwin tool with JSON input', async (t) => {
   const server = http.createServer((request, response) => {
     assert.equal(request.method, 'POST');
-    assert.equal(request.url, '/tools/create_goal/executions');
+    assert.equal(request.url, '/act/tools/create_goal/executions');
     assert.equal(request.headers.authorization, 'Bearer test-key');
 
     let body = '';
