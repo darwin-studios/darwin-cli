@@ -209,7 +209,11 @@ test('pending checkout is printed unchanged, never labeled paid', async () => {
 });
 
 test('request-bound commands match the actual strict API bodies and preserve paused denials', async () => {
-  const contract = JSON.parse(await readFile(new URL('../../../../../scripts/sdk/fern/openapi-sdk.json', import.meta.url), 'utf8').catch(() => readFile(new URL('../openapi-sdk.json', import.meta.url), 'utf8')));
+  const contract = JSON.parse(
+    await readFile(new URL('../../../../../scripts/sdk/fern/openapi-sdk.json', import.meta.url), 'utf8').catch(() =>
+      readFile(new URL('../openapi-sdk.json', import.meta.url), 'utf8'),
+    ),
+  );
   await fixture(
     async (cli, calls) => {
       for (const command of ['authenticate', 'pay']) {
