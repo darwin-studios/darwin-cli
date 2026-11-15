@@ -4,6 +4,8 @@ import { chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import { actRequest } from './act.js';
+
 const defaultBaseUrl = 'https://api.darwin.so/api/v2';
 const configRoot = process.env.XDG_CONFIG_HOME?.trim() || join(homedir(), '.config');
 const configPath = join(configRoot, 'darwin', 'config.json');
@@ -18,6 +20,7 @@ class DarwinApiError extends Error {
     readonly status: number,
     message: string,
     readonly body?: unknown,
+    readonly retryAfterSeconds?: number,
   ) {
     super(message);
     this.name = 'DarwinApiError';
@@ -29,6 +32,7 @@ type RequestOptions = {
   query?: Record<string, string | number | undefined>;
   body?: unknown;
   headers?: Record<string, string>;
+  timeoutMs?: number;
 };
 
 async function readConfig(): Promise<DarwinConfig> {
@@ -49,7 +53,7 @@ async function credentials() {
   };
 }
 
-async function request(apiKey: string, baseUrl: string, path: string, options: RequestOptions = {}) {
+async function request(apiKey: string | undefined, baseUrl: string, path: string, options: RequestOptions = {}) {
   const url = new URL(`${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`);
   for (const [key, value] of Object.entries(options.query ?? {})) {
     if (value !== undefined) {
@@ -57,35 +61,60 @@ async function request(apiKey: string, baseUrl: string, path: string, options: R
     }
   }
 
-  const response = await fetch(url, {
-    method: options.method ?? 'GET',
-    headers: {
-      Accept: 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-      'X-Darwin-Access-Point': 'cli',
-      'X-Darwin-Client': '@darwinso/cli',
-      'X-Darwin-Client-Version': '0.4.0',
-      ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
-      ...options.headers,
-    },
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
-  });
-
-  const text = await response.text();
-  let body: unknown;
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), options.timeoutMs ?? 60000);
   try {
-    body = text ? JSON.parse(text) : undefined;
-  } catch {
-    body = text;
+    const response = await fetch(url, {
+      signal: abort.signal,
+      method: options.method ?? 'GET',
+      headers: {
+        Accept: 'application/json',
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+        'X-Darwin-Access-Point': 'cli',
+        'X-Darwin-Client': '@darwinso/cli',
+        'X-Darwin-Client-Version': '0.5.0',
+        ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...options.headers,
+      },
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    });
+
+    const text = await response.text();
+    let body: unknown;
+    try {
+      body = text ? JSON.parse(text) : undefined;
+    } catch {
+      body = text;
+    }
+    if (!response.ok) {
+      const code = body && typeof body === 'object' && 'code' in body ? body.code : undefined;
+      const message =
+        body && typeof body === 'object' && 'message' in body && typeof body.message === 'string'
+          ? body.message
+          : typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,99}$/.test(code)
+            ? code
+            : response.statusText || 'Darwin API request failed';
+      const retryHeader = response.headers.get('Retry-After');
+      const headerDelay =
+        retryHeader === null
+          ? NaN
+          : /^\d+$/.test(retryHeader)
+            ? Number(retryHeader)
+            : Math.ceil((Date.parse(retryHeader) - Date.now()) / 1000);
+      const bodyDelay =
+        body && typeof body === 'object' && 'retryAfterSeconds' in body ? body.retryAfterSeconds : undefined;
+      const delay =
+        typeof bodyDelay === 'number' && Number.isFinite(bodyDelay) && bodyDelay >= 0
+          ? bodyDelay
+          : Number.isFinite(headerDelay) && headerDelay >= 0
+            ? headerDelay
+            : undefined;
+      throw new DarwinApiError(response.status, message, body, delay);
+    }
+    return body;
+  } finally {
+    clearTimeout(timer);
   }
-  if (!response.ok) {
-    const message =
-      body && typeof body === 'object' && 'message' in body && typeof body.message === 'string'
-        ? body.message
-        : response.statusText || 'Darwin API request failed';
-    throw new DarwinApiError(response.status, message, body);
-  }
-  return body;
 }
 
 function option(args: string[], name: string) {
@@ -268,7 +297,7 @@ function normalizeCapabilitySelections(body: Record<string, unknown>) {
     body.capabilitySelections = body.listingSelections.map((selection) => {
       if (!selection || typeof selection !== 'object' || Array.isArray(selection)) return selection;
       const { listingId, ...rest } = selection as Record<string, unknown>;
-      return { ...rest, capabilityId: listingId };
+      return { ...rest, operationId: listingId };
     });
   }
   delete body.listingSelections;
@@ -331,6 +360,8 @@ function help() {
   process.stdout.write(`Darwin CLI
 
 Usage:
+  darwin search <query>
+  darwin act <start-thread|send-message|get-thread|list-threads|archive-thread|authenticate|pay> [--ai <id>] --data <json>
   darwin configure --api-key <key> [--base-url <url>]
   darwin config show
   darwin logout
@@ -414,6 +445,12 @@ async function main() {
   }
 
   const auth = await credentials();
+  if (args[0] === 'search') {
+    if (args.length !== 2 || !args[1]?.trim()) throw new Error('Pass a quoted query: darwin search "outdoor venue".');
+    const result = await request(auth.apiKey, auth.v2BaseUrl, '/search', { method: 'POST', body: { query: args[1] } });
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    return;
+  }
   if (!auth.apiKey) {
     throw new Error('No API key found. Run darwin configure --api-key <key> or set DARWIN_API_KEY.');
   }
@@ -422,7 +459,18 @@ async function main() {
   const operation = args[1];
   let result: unknown;
 
-  if (resource === 'account') {
+  if (resource === 'act') {
+    const seen = new Set<string>();
+    for (let index = 2; index < args.length; index += 2) {
+      const flag = args[index]!;
+      if (!['--ai', '--data'].includes(flag) || seen.has(flag))
+        throw new Error('Act accepts one --ai and one --data option; put request fields inside --data.');
+      option(args, flag);
+      seen.add(flag);
+    }
+    const call = actRequest(operation, dataOption(args), option(args, '--ai'));
+    result = await request(auth.apiKey, auth.v2BaseUrl, call.path, call.options);
+  } else if (resource === 'account') {
     result = await request(auth.apiKey, auth.v2BaseUrl, '/account');
   } else if (resource === 'ais' && operation === 'skills') {
     result = await request(auth.apiKey, auth.v2BaseUrl, '/host/skills');
@@ -694,8 +742,8 @@ async function main() {
       delete body.agentId;
     }
     if (body.listingIds !== undefined) {
-      if (body.capabilityIds !== undefined) throw new Error('Pass capabilityIds only once.');
-      body.capabilityIds = body.listingIds;
+      if (body.operationIds !== undefined) throw new Error('Pass operationIds only once.');
+      body.operationIds = body.listingIds;
       delete body.listingIds;
     }
     result = await request(auth.apiKey, auth.v2BaseUrl, '/act/goals', {
@@ -1528,6 +1576,11 @@ async function main() {
 main().catch((error: unknown) => {
   if (error instanceof DarwinApiError) {
     process.stderr.write(`Darwin API error (${error.status}): ${error.message}\n`);
+    if (error.retryAfterSeconds !== undefined) {
+      process.stderr.write(
+        `Retry after ${error.retryAfterSeconds} seconds; reuse the same idempotencyKey/clientMessageId.\n`,
+      );
+    }
   } else {
     process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
   }

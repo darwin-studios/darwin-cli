@@ -6,7 +6,9 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const candidates = [
   process.env.DARWIN_OPENAPI_PATH,
   join(packageRoot, 'openapi.json'),
-  join(packageRoot, '..', '..', 'apps', 'docs', 'openapi-v2.json'),
+  join(packageRoot, '..', '..', '..', '..', 'apps', 'website', 'docs', 'openapi-v2.json'),
+  join(packageRoot, '..', '..', '..', '..', 'apps', 'docs', 'openapi-v2.json'),
+  join(packageRoot, '..', '..', '..', '..', 'fern', 'openapi-sdk.json'),
 ].filter(Boolean);
 
 let contractPath;
@@ -25,14 +27,13 @@ const contract = JSON.parse(await readFile(contractPath, 'utf8'));
 const problems = [];
 const expectedOperations = [
   ['post', '/search', 'search'],
-  ['post', '/actions', 'start_action'],
-  ['get', '/actions', 'list_actions'],
-  ['get', '/actions/{actionId}', 'get_action'],
-  ['patch', '/actions/{actionId}', 'continue_action'],
-  ['post', '/actions/{actionId}/pay', 'pay_action'],
-  ['post', '/actions/{actionId}/approve', 'approve_action'],
-  ['post', '/actions/{actionId}/stop', 'stop_action'],
-  ['post', '/actions/{actionId}/end', 'end_action'],
+  ['post', '/act/threads', 'start_thread'],
+  ['post', '/act/threads/{thread}/messages', 'send_message'],
+  ['get', '/act/threads/{thread}', 'get_thread'],
+  ['get', '/act/threads', 'list_threads'],
+  ['post', '/act/threads/{thread}/archive', 'archive_thread'],
+  ['post', '/act/authentications', 'authenticate'],
+  ['post', '/act/payments', 'pay'],
 ];
 
 function checkLocalSchemaReferences(value, location = '#') {
@@ -64,8 +65,17 @@ const operations = Object.entries(contract.paths ?? {}).flatMap(([path, pathItem
 );
 const operationIds = operations.map(({ operation }) => operation.operationId);
 const callableCliOperations = operations.filter(
-  ({ path, operation }) =>
-    (path === '/search' || path === '/actions' || path.startsWith('/actions/')) &&
+  ({ method, path, operation }) =>
+    // Status, owner-context discovery and download tickets are HTTP helpers; none
+    // adds a CLI command to the exact seven-operation thread surface.
+    (path === '/search' ||
+      (path.startsWith('/act/') &&
+        !['get_authentication_status', 'get_result_artifact_download_url'].includes(operation.operationId) &&
+        !(
+          method === 'get' &&
+          path === '/act/processing-context' &&
+          operation.operationId === 'get_owner_processing_context'
+        ))) &&
     operation['x-darwin-callable'] !== false,
 );
 if (callableCliOperations.length !== expectedOperations.length) {
@@ -78,6 +88,7 @@ if (!operations.length || new Set(operationIds).size !== operationIds.length) {
 }
 
 for (const path of Object.keys(contract.paths ?? {})) {
+  if (path === '/actions' || path.startsWith('/actions/')) problems.push(`${path} exposes the retired Action contract`);
   if (path === '/connect' || path.startsWith('/connect/'))
     problems.push(`${path} exposes the retired Connect namespace`);
   if (/service-accounts|enrollment-(?:links|batches)|users\/resolve/u.test(path)) {
@@ -94,4 +105,6 @@ for (const [method, path, operationId] of expectedOperations) {
 
 checkLocalSchemaReferences(contract);
 if (problems.length) throw new Error(`Darwin CLI contract check failed:\n- ${problems.join('\n- ')}`);
-process.stdout.write(`Darwin CLI is aligned to Search and the eight public Action operations (${contractPath}).\n`);
+process.stdout.write(
+  `Darwin CLI next-release contract covers Search and the seven public thread operations (${contractPath}).\n`,
+);

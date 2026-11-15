@@ -62,7 +62,7 @@ test('prints its package version', () => {
     encoding: 'utf8',
   });
   assert.equal(result.status, 0, result.stderr);
-  assert.equal(result.stdout.trim(), '0.4.0');
+  assert.equal(result.stdout.trim(), '0.5.0');
 });
 
 test('routes Supply capability commands through the v2 Host API', async (t) => {
@@ -251,7 +251,7 @@ test('uses typed v2 Act goal routes and translates legacy goal options', async (
   }
   assert.deepEqual(calls, [
     { method: 'POST', path: '/api/v2/act/goals', body: {
-      intent: 'Find a plumber', mode: 'BUY', capabilityIds: ['cap/1'],
+      intent: 'Find a plumber', mode: 'BUY', operationIds: ['cap/1'],
     }, key: undefined },
     { method: 'PATCH', path: '/api/v2/act/goals/goal%2F1', body: { mode: 'SELL' }, key: undefined },
     { method: 'POST', path: '/api/v2/act/goals/goal%2F1/pause',
@@ -318,7 +318,7 @@ test('keeps the legacy offers CLI shape while using typed v2 Act deals', async (
   assert.deepEqual(calls, [
     { path: '/api/v2/act/deals?aiId=ai-1', method: 'GET', body: undefined },
     { path: '/api/v2/act/deals', method: 'POST', body: {
-      title: 'Repair', mode: 'SELL', aiId: 'ai-1', capabilitySelections: [{ capabilityId: 'cap-1', quantity: 2 }],
+      title: 'Repair', mode: 'SELL', aiId: 'ai-1', capabilitySelections: [{ operationId: 'cap-1', quantity: 2 }],
     } },
   ]);
 });
