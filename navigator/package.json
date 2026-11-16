@@ -17,16 +17,15 @@
     "*.mts",
     "*.cts",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "dist"
   ],
-  "dependencies": {
-    "@darwinso/cli": "0.5.0"
-  },
   "engines": {
     "node": ">=20.3"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
-  }
+  },
+  "dependencies": {}
 }

@@ -950,7 +950,7 @@ test('product commands route exact JSON once to v3 and preserve failures without
   const server = http.createServer(async (request, response) => {
     let body = '';
     for await (const chunk of request) body += chunk;
-    calls.push({ path: request.url, body: JSON.parse(body), auth: request.headers.authorization });
+    calls.push({ path: request.url, body: JSON.parse(body), auth: request.headers.authorization, key:request.headers['idempotency-key'] });
     response.writeHead(request.url === '/api/v3/manage' ? 429 : 200, {
       'Content-Type': 'application/json',
       'Retry-After': '7',
@@ -970,12 +970,13 @@ test('product commands route exact JSON once to v3 and preserve failures without
               targets: [{ agentId: 'a' }, { agentId: 'b' }],
             }
           : { action: 'list_agents' };
-      const result = await runCli([command, '--data', JSON.stringify(body)], base);
+      const key = command === 'live-search' ? undefined : 'same-key';
+      const result = await runCli([command, '--data', JSON.stringify(body), ...(key ? ['--idempotency-key',key] : [])], base);
       assert.equal(result.status, command === 'manage' ? 1 : 0, result.stderr);
-      assert.deepEqual(calls.at(-1), { path: `/api/v3/${command}`, body, auth: 'Bearer test-key' });
+      assert.deepEqual(calls.at(-1), { path: `/api/v3/${command}`, body, auth: 'Bearer test-key', key });
     }
     assert.equal(calls.length, 4, 'no automatic retries');
-    for (const args of [['run'], ['build', '--data', '[]'], ['manage', '--data', '{}', '--approve']]) {
+    for (const args of [['run'], ['build', '--data', '{}'], ['build', '--data', '[]'], ['manage', '--data', '{}', '--approve']]) {
       assert.notEqual((await runCli(args, base)).status, 0);
     }
     assert.equal(calls.length, 4, 'invalid invocations must not dispatch');

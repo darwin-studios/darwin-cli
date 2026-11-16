@@ -363,8 +363,8 @@ Usage:
   navigator search <query>
   navigator live-search --data <json>
   navigator run --data <json>
-  navigator build --data <json>
-  navigator manage --data <json>
+  navigator build --data <json> --idempotency-key <key>
+  navigator manage --data <json> --idempotency-key <key>
   navigator configure --api-key <key> [--base-url <url>]
 
 Compatibility commands (the darwin command remains supported):
@@ -393,6 +393,7 @@ Compatibility commands (the darwin command remains supported):
 Options:
   --ai <id>     Explicitly target an accessible AI
   --data <json>    Supply or extend a JSON request body
+  --idempotency-key <key>  Stable request key; required for Build and Manage
   -h, --help       Show help
   -v, --version    Show the installed version
 
@@ -456,17 +457,28 @@ async function main() {
   // Canonical product operations share their API request bodies. Do not infer
   // targets, auto-approve actions, or retry an operation after an ambiguous result.
   if (['live-search', 'run', 'build', 'manage'].includes(args[0]!)) {
-    if (args.length !== 3 || args[1] !== '--data') {
-      throw new Error(`${args[0]} requires exactly --data <json>; use the API reference request body.`);
+    const seen = new Set<string>();
+    for (let index = 1; index < args.length; index += 2) {
+      const flag = args[index]!;
+      if (!['--data', '--idempotency-key'].includes(flag) || seen.has(flag))
+        throw new Error(`${args[0]} accepts one --data and one --idempotency-key option.`);
+      option(args, flag);
+      seen.add(flag);
     }
+    if (!seen.has('--data')) throw new Error(`${args[0]} requires --data <json>.`);
     const body = dataOption(args);
+    const idempotencyKey = option(args, '--idempotency-key')?.trim();
+    if (['build', 'manage'].includes(args[0]!) && !idempotencyKey)
+      throw new Error(`${args[0]} requires --idempotency-key <key>; reuse it only for the identical request.`);
     if (!auth.apiKey)
       throw new Error('No API key found. Run navigator configure --api-key <key> or set DARWIN_API_KEY.');
     if (!/\/v[123]\/?$/.test(auth.baseUrl)) {
       throw new Error('The API base URL must end in /v2 or /v3 for Navigator product commands.');
     }
     const baseUrl = auth.baseUrl.replace(/\/v[123]\/?$/, '/v3');
-    const result = await request(auth.apiKey, baseUrl, `/${args[0]}`, { method: 'POST', body });
+    const result = await request(auth.apiKey, baseUrl, `/${args[0]}`, {
+      method: 'POST', body, headers: idempotencyKey ? {'Idempotency-Key':idempotencyKey} : undefined,
+    });
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     return;
   }

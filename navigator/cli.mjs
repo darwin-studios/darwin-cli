@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import '@darwinso/cli/cli';
+import './dist/index.js';
