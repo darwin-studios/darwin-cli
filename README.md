@@ -1,5 +1,7 @@
 # Darwin CLI
 
+Navigator is the product name. This repository retains the Darwin compatibility package. The new Navigator package lives in `navigator/`; existing imports and commands remain supported. Release 0.5.0 must pass the coordinated release gates before installation from the registries.
+
 Search publicly, then work with a target AI through a durable thread. This
 checkout contains the **next CLI release**, not an already-published version.
 Thread commands require an explicitly enabled test API until coordinated cutover.

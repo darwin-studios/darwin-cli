@@ -27459,7 +27459,7 @@
             "properties": {
               "targets": {
                 "minItems": 1,
-                "maxItems": 1,
+                "maxItems": 8,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -128562,6 +128562,178 @@
           "previousRuns",
           "createdAt",
           "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "RunRequest": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ActV3Request"
+          },
+          {
+            "$ref": "#/components/schemas/RunTurnRequest"
+          }
+        ]
+      },
+      "RunTurnRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "default": "turn",
+            "type": "string",
+            "const": "turn"
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "human",
+              "agent"
+            ],
+            "description": "Who consumes this response. Controls presentation only; never identity, permissions, or approval."
+          },
+          "target": {
+            "description": "Explicit agent target. Bypasses Darwin discovery; it never grants execution authority.",
+            "type": "object",
+            "properties": {
+              "agentId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+              },
+              "operationId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+              }
+            },
+            "required": [
+              "agentId"
+            ],
+            "additionalProperties": false
+          },
+          "clientMessageId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+            "description": "A unique ID for this message. Reuse it only when retrying the same request."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000,
+            "description": "What you want to find, do, or discuss."
+          },
+          "sessionId": {
+            "description": "Session to continue. Omit to start a new session.",
+            "type": "string",
+            "pattern": "^asst_[a-f0-9-]{36}$"
+          },
+          "threadId": {
+            "description": "Deprecated alias for sessionId.",
+            "type": "string",
+            "pattern": "^asst_[a-f0-9-]{36}$"
+          },
+          "conversationId": {
+            "description": "Omit to start a conversation; return this ID on follow-ups.",
+            "type": "string",
+            "pattern": "^asst_[a-f0-9-]{36}$"
+          },
+          "mode": {
+            "type": "string",
+            "const": "execute",
+            "deprecated": true
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "texts": {
+                "description": "Additional text context blocks. Text blocks and files share a ten-item limit.",
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                }
+              },
+              "text": {
+                "description": "Task details, constraints, budget, or deadline. This is not permission to spend.",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+              },
+              "files": {
+                "description": "PDFs or images, with base64 contents. Put Markdown text in context.text or user_memory.",
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "mimeType": {
+                      "type": "string",
+                      "enum": [
+                        "application/pdf",
+                        "image/png",
+                        "image/jpeg",
+                        "image/webp"
+                      ]
+                    },
+                    "data": {
+                      "type": "string",
+                      "minLength": 4,
+                      "maxLength": 7000000,
+                      "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "mimeType",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "memoryAgentId": {
+            "description": "Read memory for an account agent you belong to. Does not change the acting identity. Cannot be combined with userId or user_memory.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "userId": {
+            "description": "Your application-scoped user ID, or your own Darwin user ID with a user credential. Reuses memory previously supplied for this user; never grants account access.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          },
+          "user_memory": {
+            "description": "Markdown preferences to personalize this request. Read a .md file and pass its text, not a path or URL. With userId, saves these preferences for later requests; empty text clears them.",
+            "type": "string",
+            "maxLength": 4000
+          },
+          "applicationId": {
+            "description": "Optional attribution check. Must match the application attached to your API credential; inferred when omitted.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"
+          }
+        },
+        "required": [
+          "clientMessageId",
+          "message"
         ],
         "additionalProperties": false
       },

@@ -944,3 +944,42 @@ test('drives the session lifecycle with public IDs and idempotency keys', async 
     },
   ]);
 });
+
+test('product commands route exact JSON once to v3 and preserve failures without retrying', async () => {
+  const calls = [];
+  const server = http.createServer(async (request, response) => {
+    let body = '';
+    for await (const chunk of request) body += chunk;
+    calls.push({ path: request.url, body: JSON.parse(body), auth: request.headers.authorization });
+    response.writeHead(request.url === '/api/v3/manage' ? 429 : 200, {
+      'Content-Type': 'application/json',
+      'Retry-After': '7',
+    });
+    response.end(JSON.stringify(request.url === '/api/v3/manage' ? { code: 'RATE_LIMITED' } : { accepted: true }));
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const base = `http://127.0.0.1:${server.address().port}/api/v2`;
+  try {
+    for (const command of ['live-search', 'run', 'build', 'manage']) {
+      const body =
+        command === 'run'
+          ? {
+              type: 'turn',
+              clientMessageId: 'same-id',
+              message: 'Review',
+              targets: [{ agentId: 'a' }, { agentId: 'b' }],
+            }
+          : { action: 'list_agents' };
+      const result = await runCli([command, '--data', JSON.stringify(body)], base);
+      assert.equal(result.status, command === 'manage' ? 1 : 0, result.stderr);
+      assert.deepEqual(calls.at(-1), { path: `/api/v3/${command}`, body, auth: 'Bearer test-key' });
+    }
+    assert.equal(calls.length, 4, 'no automatic retries');
+    for (const args of [['run'], ['build', '--data', '[]'], ['manage', '--data', '{}', '--approve']]) {
+      assert.notEqual((await runCli(args, base)).status, 0);
+    }
+    assert.equal(calls.length, 4, 'invalid invocations must not dispatch');
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

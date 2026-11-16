@@ -9,11 +9,11 @@
   ],
   "homepage": "https://darwin.so/docs/cli",
   "bugs": {
-    "url": "https://github.com/darwin-studios/darwin-cli/issues"
+    "url": "https://github.com/darwin-studios/navigator-cli/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darwin-studios/darwin-cli.git"
+    "url": "git+https://github.com/darwin-studios/navigator-cli.git"
   },
   "license": "MIT",
   "type": "module",
@@ -43,5 +43,9 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "exports": {
+    "./cli": "./dist/index.js",
+    "./package.json": "./package.json"
   }
 }

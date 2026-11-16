@@ -1,0 +1,32 @@
+{
+  "name": "@darwinso/navigator-cli",
+  "version": "0.5.0",
+  "description": "Official Navigator command-line client by Darwin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darwin-studios/navigator-cli.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "navigator": "./cli.mjs"
+  },
+  "files": [
+    "*.mjs",
+    "*.cjs",
+    "*.mts",
+    "*.cts",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@darwinso/cli": "0.5.0"
+  },
+  "engines": {
+    "node": ">=20.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

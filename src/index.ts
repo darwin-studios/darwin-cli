@@ -357,9 +357,17 @@ async function version() {
 }
 
 function help() {
-  process.stdout.write(`Darwin CLI
+  process.stdout.write(`Navigator CLI by Darwin
 
 Usage:
+  navigator search <query>
+  navigator live-search --data <json>
+  navigator run --data <json>
+  navigator build --data <json>
+  navigator manage --data <json>
+  navigator configure --api-key <key> [--base-url <url>]
+
+Compatibility commands (the darwin command remains supported):
   darwin search <query>
   darwin act <start-thread|send-message|get-thread|list-threads|archive-thread|authenticate|pay> [--ai <id>] --data <json>
   darwin configure --api-key <key> [--base-url <url>]
@@ -445,6 +453,23 @@ async function main() {
   }
 
   const auth = await credentials();
+  // Canonical product operations share their API request bodies. Do not infer
+  // targets, auto-approve actions, or retry an operation after an ambiguous result.
+  if (['live-search', 'run', 'build', 'manage'].includes(args[0]!)) {
+    if (args.length !== 3 || args[1] !== '--data') {
+      throw new Error(`${args[0]} requires exactly --data <json>; use the API reference request body.`);
+    }
+    const body = dataOption(args);
+    if (!auth.apiKey)
+      throw new Error('No API key found. Run navigator configure --api-key <key> or set DARWIN_API_KEY.');
+    if (!/\/v[123]\/?$/.test(auth.baseUrl)) {
+      throw new Error('The API base URL must end in /v2 or /v3 for Navigator product commands.');
+    }
+    const baseUrl = auth.baseUrl.replace(/\/v[123]\/?$/, '/v3');
+    const result = await request(auth.apiKey, baseUrl, `/${args[0]}`, { method: 'POST', body });
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    return;
+  }
   if (args[0] === 'search') {
     if (args.length !== 2 || !args[1]?.trim()) throw new Error('Pass a quoted query: darwin search "outdoor venue".');
     const result = await request(auth.apiKey, auth.v2BaseUrl, '/search', { method: 'POST', body: { query: args[1] } });
